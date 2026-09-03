@@ -3,17 +3,23 @@
         {
             "number": 1,
             "title": "Pertemuan dengan Dao",
-            "url": "https://ok.ru/video/5979427044412"
+            "sources": [
+                { "server": "OK.ru", "url": "https://ok.ru/video/5979427044412" }
+            ]
         },
         {
             "number": 2,
             "title": "Kultivasi Awal",
-            "url": "https://ok.ru/video/5979427044413"
+            "sources": [
+                { "server": "OK.ru", "url": "https://ok.ru/video/5979427044413" }
+            ]
         },
         {
             "number": 3,
             "title": "Ujian",
-            "url": "https://ok.ru/video/5979427044414"
+            "sources": [
+                { "server": "Dailymotion", "url": "https://www.dailymotion.com/video/x84sh87" }
+            ]
         }
     ]
 }
