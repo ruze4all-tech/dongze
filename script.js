@@ -7,7 +7,7 @@ let currentEpisodeIndex = 0;
 let currentGenre = 'all';
 let currentSources = [];
 let currentSourceIndex = 0;
-let isPopState = false; // ★ FLAG UNTUK CEGAH PUSHSTATE SAAT BACK
+let isPopState = false;
 
 // ============================================================
 //  PAGINATION
@@ -82,8 +82,8 @@ function showPage(pageId) {
 }
 
 function goHome() {
-    // ★ REPLACE STATE MENJADI null AGAR BACK DARI HOME LANGSUNG KELUAR ★
-    history.replaceState(null, '', window.location.href);
+    // ★ SET STATE HOME ★
+    history.replaceState({ page: 'home' }, '', window.location.href);
     showPage('page-home');
     loadAnimeList(currentGenre, 1);
     currentAnimeId = null;
@@ -104,17 +104,24 @@ function goToDetail() {
 window.addEventListener('popstate', function(e) {
     const state = e.state;
     console.log('popstate:', state);
-    
-    // ★ SET FLAG ★
+
     isPopState = true;
-    
-    // Jika state null, biarkan browser keluar (dari Home)
+
+    // ★ Jika state Home, kembali ke Home ★
+    if (state && state.page === 'home') {
+        console.log('State Home, kembali ke Home');
+        goHome();
+        isPopState = false;
+        return;
+    }
+
+    // Jika state null, biarkan browser keluar
     if (!state) {
         console.log('State null, biarkan browser keluar');
         isPopState = false;
         return;
     }
-    
+
     // Jika state Detail
     if (state.page === 'detail' && state.animeId) {
         console.log('State Detail, kembali ke Detail');
@@ -124,7 +131,7 @@ window.addEventListener('popstate', function(e) {
         isPopState = false;
         return;
     }
-    
+
     // Jika state Watch
     if (state.page === 'watch' && state.animeId !== undefined) {
         console.log('State Watch, kembali ke Watch');
@@ -135,7 +142,7 @@ window.addEventListener('popstate', function(e) {
         isPopState = false;
         return;
     }
-    
+
     // Fallback ke Home
     console.log('Fallback ke Home');
     goHome();
@@ -261,17 +268,17 @@ async function searchAnime() {
 }
 
 // ============================================================
-//  ★ OPEN DETAIL (DENGAN FLAG) ★
+//  OPEN DETAIL
 // ============================================================
 async function openDetail(animeId) {
     currentAnimeId = animeId;
     showPage('page-detail');
-    
-    // ★ PUSH STATE HANYA JIKA BUKAN DARI POPSTATE ★
+
+    // ★ PUSH STATE DETAIL (jika bukan dari popstate) ★
     if (!isPopState) {
         history.pushState({ page: 'detail', animeId: animeId }, '', window.location.href);
     }
-    
+
     const container = document.getElementById('detailContent');
     container.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
 
@@ -326,7 +333,7 @@ async function openDetail(animeId) {
                 goToDetail();
             };
         }
-        
+
     } catch (err) {
         console.error(err);
         container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>${err.message}</p></div>`;
@@ -334,7 +341,7 @@ async function openDetail(animeId) {
 }
 
 // ============================================================
-//  ★ WATCH EPISODE (DENGAN FLAG) ★
+//  WATCH EPISODE
 // ============================================================
 function watchEpisode(index) {
     if (!currentEpisodes || currentEpisodes.length === 0) {
@@ -349,12 +356,12 @@ function watchEpisode(index) {
     const ep = currentEpisodes[index];
     currentEpisodeIndex = index;
 
-    // ★ PUSH STATE HANYA JIKA BUKAN DARI POPSTATE ★
+    // ★ PUSH STATE WATCH (jika bukan dari popstate) ★
     if (!isPopState) {
-        history.pushState({ 
-            page: 'watch', 
+        history.pushState({
+            page: 'watch',
             animeId: currentAnimeId,
-            episodeIndex: index 
+            episodeIndex: index
         }, '', window.location.href);
     }
 
@@ -371,14 +378,14 @@ function watchEpisode(index) {
     showPage('page-watch');
 
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
-    
+
     document.getElementById('breadcrumbSeriesLink').textContent = seriesName;
     document.getElementById('breadcrumbSeriesLink').onclick = function(e) {
         e.preventDefault();
         goToDetail();
     };
     document.getElementById('breadcrumbEpisode').textContent = `Episode ${ep.number}`;
-    
+
     document.getElementById('episodeSeriesName').textContent = seriesName;
     document.getElementById('watchTitle').textContent = `${seriesName} Episode ${ep.number} - ${ep.title || 'Subtitle Indonesia'}`;
     document.getElementById('episodeReleaseDate').innerHTML = `<i class="far fa-calendar-alt"></i> Released on ${new Date().toLocaleDateString('id-ID')}`;
@@ -490,12 +497,12 @@ function updateEpisodeGrid() {
 // ============================================================
 function navigateEpisode(direction) {
     if (!currentEpisodes || currentEpisodes.length === 0) return;
-    
+
     let newIndex = currentEpisodeIndex + direction;
     if (newIndex < 0) newIndex = 0;
     if (newIndex >= currentEpisodes.length) newIndex = currentEpisodes.length - 1;
     if (newIndex === currentEpisodeIndex) return;
-    
+
     watchEpisode(newIndex);
 }
 
@@ -516,14 +523,14 @@ function updateNavButtons() {
 //  INISIALISASI
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // ★ SET STATE AWAL NULL ★
-    history.replaceState(null, '', window.location.href);
+    // ★ SET STATE HOME AWAL ★
+    history.replaceState({ page: 'home' }, '', window.location.href);
     loadAnimeList('all', 1);
-    
+
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') searchAnime();
     });
-    
+
     document.querySelector('.pagination').style.display = 'flex';
 });
 
