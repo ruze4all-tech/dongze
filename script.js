@@ -5,7 +5,6 @@ let currentAnimeId = null;
 let currentEpisodes = [];
 let currentEpisodeIndex = 0;
 let currentGenre = 'all';
-let currentAnimeTitle = '';
 let backCount = 0;
 let backTimer = null;
 let isPopState = false;
@@ -38,17 +37,12 @@ function showPage(pageId) {
 }
 
 function goHome() {
-    // Jika dari Detail/Watch ke Home, push state Home agar back dari Home bisa keluar
-    const currentPage = document.querySelector('.page.active');
-    if (currentPage && currentPage.id !== 'page-home') {
-        // Push state Home agar back dari Home bisa kembali ke Home (loop) atau keluar
-        // Tapi kita mau dari Home back langsung keluar, jadi push state Home
-        history.pushState({ page: 'page-home' }, '', window.location.href);
-    }
+    // Replace state Home agar back dari Home bisa keluar dengan double tap
+    // Tapi tidak push state Home berlapis
+    history.replaceState({ page: 'page-home' }, '', window.location.href);
     showPage('page-home');
     loadAnimeList(currentGenre);
     currentAnimeId = null;
-    // Reset double tap counter saat kembali ke Home
     backCount = 0;
     clearTimeout(backTimer);
 }
@@ -63,7 +57,7 @@ function goToDetail() {
 }
 
 // ============================================================
-//  TOAST NOTIFIKASI (UNTUK DOUBLE TAP)
+//  TOAST NOTIFIKASI (DOUBLE TAP)
 // ============================================================
 function showToast(message) {
     const existingToast = document.querySelector('.toast-notification');
@@ -99,14 +93,17 @@ function showToast(message) {
 }
 
 // Tambahkan keyframe animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-        to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-`;
-document.head.appendChild(style);
+if (!document.querySelector('#toast-style')) {
+    const style = document.createElement('style');
+    style.id = 'toast-style';
+    style.textContent = `
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+}
 
 // ============================================================
 //  TANGANI BACK BROWSER (POPSTATE)
@@ -155,7 +152,7 @@ window.addEventListener('popstate', function(event) {
         return;
     }
 
-    // Fallback: jika state tidak dikenal, kembali ke Home
+    // Fallback: kembali ke Home
     isPopState = true;
     goHome();
 });
