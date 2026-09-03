@@ -22,6 +22,18 @@
         <!-- HALAMAN HOME -->
         <div id="page-home" class="page active">
             <div class="section-title"><i class="fas fa-film"></i> Daftar Anime</div>
+            <!-- FILTER GENRE -->
+<div class="genre-filter">
+    <button class="genre-btn active" onclick="filterGenre('all')">Semua</button>
+    <button class="genre-btn" onclick="filterGenre('donghua')">Donghua</button>
+    <button class="genre-btn" onclick="filterGenre('action')">Action</button>
+    <button class="genre-btn" onclick="filterGenre('fantasy')">Fantasy</button>
+    <button class="genre-btn" onclick="filterGenre('shonen')">Shonen</button>
+    <button class="genre-btn" onclick="filterGenre('adventure')">Adventure</button>
+    <button class="genre-btn" onclick="filterGenre('comedy')">Comedy</button>
+    <button class="genre-btn" onclick="filterGenre('romance')">Romance</button>
+    <button class="genre-btn" onclick="filterGenre('sports')">Sports</button>
+</div>
             <div id="animeGrid" class="anime-grid"></div>
         </div>
 
