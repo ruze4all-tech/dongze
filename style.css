@@ -1,4 +1,4 @@
-/* ========== GLOBAL ========== */
+/* ========== GLOBAL RESET ========== */
 * {
     margin: 0;
     padding: 0;
@@ -90,6 +90,47 @@ header {
 .main-nav a:hover { color: #ff4757; }
 .main-nav a:hover i { color: #ff4757; }
 .main-nav a.active { color: #ff4757; border-bottom: 2px solid #ff4757; }
+.main-nav a.active i { color: #ff4757; }
+
+/* ========== BREADCRUMB ========== */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 0 10px 0;
+    font-size: 14px;
+    color: #7a7a9a;
+}
+.breadcrumb a {
+    color: #7a7a9a;
+    text-decoration: none;
+    cursor: pointer;
+}
+.breadcrumb a:hover { color: #ff4757; }
+.breadcrumb i { font-size: 12px; color: #3a3a5a; }
+.breadcrumb span { color: #e8e8e8; }
+
+/* ========== PENGUMUMAN ========== */
+.announcement {
+    background: #1a1a2e;
+    border-left: 4px solid #ff4757;
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin: 10px 0 20px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    color: #a0a0c0;
+    line-height: 1.6;
+    border: 1px solid #2a2a3a;
+}
+.announcement i {
+    color: #ff4757;
+    font-size: 18px;
+    margin-top: 2px;
+}
+.announcement strong { color: #e8e8e8; }
 
 /* ========== KONTEN ========== */
 .container {
@@ -113,7 +154,7 @@ header {
 }
 .section-title i { color: #ff4757; }
 
-/* ========== GENRE FILTER (RATA TENGAH) ========== */
+/* ========== GENRE FILTER ========== */
 .genre-filter {
     display: flex;
     flex-wrap: wrap;
@@ -145,6 +186,7 @@ header {
 }
 .genre-btn:hover { background: #2a2a3a; color: #e8e8e8; border-color: #ff4757; }
 .genre-btn.active { background: #ff4757; color: #fff; border-color: #ff4757; }
+.genre-btn.active:hover { background: #e03e4e; }
 
 /* ========== GRID ANIME ========== */
 .anime-grid {
@@ -228,46 +270,6 @@ header {
     text-align: center;
 }
 
-/* ========== BREADCRUMB ========== */
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 15px 0 10px 0;
-    font-size: 14px;
-    color: #7a7a9a;
-}
-.breadcrumb a {
-    color: #7a7a9a;
-    text-decoration: none;
-    cursor: pointer;
-}
-.breadcrumb a:hover { color: #ff4757; }
-.breadcrumb i { font-size: 12px; color: #3a3a5a; }
-.breadcrumb span { color: #e8e8e8; }
-
-/* ========== ANNOUNCEMENT ========== */
-.announcement {
-    background: #1a1a2e;
-    border-left: 4px solid #ff4757;
-    padding: 12px 18px;
-    border-radius: 8px;
-    margin: 10px 0 20px 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    font-size: 13px;
-    color: #a0a0c0;
-    line-height: 1.6;
-    border: 1px solid #2a2a3a;
-}
-.announcement i {
-    color: #ff4757;
-    font-size: 18px;
-    margin-top: 2px;
-}
-.announcement strong { color: #e8e8e8; }
-
 /* ========== DETAIL ========== */
 .detail-banner {
     background: #141425;
@@ -337,6 +339,7 @@ header {
     margin-right: 5px;
 }
 
+/* ========== EPISODE LIST (DI DETAIL) ========== */
 .episode-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -369,6 +372,7 @@ header {
 .video-wrapper video { width: 100%; height: 100%; display: block; }
 .video-wrapper iframe { width: 100%; height: 100%; border: none; }
 
+/* ========== SERVER SELECTOR ========== */
 .server-selector {
     display: flex;
     align-items: center;
@@ -399,6 +403,7 @@ header {
 .server-selector select:hover { border-color: #ff4757; }
 .server-selector select option { background: #141425; }
 
+/* ========== EPISODE INFO (DI WATCH) ========== */
 .episode-info {
     margin: 15px 0;
     padding: 15px 0;
@@ -425,6 +430,7 @@ header {
     align-items: center;
 }
 
+/* ========== WATCH NAV (PANAH) ========== */
 .watch-nav {
     display: flex;
     align-items: center;
@@ -461,6 +467,7 @@ header {
     text-align: center;
 }
 
+/* ========== EPISODE GRID (PERSEGI) ========== */
 .episode-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
@@ -515,6 +522,7 @@ header {
     color: #fff;
 }
 
+/* ========== FOOTER ========== */
 .watch-footer {
     margin-top: 30px;
     padding: 15px 20px;
@@ -534,6 +542,26 @@ header {
     color: #a0a0c0;
 }
 
+/* ========== IKLAN ========== */
+.ad-container {
+    min-height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.ad-footer {
+    margin-top: 25px;
+    padding: 10px 0;
+    border-top: 1px solid #2a2a3a;
+}
+.ad-under-video {
+    margin: 15px 0;
+}
+
+/* ========== LOADING ========== */
 .loader {
     display: flex;
     justify-content: center;
@@ -556,7 +584,7 @@ header {
 }
 .empty-state i { font-size: 40px; margin-bottom: 10px; color: #2a2a3a; }
 
-/* ========== RESPONSIVE ========== */
+/* ========== RESPONSIVE HP ========== */
 @media (max-width: 768px) {
     header { padding: 6px 15px; }
     .header-top { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -583,6 +611,7 @@ header {
     .server-selector { flex-direction: column; align-items: stretch; }
     .breadcrumb { font-size: 12px; flex-wrap: wrap; }
     .logo { font-size: 20px; }
+    .ad-container { min-height: 60px; }
 }
 
 @media (max-width: 480px) {
