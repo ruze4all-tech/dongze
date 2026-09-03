@@ -6,72 +6,66 @@ let currentEpisodes = [];
 let currentEpisodeIndex = 0;
 let currentGenre = 'all';
 let currentAnimeTitle = '';
-let pageHistory = [];
 
 // ============================================================
-//  NAVIGASI (DENGAN BACK/UNDO)
+//  NAVIGASI DENGAN BACK BROWSER
 // ============================================================
-let previousPage = null;
-let previousAnimeId = null;
-
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
-    previousPage = pageId;
+
+    // Sembunyikan/munculkan navigasi utama
+    const nav = document.getElementById('mainNav');
+    if (nav) {
+        nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
+    }
+
+    // Push state ke history untuk mendukung back browser
+    if (pageId !== 'page-home') {
+        history.pushState({ page: pageId, animeId: currentAnimeId }, '', window.location.href);
+    }
 }
 
 function goHome() {
     showPage('page-home');
-    toggleMainNav(true);
     loadAnimeList(currentGenre);
-    previousAnimeId = null;
+    currentAnimeId = null;
 }
 
 function goToDetail() {
     if (currentAnimeId) {
         showPage('page-detail');
-        toggleMainNav(false);
-        openDetail(currentAnimeId); // reload detail
+        openDetail(currentAnimeId);
     } else {
         goHome();
     }
 }
 
-// Override openDetail untuk menyimpan currentAnimeId
-const originalOpenDetail = openDetail;
-openDetail = async function(animeId) {
-    currentAnimeId = animeId;
-    await originalOpenDetail(animeId);
-    // Update breadcrumb link di halaman tonton
-    const seriesLink = document.getElementById('breadcrumbSeriesLink');
-    if (seriesLink) {
-        seriesLink.onclick = function(e) {
-            e.preventDefault();
-            goToDetail();
-        };
+// ============================================================
+//  TANGANI BACK BROWSER (POPSTATE)
+// ============================================================
+window.addEventListener('popstate', function(event) {
+    const state = event.state;
+    if (state) {
+        if (state.page === 'page-detail' && state.animeId) {
+            currentAnimeId = state.animeId;
+            showPage('page-detail');
+            openDetail(currentAnimeId);
+        } else if (state.page === 'page-watch' && state.animeId) {
+            currentAnimeId = state.animeId;
+            showPage('page-watch');
+            // Bisa reload episode terakhir
+            if (currentEpisodeIndex !== undefined) {
+                watchEpisode(currentEpisodeIndex);
+            }
+        } else {
+            goHome();
+        }
+    } else {
+        goHome();
     }
-};
-
-// Override watchEpisode untuk update breadcrumb
-const originalWatchEpisode = watchEpisode;
-watchEpisode = function(index) {
-    originalWatchEpisode(index);
-    // Pastikan breadcrumb Series mengarah ke detail
-    const seriesLink = document.getElementById('breadcrumbSeriesLink');
-    if (seriesLink) {
-        seriesLink.onclick = function(e) {
-            e.preventDefault();
-            goToDetail();
-        };
-    }
-};
-
-// Inisialisasi
-document.addEventListener('DOMContentLoaded', () => {
-    loadAnimeList('all');
-    toggleMainNav(true);
-    // ...
 });
+
 // ============================================================
 //  LOAD DAFTAR ANIME
 // ============================================================
@@ -123,6 +117,10 @@ function filterByGenre(genre) {
         btn.classList.toggle('active', btn.dataset.genre === genre);
     });
     loadAnimeList(genre);
+    if (document.getElementById('page-detail').classList.contains('active') ||
+        document.getElementById('page-watch').classList.contains('active')) {
+        goHome();
+    }
 }
 
 // ============================================================
@@ -161,6 +159,11 @@ async function searchAnime() {
                 </div>
             </div>
         `).join('');
+
+        if (document.getElementById('page-detail').classList.contains('active') ||
+            document.getElementById('page-watch').classList.contains('active')) {
+            goHome();
+        }
     } catch (error) { console.error('Search error:', error); }
 }
 
@@ -221,6 +224,16 @@ async function openDetail(animeId) {
             <div class="episode-list">${episodeButtons}</div>
         `;
 
+        // Update link Series di breadcrumb halaman tonton
+        const seriesLink = document.getElementById('breadcrumbSeriesLink');
+        if (seriesLink) {
+            seriesLink.textContent = info.title;
+            seriesLink.onclick = function(e) {
+                e.preventDefault();
+                goToDetail();
+            };
+        }
+
     } catch (error) {
         console.error('Error loading detail:', error);
         container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat detail anime.</p></div>`;
@@ -245,16 +258,23 @@ function watchEpisode(index) {
 
     showPage('page-watch');
 
+    // Breadcrumb
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
     document.getElementById('breadcrumbSeriesLink').textContent = seriesName;
+    document.getElementById('breadcrumbSeriesLink').onclick = function(e) {
+        e.preventDefault();
+        goToDetail();
+    };
     document.getElementById('breadcrumbEpisode').textContent = `Episode ${episode.number}`;
     document.getElementById('episodeSeriesName').textContent = seriesName;
 
+    // Title & meta
     document.getElementById('watchTitle').textContent = `${seriesName} Episode ${episode.number} - ${episode.title || 'Subtitle Indonesia'}`;
     document.getElementById('episodeReleaseDate').innerHTML = `<i class="far fa-calendar-alt"></i> Released on ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
     document.getElementById('episodePostedBy').innerHTML = `<i class="far fa-user"></i> Posted by admin`;
     document.getElementById('episodeSeries').innerHTML = `<i class="fas fa-tv"></i> Series: <span id="episodeSeriesName">${seriesName}</span>`;
 
+    // Reset player
     const video = document.getElementById('videoPlayer');
     const videoWrapper = document.querySelector('.video-wrapper');
     video.pause();
@@ -263,6 +283,7 @@ function watchEpisode(index) {
     videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
     const newVideo = document.getElementById('videoPlayer');
 
+    // Putar video
     if (episode.url) {
         const url = episode.url;
         if (url.includes('ok.ru') || url.includes('youtube') || url.includes('dailymotion') || url.includes('mega.nz')) {
@@ -275,12 +296,13 @@ function watchEpisode(index) {
         videoWrapper.innerHTML = `<div class="empty-state"><p>Link video tidak tersedia.</p></div>`;
     }
 
+    // Sidebar & navigasi
     updateEpisodeSidebar();
     updateNavButtons();
 }
 
 // ============================================================
-//  UPDATE EPISODE SIDEBAR
+//  EPISODE SIDEBAR & NAVIGASI
 // ============================================================
 function updateEpisodeSidebar() {
     const sidebar = document.getElementById('episodeListSidebar');
@@ -295,14 +317,8 @@ function updateEpisodeSidebar() {
     `).join('');
 }
 
-// ============================================================
-//  NAVIGASI EPISODE
-// ============================================================
 function navigateEpisode(direction) {
-    if (!currentEpisodes || currentEpisodes.length === 0) {
-        alert('Tidak ada episode!');
-        return;
-    }
+    if (!currentEpisodes || currentEpisodes.length === 0) return;
 
     let newIndex = currentEpisodeIndex + direction;
     if (newIndex < 0) newIndex = 0;
@@ -326,7 +342,7 @@ function updateNavButtons() {
 }
 
 // ============================================================
-//  CHANGE VIDEO SERVER
+//  SERVER SELECTOR
 // ============================================================
 function changeServer() {
     const select = document.getElementById('videoServer');
@@ -358,6 +374,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-console.log('🚀 AnimeStream siap!');
-console.log('📁 Sistem folder manual aktif.');
-console.log('🎯 Gunakan filter genre untuk mencari anime favorit.');
+console.log('🚀 AnimeStream siap! Gunakan tombol Back browser untuk kembali.');
