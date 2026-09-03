@@ -106,14 +106,17 @@
                     </div>
                 </div>
 
+                <!-- ★ TOMBOL PANAH + COUNTER ★ -->
                 <div class="watch-nav">
-                    <button id="prevEpBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
-                    <button id="nextEpBtn" onclick="navigateEpisode(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
+                    <button id="prevEpBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <span id="episodeCounter">1 / 10</span>
+                    <button id="nextEpBtn" onclick="navigateEpisode(1)"><i class="fas fa-chevron-right"></i></button>
                 </div>
 
+                <!-- ★ GRID EPISODE PERSEGI ★ -->
                 <div class="episode-sidebar">
                     <h3><i class="fas fa-list-ul"></i> Daftar Episode</h3>
-                    <div id="episodeListSidebar" class="episode-list-sidebar"></div>
+                    <div id="episodeGrid" class="episode-grid"></div>
                 </div>
 
                 <div class="watch-footer">
