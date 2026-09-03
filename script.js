@@ -4,6 +4,7 @@
 let currentAnimeId = null;
 let currentEpisodes = [];
 let currentEpisodeIndex = 0;
+let currentGenre = 'all'; // ← tambahan state genre
 
 // ============================================================
 //  NAVIGASI
@@ -15,13 +16,13 @@ function showPage(pageId) {
 
 function goHome() {
     showPage('page-home');
-    loadAnimeList();
+    loadAnimeList(currentGenre);
 }
 
 // ============================================================
-//  LOAD DAFTAR ANIME
+//  LOAD DAFTAR ANIME (DENGAN FILTER GENRE)
 // ============================================================
-async function loadAnimeList() {
+async function loadAnimeList(genre = 'all') {
     const grid = document.getElementById('animeGrid');
     grid.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
 
@@ -30,10 +31,18 @@ async function loadAnimeList() {
         if (!response.ok) throw new Error('Gagal load anime list');
         
         const data = await response.json();
-        const animeList = data.anime || [];
+        let animeList = data.anime || [];
+
+        // ★ FILTER BERDASARKAN GENRE ★
+        if (genre !== 'all') {
+            animeList = animeList.filter(anime => {
+                const genres = anime.genre.toLowerCase().split(', ');
+                return genres.some(g => g.includes(genre.toLowerCase()));
+            });
+        }
 
         if (animeList.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><p>Belum ada anime.</p></div>`;
+            grid.innerHTML = `<div class="empty-state"><p>Tidak ada anime dengan genre ini.</p></div>`;
             return;
         }
 
@@ -53,23 +62,46 @@ async function loadAnimeList() {
 }
 
 // ============================================================
-//  PENCARIAN
+//  FILTER BY GENRE
+// ============================================================
+function filterByGenre(genre) {
+    currentGenre = genre;
+    
+    // Update class active pada tombol genre
+    document.querySelectorAll('.genre-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.genre === genre);
+    });
+    
+    // Load ulang anime dengan genre yang dipilih
+    loadAnimeList(genre);
+}
+
+// ============================================================
+//  PENCARIAN (Tetap Jalan dengan Filter Genre)
 // ============================================================
 async function searchAnime() {
     const query = document.getElementById('searchInput').value.toLowerCase().trim();
     const grid = document.getElementById('animeGrid');
 
     if (!query) {
-        loadAnimeList();
+        loadAnimeList(currentGenre);
         return;
     }
 
     try {
         const response = await fetch('anime-list.json');
         const data = await response.json();
-        const results = data.anime.filter(a => 
+        let results = data.anime.filter(a => 
             a.title.toLowerCase().includes(query)
         );
+        
+        // ★ Filter juga berdasarkan genre yang sedang aktif ★
+        if (currentGenre !== 'all') {
+            results = results.filter(anime => {
+                const genres = anime.genre.toLowerCase().split(', ');
+                return genres.some(g => g.includes(currentGenre.toLowerCase()));
+            });
+        }
 
         if (results.length === 0) {
             grid.innerHTML = `<div class="empty-state"><p>Tidak ada hasil untuk "${query}"</p></div>`;
@@ -219,99 +251,6 @@ function updateNavButtons() {
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     loadAnimeList();
-    // ============================================================
-//  FILTER GENRE
-// ============================================================
-let currentGenre = 'all';
-let allAnimeData = [];
-
-async function filterGenre(genre) {
-    // Update tombol aktif
-    document.querySelectorAll('.genre-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.textContent.toLowerCase() === genre || 
-            (genre === 'all' && btn.textContent === 'Semua')) {
-            btn.classList.add('active');
-        }
-    });
-
-    currentGenre = genre;
-    const grid = document.getElementById('animeGrid');
-
-    // Jika data belum dimuat, muat dulu
-    if (allAnimeData.length === 0) {
-        try {
-            const response = await fetch('anime-list.json');
-            const data = await response.json();
-            allAnimeData = data.anime || [];
-        } catch (error) {
-            console.error('Error loading anime list:', error);
-            return;
-        }
-    }
-
-    // Filter berdasarkan genre
-    let filtered = allAnimeData;
-    if (genre !== 'all') {
-        filtered = allAnimeData.filter(anime => {
-            // Cek apakah genre cocok (case insensitive)
-            const animeGenre = anime.genre ? anime.genre.toLowerCase() : '';
-            return animeGenre.includes(genre.toLowerCase());
-        });
-    }
-
-    // Tampilkan hasil
-    if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty-state"><p>Tidak ada anime dengan genre "${genre}"</p></div>`;
-        return;
-    }
-
-    grid.innerHTML = filtered.map(anime => `
-        <div class="anime-card" onclick="openDetail('${anime.id}')">
-            <img src="${anime.image}" alt="${anime.title}" onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/7a849b?text=No+Image'">
-            <div class="info">
-                <h3>${anime.title}</h3>
-                <p>${anime.genre || 'Anime'}</p>
-            </div>
-        </div>
-    `).join('');
-}
-
-// ============================================================
-//  LOAD DAFTAR ANIME (DIUBAH agar menyimpan data)
-// ============================================================
-// Ganti fungsi loadAnimeList yang lama dengan ini:
-async function loadAnimeList() {
-    const grid = document.getElementById('animeGrid');
-    grid.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
-
-    try {
-        const response = await fetch('anime-list.json');
-        if (!response.ok) throw new Error('Gagal load anime list');
-        
-        const data = await response.json();
-        allAnimeData = data.anime || [];
-
-        if (allAnimeData.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><p>Belum ada anime.</p></div>`;
-            return;
-        }
-
-        // Tampilkan semua anime
-        grid.innerHTML = allAnimeData.map(anime => `
-            <div class="anime-card" onclick="openDetail('${anime.id}')">
-                <img src="${anime.image}" alt="${anime.title}" onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/7a849b?text=No+Image'">
-                <div class="info">
-                    <h3>${anime.title}</h3>
-                    <p>${anime.genre || 'Anime'}</p>
-                </div>
-            </div>
-        `).join('');
-    } catch (error) {
-        console.error('Error loading anime list:', error);
-        grid.innerHTML = `<div class="empty-state"><p>Gagal memuat daftar anime.</p></div>`;
-    }
-}
 
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') searchAnime();
