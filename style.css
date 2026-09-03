@@ -15,12 +15,11 @@ body {
 /* ========== HEADER ========== */
 header {
     background: #141425;
-    border-bottom: 2px solid #2a2a3a;
-    padding: 12px 30px;
+    border-bottom: 1px solid #2a2a3a;
+    padding: 8px 30px;
     position: sticky;
     top: 0;
     z-index: 999;
-    transition: padding 0.2s ease, border-bottom-width 0.2s ease;
 }
 
 .header-top {
@@ -28,16 +27,14 @@ header {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 10px;
-    transition: margin-bottom 0.2s ease;
+    gap: 10px;
+    margin-bottom: 6px;
 }
 
 .logo {
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 800;
     color: #ff4757;
-    transition: font-size 0.2s ease;
 }
 .logo span { color: #e8e8e8; }
 
@@ -45,20 +42,18 @@ header {
     display: flex;
     align-items: center;
     background: #0d0d1a;
-    padding: 8px 16px;
+    padding: 5px 12px;
     border-radius: 30px;
     border: 1px solid #2a2a3a;
-    transition: padding 0.2s ease;
 }
 .search-box input {
     background: transparent;
     border: none;
     outline: none;
     color: #e8e8e8;
-    padding: 5px 10px;
-    width: 220px;
-    font-size: 14px;
-    transition: width 0.2s ease, font-size 0.2s ease, padding 0.2s ease;
+    padding: 4px 8px;
+    width: 160px;
+    font-size: 13px;
 }
 .search-box input::placeholder { color: #6a6a8a; }
 .search-box button {
@@ -66,8 +61,7 @@ header {
     border: none;
     color: #6a6a8a;
     cursor: pointer;
-    font-size: 16px;
-    transition: font-size 0.2s ease;
+    font-size: 14px;
 }
 .search-box button:hover { color: #ff4757; }
 
@@ -75,60 +69,27 @@ header {
 .main-nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 25px;
-    padding: 8px 0;
+    gap: 20px;
+    padding: 4px 0;
     border-top: 1px solid #2a2a3a;
 }
 .main-nav a {
     color: #a0a0c0;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    padding: 6px 0;
+    padding: 4px 0;
     transition: 0.3s;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     cursor: pointer;
 }
-.main-nav a i { font-size: 13px; color: #6a6a8a; }
+.main-nav a i { font-size: 12px; color: #6a6a8a; }
 .main-nav a:hover { color: #ff4757; }
 .main-nav a:hover i { color: #ff4757; }
 .main-nav a.active { color: #ff4757; border-bottom: 2px solid #ff4757; }
 .main-nav a.active i { color: #ff4757; }
-
-/* ========== HEADER COMPACT DI DETAIL & WATCH ========== */
-body:has(#page-detail.active) header,
-body:has(#page-watch.active) header {
-    padding: 6px 30px;
-    border-bottom-width: 1px;
-}
-body:has(#page-detail.active) header .logo,
-body:has(#page-watch.active) header .logo {
-    font-size: 20px;
-}
-body:has(#page-detail.active) header .header-top,
-body:has(#page-watch.active) header .header-top {
-    margin-bottom: 2px;
-}
-body:has(#page-detail.active) header .search-box input,
-body:has(#page-watch.active) header .search-box input {
-    width: 140px;
-    font-size: 12px;
-    padding: 4px 8px;
-}
-body:has(#page-detail.active) header .search-box,
-body:has(#page-watch.active) header .search-box {
-    padding: 4px 12px;
-}
-body:has(#page-detail.active) header .search-box button,
-body:has(#page-watch.active) header .search-box button {
-    font-size: 13px;
-}
-body:has(#page-detail.active) header .main-nav,
-body:has(#page-watch.active) header .main-nav {
-    display: none;
-}
 
 /* ========== BREADCRUMB ========== */
 .breadcrumb {
@@ -562,11 +523,11 @@ body:has(#page-watch.active) header .main-nav {
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
-    header { padding: 12px 15px; }
-    .header-top { flex-direction: column; align-items: stretch; }
+    header { padding: 6px 15px; }
+    .header-top { flex-direction: column; align-items: stretch; gap: 6px; }
     .search-box input { width: 100%; }
-    .search-box { width: 100%; }
-    .main-nav { justify-content: center; gap: 15px; }
+    .search-box { width: 100%; padding: 4px 10px; }
+    .main-nav { justify-content: center; gap: 12px; }
     .main-nav a { font-size: 12px; }
     .container { padding: 10px 15px; }
     .anime-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
@@ -580,21 +541,6 @@ body:has(#page-watch.active) header .main-nav {
     .episode-info .episode-meta { flex-direction: column; gap: 8px; }
     .server-selector { flex-direction: column; align-items: stretch; }
     .breadcrumb { font-size: 12px; flex-wrap: wrap; }
-
-    /* Compact di mobile juga */
-    body:has(#page-detail.active) header,
-    body:has(#page-watch.active) header {
-        padding: 4px 15px;
-    }
-    body:has(#page-detail.active) header .logo,
-    body:has(#page-watch.active) header .logo {
-        font-size: 18px;
-    }
-    body:has(#page-detail.active) header .search-box input,
-    body:has(#page-watch.active) header .search-box input {
-        width: 100%;
-        font-size: 12px;
-    }
 }
 
 @media (max-width: 480px) {
