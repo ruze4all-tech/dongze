@@ -16,7 +16,7 @@ const itemsPerPage = 24;
 let totalPages = 1;
 
 // ============================================================
-//  DAFTAR PLATFORM YANG SUPPORT IFRAME
+//  ★ DAFTAR PLATFORM YANG SUPPORT IFRAME (LENGKAP) ★
 // ============================================================
 const IFRAME_PLATFORMS = [
     'ok.ru',
@@ -40,20 +40,26 @@ const IFRAME_PLATFORMS = [
     'voe.sx',
     'vidplay.site',
     'vidoza.net',
-    'filemoon.sx'
+    'filemoon.sx',
+    'facebook.com',
+    'fb.watch',
+    'twitch.tv',
+    'player.twitch.tv'
 ];
 
 // ============================================================
-//  CEK APAKAH URL BUTUH IFRAME
+//  ★ CEK APAKAH URL BUTUH IFRAME ★
 // ============================================================
 function isIframePlatform(url) {
     if (!url) return false;
     const urlLower = url.toLowerCase();
-    return IFRAME_PLATFORMS.some(platform => urlLower.includes(platform));
+    const result = IFRAME_PLATFORMS.some(platform => urlLower.includes(platform));
+    console.log('isIframePlatform:', url, '→', result);
+    return result;
 }
 
 // ============================================================
-//  FIX LINK OK.ru (ganti /video/ menjadi /videoembed/)
+//  ★ FUNGSI FIX LINK ★
 // ============================================================
 function fixOkRuUrl(url) {
     if (!url) return url;
@@ -63,13 +69,9 @@ function fixOkRuUrl(url) {
     return url;
 }
 
-// ============================================================
-//  FIX LINK GOOGLE DRIVE (ganti /file/d/ menjadi /file/d/xxx/preview)
-// ============================================================
 function fixGoogleDriveUrl(url) {
     if (!url) return url;
     if (url.includes('drive.google.com/file/d/')) {
-        // Jika belum ada /preview di akhir
         if (!url.endsWith('/preview')) {
             return url + '/preview';
         }
@@ -77,9 +79,6 @@ function fixGoogleDriveUrl(url) {
     return url;
 }
 
-// ============================================================
-//  FIX LINK MEGA (ganti /file/ menjadi /embed/)
-// ============================================================
 function fixMegaUrl(url) {
     if (!url) return url;
     if (url.includes('mega.nz/file/') && !url.includes('embed')) {
@@ -88,9 +87,6 @@ function fixMegaUrl(url) {
     return url;
 }
 
-// ============================================================
-//  FIX LINK DAILYMOTION (ganti /video/ menjadi /embed/video/)
-// ============================================================
 function fixDailymotionUrl(url) {
     if (!url) return url;
     if (url.includes('dailymotion.com/video/') && !url.includes('embed')) {
@@ -99,9 +95,6 @@ function fixDailymotionUrl(url) {
     return url;
 }
 
-// ============================================================
-//  FIX LINK YOUTUBE (ganti /watch?v= menjadi /embed/)
-// ============================================================
 function fixYoutubeUrl(url) {
     if (!url) return url;
     if (url.includes('youtube.com/watch?v=') && !url.includes('embed')) {
@@ -119,9 +112,14 @@ function fixYoutubeUrl(url) {
     return url;
 }
 
-// ============================================================
-//  OTOMATIS FIX SEMUA LINK
-// ============================================================
+function fixStreamtapeUrl(url) {
+    if (!url) return url;
+    if (url.includes('streamtape.com/v/') && !url.includes('/e/')) {
+        return url.replace('streamtape.com/v/', 'streamtape.com/e/');
+    }
+    return url;
+}
+
 function fixUrl(url) {
     if (!url) return url;
     let fixed = url;
@@ -130,6 +128,8 @@ function fixUrl(url) {
     fixed = fixMegaUrl(fixed);
     fixed = fixDailymotionUrl(fixed);
     fixed = fixYoutubeUrl(fixed);
+    fixed = fixStreamtapeUrl(fixed);
+    console.log('fixUrl:', url, '→', fixed);
     return fixed;
 }
 
@@ -497,20 +497,26 @@ function playSource(index) {
     video.style.display = 'block';
 
     let url = source.url;
+    console.log('Original URL:', url);
 
     // ★ OTOMATIS FIX LINK ★
     url = fixUrl(url);
+    console.log('Fixed URL:', url);
 
     // ★ CEK APAKAH BUTUH IFRAME ★
-    if (isIframePlatform(url)) {
-        // Jika link sudah valid, langsung pakai iframe
+    const useIframe = isIframePlatform(url);
+    console.log('Use iframe?', useIframe);
+
+    if (useIframe) {
         videoWrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>`;
+        console.log('✅ Menggunakan iframe untuk:', url);
     } else {
         // Selain itu, anggap sebagai video langsung (MP4, M3U8, dll.)
         videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
         const newVideo = document.getElementById('videoPlayer');
         newVideo.src = url;
         newVideo.play().catch(e => console.log('Autoplay blocked:', e));
+        console.log('🎬 Menggunakan video tag untuk:', url);
     }
 
     // Update dropdown
@@ -537,4 +543,8 @@ function updateEpisodeGrid() {
     if (!grid || !currentEpisodes) return;
 
     grid.innerHTML = currentEpisodes.map((ep, idx) => {
-        const hasLink = (ep.sou
+        const hasLink = (ep.sources && ep.sources.length > 0) || ep.url;
+        return `
+            <div class="episode-square ${idx === currentEpisodeIndex ? 'active' : ''}" onclick="watchEpisode(${idx})">
+                <span class="ep-number">${ep.number}</span>
+                <span class="ep-title">${ep.tit
