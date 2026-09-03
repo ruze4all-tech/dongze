@@ -262,3 +262,46 @@ header {
     .watch-info { flex-direction: column; align-items: stretch; }
     .watch-nav button { width: 100%; margin: 5px 0; }
 }
+/* ========== FILTER GENRE ========== */
+.genre-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+    padding: 10px 0;
+}
+
+.genre-btn {
+    background: #1a1a2e;
+    border: 1px solid #2a2a3a;
+    color: #7a849b;
+    padding: 8px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.genre-btn:hover {
+    background: #2a2a3a;
+    color: #f1f3f5;
+    border-color: #ff4757;
+}
+
+.genre-btn.active {
+    background: #ff4757;
+    color: #fff;
+    border-color: #ff4757;
+}
+
+.genre-btn.active:hover {
+    background: #e03e4e;
+}
+
+@media (max-width: 768px) {
+    .genre-btn {
+        padding: 6px 14px;
+        font-size: 12px;
+    }
+}
