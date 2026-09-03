@@ -6,15 +6,7 @@
             "sources": [
                 {
                     "server": "Dailymotion",
-                    "url": "https://www.dailymotion.com/embed/video/x8w5k1g"
-                },
-                {
-                    "server": "OK.ru",
-                    "url": "https://ok.ru/videoembed/5979427044412"
-                },
-                {
-                    "server": "Rumble",
-                    "url": "https://rumble.com/embed/v5x8y9z/"
+                    "url": "https://www.dailymotion.com/embed/video/x9fvxws"
                 }
             ]
         }
