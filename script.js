@@ -7,6 +7,7 @@ let currentEpisodeIndex = 0;
 let currentGenre = 'all';
 let currentSources = [];
 let currentSourceIndex = 0;
+let isPopState = false; // ★ FLAG UNTUK CEGAH PUSHSTATE SAAT BACK
 
 // ============================================================
 //  PAGINATION
@@ -104,9 +105,13 @@ window.addEventListener('popstate', function(e) {
     const state = e.state;
     console.log('popstate:', state);
     
-    // ★ Jika state null, biarkan browser keluar (dari Home) ★
+    // ★ SET FLAG ★
+    isPopState = true;
+    
+    // Jika state null, biarkan browser keluar (dari Home)
     if (!state) {
         console.log('State null, biarkan browser keluar');
+        isPopState = false;
         return;
     }
     
@@ -116,6 +121,7 @@ window.addEventListener('popstate', function(e) {
         currentAnimeId = state.animeId;
         showPage('page-detail');
         openDetail(currentAnimeId);
+        isPopState = false;
         return;
     }
     
@@ -126,12 +132,14 @@ window.addEventListener('popstate', function(e) {
         currentEpisodeIndex = state.episodeIndex || 0;
         showPage('page-watch');
         watchEpisode(currentEpisodeIndex);
+        isPopState = false;
         return;
     }
     
     // Fallback ke Home
     console.log('Fallback ke Home');
     goHome();
+    isPopState = false;
 });
 
 // ============================================================
@@ -253,14 +261,16 @@ async function searchAnime() {
 }
 
 // ============================================================
-//  OPEN DETAIL
+//  ★ OPEN DETAIL (DENGAN FLAG) ★
 // ============================================================
 async function openDetail(animeId) {
     currentAnimeId = animeId;
     showPage('page-detail');
     
-    // ★ PUSH STATE DETAIL ★
-    history.pushState({ page: 'detail', animeId: animeId }, '', window.location.href);
+    // ★ PUSH STATE HANYA JIKA BUKAN DARI POPSTATE ★
+    if (!isPopState) {
+        history.pushState({ page: 'detail', animeId: animeId }, '', window.location.href);
+    }
     
     const container = document.getElementById('detailContent');
     container.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
@@ -324,7 +334,7 @@ async function openDetail(animeId) {
 }
 
 // ============================================================
-//  WATCH EPISODE
+//  ★ WATCH EPISODE (DENGAN FLAG) ★
 // ============================================================
 function watchEpisode(index) {
     if (!currentEpisodes || currentEpisodes.length === 0) {
@@ -339,12 +349,14 @@ function watchEpisode(index) {
     const ep = currentEpisodes[index];
     currentEpisodeIndex = index;
 
-    // ★ PUSH STATE WATCH ★
-    history.pushState({ 
-        page: 'watch', 
-        animeId: currentAnimeId,
-        episodeIndex: index 
-    }, '', window.location.href);
+    // ★ PUSH STATE HANYA JIKA BUKAN DARI POPSTATE ★
+    if (!isPopState) {
+        history.pushState({ 
+            page: 'watch', 
+            animeId: currentAnimeId,
+            episodeIndex: index 
+        }, '', window.location.href);
+    }
 
     if (ep.sources && ep.sources.length > 0) {
         currentSources = ep.sources;
@@ -504,7 +516,7 @@ function updateNavButtons() {
 //  INISIALISASI
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // ★ SET STATE AWAL MENJADI null ★
+    // ★ SET STATE AWAL NULL ★
     history.replaceState(null, '', window.location.href);
     loadAnimeList('all', 1);
     
