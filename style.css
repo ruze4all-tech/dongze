@@ -1,4 +1,4 @@
-/* ========== GLOBAL ========== */
+/* ========== GLOBAL RESET ========== */
 * {
     margin: 0;
     padding: 0;
@@ -65,7 +65,7 @@ header {
 }
 .search-box button:hover { color: #ff4757; }
 
-/* ========== MAIN NAV (HANYA DI HOME) ========== */
+/* ========== MAIN NAV ========== */
 .main-nav {
     display: flex;
     flex-wrap: wrap;
@@ -109,27 +109,6 @@ header {
 .breadcrumb i { font-size: 12px; color: #3a3a5a; }
 .breadcrumb span { color: #e8e8e8; }
 
-/* ========== TOMBOL KEMBALI ========== */
-.back-btn {
-    background: transparent;
-    border: 1px solid #2a2a3a;
-    color: #e8e8e8;
-    padding: 8px 20px;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    transition: 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-}
-.back-btn:hover {
-    background: #2a2a3a;
-    border-color: #ff4757;
-}
-.back-btn i { font-size: 13px; }
-
 /* ========== ANNOUNCEMENT ========== */
 .announcement {
     background: #1a1a2e;
@@ -162,6 +141,7 @@ header {
 .page { display: none; }
 .page.active { display: block; }
 
+/* ========== SECTION TITLE (UPDATE ANIME) ========== */
 .section-title {
     font-size: 20px;
     font-weight: 700;
@@ -317,6 +297,7 @@ header {
     margin-right: 5px;
 }
 
+/* ========== EPISODE LIST (di Detail) ========== */
 .episode-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -380,7 +361,7 @@ header {
 .server-selector select:hover { border-color: #ff4757; }
 .server-selector select option { background: #141425; }
 
-/* ========== EPISODE INFO ========== */
+/* ========== EPISODE INFO (di Watch) ========== */
 .episode-info {
     margin: 15px 0;
     padding: 15px 0;
@@ -497,7 +478,7 @@ header {
 .episode-item.active .ep-title { color: #fff; }
 .episode-item.active .ep-date { color: #e8e8e8; }
 
-/* ========== WATCH FOOTER ========== */
+/* ========== WATCH FOOTER (TEKS ABU-ABU) ========== */
 .watch-footer {
     margin-top: 30px;
     padding: 15px 20px;
@@ -566,4 +547,4 @@ header {
     .anime-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
     .anime-card img { height: 200px; }
     .section-title { font-size: 18px; }
-        }
+}
