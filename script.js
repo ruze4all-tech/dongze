@@ -8,34 +8,25 @@ let currentGenre = 'all';
 let currentAnimeTitle = '';
 
 // ============================================================
-//  NAVIGASI
+//  NAVIGASI DENGAN BACK BROWSER
 // ============================================================
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 
+    // Sembunyikan/munculkan navigasi utama
     const nav = document.getElementById('mainNav');
     if (nav) {
         nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
     }
 
-    // Push state hanya jika bukan Home
+    // Push state ke history untuk mendukung back browser
     if (pageId !== 'page-home') {
-        const stateData = { page: pageId };
-        if (pageId === 'page-detail' && currentAnimeId) {
-            stateData.animeId = currentAnimeId;
-        }
-        if (pageId === 'page-watch' && currentAnimeId) {
-            stateData.animeId = currentAnimeId;
-            stateData.episodeIndex = currentEpisodeIndex;
-        }
-        history.pushState(stateData, '', window.location.href);
+        history.pushState({ page: pageId, animeId: currentAnimeId }, '', window.location.href);
     }
 }
 
 function goHome() {
-    // Replace state Home agar back dari Home langsung keluar
-    history.replaceState({ page: 'page-home' }, '', window.location.href);
     showPage('page-home');
     loadAnimeList(currentGenre);
     currentAnimeId = null;
@@ -55,32 +46,24 @@ function goToDetail() {
 // ============================================================
 window.addEventListener('popstate', function(event) {
     const state = event.state;
-
-    // Jika state null atau state Home, biarkan browser keluar
-    if (!state || state.page === 'page-home') {
-        // Tidak ada intervensi, browser akan keluar dari website
-        return;
+    if (state) {
+        if (state.page === 'page-detail' && state.animeId) {
+            currentAnimeId = state.animeId;
+            showPage('page-detail');
+            openDetail(currentAnimeId);
+        } else if (state.page === 'page-watch' && state.animeId) {
+            currentAnimeId = state.animeId;
+            showPage('page-watch');
+            // Bisa reload episode terakhir
+            if (currentEpisodeIndex !== undefined) {
+                watchEpisode(currentEpisodeIndex);
+            }
+        } else {
+            goHome();
+        }
+    } else {
+        goHome();
     }
-
-    // Jika state Detail, kembali ke Detail
-    if (state.page === 'page-detail' && state.animeId) {
-        currentAnimeId = state.animeId;
-        showPage('page-detail');
-        openDetail(currentAnimeId);
-        return;
-    }
-
-    // Jika state Watch, kembali ke Watch
-    if (state.page === 'page-watch' && state.animeId) {
-        currentAnimeId = state.animeId;
-        currentEpisodeIndex = state.episodeIndex || 0;
-        showPage('page-watch');
-        watchEpisode(currentEpisodeIndex);
-        return;
-    }
-
-    // Fallback: kembali ke Home
-    goHome();
 });
 
 // ============================================================
@@ -241,6 +224,7 @@ async function openDetail(animeId) {
             <div class="episode-list">${episodeButtons}</div>
         `;
 
+        // Update link Series di breadcrumb halaman tonton
         const seriesLink = document.getElementById('breadcrumbSeriesLink');
         if (seriesLink) {
             seriesLink.textContent = info.title;
@@ -274,6 +258,7 @@ function watchEpisode(index) {
 
     showPage('page-watch');
 
+    // Breadcrumb
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
     document.getElementById('breadcrumbSeriesLink').textContent = seriesName;
     document.getElementById('breadcrumbSeriesLink').onclick = function(e) {
@@ -283,11 +268,13 @@ function watchEpisode(index) {
     document.getElementById('breadcrumbEpisode').textContent = `Episode ${episode.number}`;
     document.getElementById('episodeSeriesName').textContent = seriesName;
 
+    // Title & meta
     document.getElementById('watchTitle').textContent = `${seriesName} Episode ${episode.number} - ${episode.title || 'Subtitle Indonesia'}`;
     document.getElementById('episodeReleaseDate').innerHTML = `<i class="far fa-calendar-alt"></i> Released on ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
     document.getElementById('episodePostedBy').innerHTML = `<i class="far fa-user"></i> Posted by admin`;
     document.getElementById('episodeSeries').innerHTML = `<i class="fas fa-tv"></i> Series: <span id="episodeSeriesName">${seriesName}</span>`;
 
+    // Reset player
     const video = document.getElementById('videoPlayer');
     const videoWrapper = document.querySelector('.video-wrapper');
     video.pause();
@@ -296,6 +283,7 @@ function watchEpisode(index) {
     videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
     const newVideo = document.getElementById('videoPlayer');
 
+    // Putar video
     if (episode.url) {
         const url = episode.url;
         if (url.includes('ok.ru') || url.includes('youtube') || url.includes('dailymotion') || url.includes('mega.nz')) {
@@ -308,6 +296,7 @@ function watchEpisode(index) {
         videoWrapper.innerHTML = `<div class="empty-state"><p>Link video tidak tersedia.</p></div>`;
     }
 
+    // Sidebar & navigasi
     updateEpisodeSidebar();
     updateNavButtons();
 }
@@ -368,8 +357,6 @@ function changeServer() {
 //  INISIALISASI
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Set state awal Home
-    history.replaceState({ page: 'page-home' }, '', window.location.href);
     loadAnimeList('all');
 
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
@@ -387,6 +374,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-console.log('🚀 AnimeStream siap!');
-console.log('📌 Dari Detail → Back ke Home');
-console.log('📌 Dari Home → Back keluar dari website');
+console.log('🚀 AnimeStream siap! Gunakan tombol Back browser untuk kembali.');
