@@ -296,26 +296,35 @@ function watchEpisode(index) {
         videoWrapper.innerHTML = `<div class="empty-state"><p>Link video tidak tersedia.</p></div>`;
     }
 
-    updateEpisodeSidebar();
+    // Update episode grid dan counter
+    updateEpisodeGrid();
     updateNavButtons();
 }
 
 // ============================================================
-//  EPISODE SIDEBAR & NAVIGASI
+//  UPDATE EPISODE GRID (PERSEGI) & COUNTER
 // ============================================================
-function updateEpisodeSidebar() {
-    const sidebar = document.getElementById('episodeListSidebar');
-    if (!sidebar || !currentEpisodes) return;
+function updateEpisodeGrid() {
+    const grid = document.getElementById('episodeGrid');
+    if (!grid || !currentEpisodes) return;
 
-    sidebar.innerHTML = currentEpisodes.map((ep, idx) => `
-        <div class="episode-item ${idx === currentEpisodeIndex ? 'active' : ''}" onclick="watchEpisode(${idx})">
-            <span class="ep-number">Episode ${ep.number}</span>
-            <span class="ep-title">${ep.title || 'Subtitle Indonesia'}</span>
-            <span class="ep-date">${new Date().toLocaleDateString('id-ID')}</span>
+    grid.innerHTML = currentEpisodes.map((ep, idx) => `
+        <div class="episode-square ${idx === currentEpisodeIndex ? 'active' : ''}" onclick="watchEpisode(${idx})">
+            <span class="ep-number">${ep.number}</span>
+            <span class="ep-title">${ep.title ? ep.title.substring(0, 6) : ''}</span>
         </div>
     `).join('');
+
+    // Update counter
+    const counter = document.getElementById('episodeCounter');
+    if (counter) {
+        counter.textContent = `${currentEpisodeIndex + 1} / ${currentEpisodes.length}`;
+    }
 }
 
+// ============================================================
+//  NAVIGASI EPISODE (PANAH)
+// ============================================================
 function navigateEpisode(direction) {
     if (!currentEpisodes || currentEpisodes.length === 0) return;
 
@@ -377,3 +386,4 @@ document.addEventListener('DOMContentLoaded', () => {
 console.log('🚀 AnimeStream siap!');
 console.log('📌 Home → Detail → Watch');
 console.log('📌 Back dari Watch → Detail, Back dari Detail → Home, Back dari Home → keluar.');
+console.log('📌 Episode grid persegi dengan navigasi panah kiri/kanan.');
