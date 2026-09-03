@@ -71,10 +71,18 @@ function fixUrl(url) {
 }
 
 // ============================================================
-//  ★ NAVIGASI (SEDERHANA) ★
+//  ★ NAVIGASI (DIPERBAIKI) ★
 // ============================================================
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    const nav = document.getElementById('mainNav');
+    if (nav) nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
+}
+
 function goHome() {
-    history.replaceState({ page: 'page-home' }, '', window.location.href);
+    // ★ REPLACE STATE HOME ★
+    history.replaceState({ page: 'home' }, '', window.location.href);
     showPage('page-home');
     loadAnimeList(currentGenre, 1);
     currentAnimeId = null;
@@ -83,19 +91,10 @@ function goHome() {
 function goToDetail() {
     if (currentAnimeId) {
         showPage('page-detail');
-        // Force reload detail dengan animeId yang sama
         openDetail(currentAnimeId);
     } else {
         goHome();
     }
-}
-
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    
-    const nav = document.getElementById('mainNav');
-    if (nav) nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
 }
 
 // ============================================================
@@ -105,13 +104,22 @@ window.addEventListener('popstate', function(e) {
     const state = e.state;
     console.log('popstate:', state);
     
-    // Jika state null atau Home, biarkan browser keluar
-    if (!state || state.page === 'page-home') {
+    // Jika state null, biarkan browser keluar (dari Home)
+    if (!state) {
+        console.log('State null, biarkan browser keluar');
+        return;
+    }
+    
+    // Jika state Home, kembali ke Home
+    if (state.page === 'home') {
+        console.log('State Home, kembali ke Home');
+        goHome();
         return;
     }
     
     // Jika state Detail
-    if (state.page === 'page-detail' && state.animeId) {
+    if (state.page === 'detail' && state.animeId) {
+        console.log('State Detail, kembali ke Detail');
         currentAnimeId = state.animeId;
         showPage('page-detail');
         openDetail(currentAnimeId);
@@ -119,7 +127,8 @@ window.addEventListener('popstate', function(e) {
     }
     
     // Jika state Watch
-    if (state.page === 'page-watch' && state.animeId !== undefined) {
+    if (state.page === 'watch' && state.animeId !== undefined) {
+        console.log('State Watch, kembali ke Watch');
         currentAnimeId = state.animeId;
         currentEpisodeIndex = state.episodeIndex || 0;
         showPage('page-watch');
@@ -128,6 +137,7 @@ window.addEventListener('popstate', function(e) {
     }
     
     // Fallback
+    console.log('Fallback ke Home');
     goHome();
 });
 
@@ -256,8 +266,8 @@ async function openDetail(animeId) {
     currentAnimeId = animeId;
     showPage('page-detail');
     
-    // Push state agar back bisa kembali ke Detail
-    history.pushState({ page: 'page-detail', animeId: animeId }, '', window.location.href);
+    // ★ PUSH STATE DETAIL ★
+    history.pushState({ page: 'detail', animeId: animeId }, '', window.location.href);
     
     const container = document.getElementById('detailContent');
     container.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
@@ -275,7 +285,6 @@ async function openDetail(animeId) {
         const genres = info.genre ? info.genre.map(g => `<span>${g}</span>`).join('') : '';
         const img = info.image || 'https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image';
 
-        // Update breadcrumb
         document.getElementById('breadcrumbSeries').textContent = info.title;
 
         let epBtns = '';
@@ -306,7 +315,6 @@ async function openDetail(animeId) {
             <div class="episode-list">${epBtns}</div>
         `;
 
-        // ★ Update link "Series" di breadcrumb Watch ★
         const seriesLink = document.getElementById('breadcrumbSeriesLink');
         if (seriesLink) {
             seriesLink.textContent = info.title;
@@ -338,9 +346,9 @@ function watchEpisode(index) {
     const ep = currentEpisodes[index];
     currentEpisodeIndex = index;
 
-    // Push state Watch
+    // ★ PUSH STATE WATCH ★
     history.pushState({ 
-        page: 'page-watch', 
+        page: 'watch', 
         animeId: currentAnimeId,
         episodeIndex: index 
     }, '', window.location.href);
@@ -359,7 +367,6 @@ function watchEpisode(index) {
 
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
     
-    // Update breadcrumb
     document.getElementById('breadcrumbSeriesLink').textContent = seriesName;
     document.getElementById('breadcrumbSeriesLink').onclick = function(e) {
         e.preventDefault();
@@ -367,7 +374,6 @@ function watchEpisode(index) {
     };
     document.getElementById('breadcrumbEpisode').textContent = `Episode ${ep.number}`;
     
-    // Update info
     document.getElementById('episodeSeriesName').textContent = seriesName;
     document.getElementById('watchTitle').textContent = `${seriesName} Episode ${ep.number} - ${ep.title || 'Subtitle Indonesia'}`;
     document.getElementById('episodeReleaseDate').innerHTML = `<i class="far fa-calendar-alt"></i> Released on ${new Date().toLocaleDateString('id-ID')}`;
@@ -505,7 +511,8 @@ function updateNavButtons() {
 //  INISIALISASI
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    history.replaceState({ page: 'page-home' }, '', window.location.href);
+    // ★ SET STATE HOME AWAL ★
+    history.replaceState({ page: 'home' }, '', window.location.href);
     loadAnimeList('all', 1);
     
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
@@ -516,5 +523,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('🚀 DONGZE siap!');
-console.log('📌 Navigasi back sudah diperbaiki.');
-console.log('📌 Home → Detail → Watch, Back normal.');
+console.log('📌 Alur navigasi: Home → Detail → Watch');
+console.log('📌 Back: Watch → Detail → Home → keluar');
