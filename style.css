@@ -76,78 +76,78 @@ header {
 }
 .section-title i { color: #ff4757; margin-right: 10px; }
 
-/* ========== GENRE DROPDOWN ========== */
-.genre-dropdown {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 20px;
+/* ========== GENRE FILTER (DI BAWAH) ========== */
+.genre-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 30px;
+    padding: 15px 20px;
+    background: rgba(26, 26, 46, 0.6);
+    border-radius: 12px;
+    border: 1px solid #2a2a3a;
+    justify-content: center;
+    align-items: center;
 }
 
-.genre-toggle {
-    background: #1a1a2e;
-    border: 1px solid #2a2a3a;
-    color: #f1f3f5;
-    padding: 10px 20px;
-    border-radius: 30px;
-    cursor: pointer;
+.genre-filter .genre-label {
+    color: #7a849b;
     font-size: 14px;
     font-weight: 600;
-    transition: 0.3s;
     display: flex;
     align-items: center;
-    gap: 8px;
+    margin-right: 8px;
 }
-.genre-toggle:hover {
-    background: #2a2a3a;
-    border-color: #ff4757;
-}
-.genre-toggle i {
+.genre-filter .genre-label i {
     color: #ff4757;
-}
-
-.genre-list {
-    display: none;
-    position: absolute;
-    top: 110%;
-    left: 0;
-    background: #1a1a2e;
-    border: 1px solid #2a2a3a;
-    border-radius: 12px;
-    padding: 12px;
-    min-width: 180px;
-    z-index: 1000;
-    flex-wrap: wrap;
-    gap: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-.genre-list.open {
-    display: flex;
+    margin-right: 8px;
 }
 
 .genre-btn {
-    background: #0f0f1a;
+    background: #1a1a2e;
     border: 1px solid #2a2a3a;
     color: #7a849b;
-    padding: 6px 16px;
+    padding: 8px 18px;
     border-radius: 30px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     transition: 0.3s;
-    flex: 0 0 auto;
 }
+
 .genre-btn:hover {
     background: #2a2a3a;
     color: #f1f3f5;
     border-color: #ff4757;
 }
+
 .genre-btn.active {
     background: #ff4757;
     color: #fff;
     border-color: #ff4757;
 }
+
 .genre-btn.active:hover {
     background: #e03e4e;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .genre-filter {
+        padding: 12px 14px;
+        gap: 8px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .genre-filter .genre-label {
+        justify-content: center;
+        margin-bottom: 4px;
+    }
+    .genre-btn {
+        font-size: 12px;
+        padding: 6px 14px;
+        text-align: center;
+    }
 }
 
 /* ========== GRID ANIME ========== */
