@@ -16,6 +16,124 @@ const itemsPerPage = 24;
 let totalPages = 1;
 
 // ============================================================
+//  DAFTAR PLATFORM YANG SUPPORT IFRAME
+// ============================================================
+const IFRAME_PLATFORMS = [
+    'ok.ru',
+    'youtube.com',
+    'youtu.be',
+    'dailymotion.com',
+    'mega.nz',
+    'drive.google.com',
+    'streamtape.com',
+    'vimeo.com',
+    'player.vimeo.com',
+    'streamwish.com',
+    'terabox.com',
+    'mediafire.com',
+    'dropbox.com',
+    'pcloud.com',
+    'gofile.io',
+    'sendvid.com',
+    'vidhide.com',
+    'vudeo.net',
+    'voe.sx',
+    'vidplay.site',
+    'vidoza.net',
+    'filemoon.sx'
+];
+
+// ============================================================
+//  CEK APAKAH URL BUTUH IFRAME
+// ============================================================
+function isIframePlatform(url) {
+    if (!url) return false;
+    const urlLower = url.toLowerCase();
+    return IFRAME_PLATFORMS.some(platform => urlLower.includes(platform));
+}
+
+// ============================================================
+//  FIX LINK OK.ru (ganti /video/ menjadi /videoembed/)
+// ============================================================
+function fixOkRuUrl(url) {
+    if (!url) return url;
+    if (url.includes('ok.ru/video/') && !url.includes('videoembed')) {
+        return url.replace('ok.ru/video/', 'ok.ru/videoembed/');
+    }
+    return url;
+}
+
+// ============================================================
+//  FIX LINK GOOGLE DRIVE (ganti /file/d/ menjadi /file/d/xxx/preview)
+// ============================================================
+function fixGoogleDriveUrl(url) {
+    if (!url) return url;
+    if (url.includes('drive.google.com/file/d/')) {
+        // Jika belum ada /preview di akhir
+        if (!url.endsWith('/preview')) {
+            return url + '/preview';
+        }
+    }
+    return url;
+}
+
+// ============================================================
+//  FIX LINK MEGA (ganti /file/ menjadi /embed/)
+// ============================================================
+function fixMegaUrl(url) {
+    if (!url) return url;
+    if (url.includes('mega.nz/file/') && !url.includes('embed')) {
+        return url.replace('mega.nz/file/', 'mega.nz/embed/');
+    }
+    return url;
+}
+
+// ============================================================
+//  FIX LINK DAILYMOTION (ganti /video/ menjadi /embed/video/)
+// ============================================================
+function fixDailymotionUrl(url) {
+    if (!url) return url;
+    if (url.includes('dailymotion.com/video/') && !url.includes('embed')) {
+        return url.replace('dailymotion.com/video/', 'dailymotion.com/embed/video/');
+    }
+    return url;
+}
+
+// ============================================================
+//  FIX LINK YOUTUBE (ganti /watch?v= menjadi /embed/)
+// ============================================================
+function fixYoutubeUrl(url) {
+    if (!url) return url;
+    if (url.includes('youtube.com/watch?v=') && !url.includes('embed')) {
+        const videoId = url.split('v=')[1]?.split('&')[0];
+        if (videoId) {
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+    }
+    if (url.includes('youtu.be/') && !url.includes('embed')) {
+        const videoId = url.split('youtu.be/')[1]?.split('?')[0];
+        if (videoId) {
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+    }
+    return url;
+}
+
+// ============================================================
+//  OTOMATIS FIX SEMUA LINK
+// ============================================================
+function fixUrl(url) {
+    if (!url) return url;
+    let fixed = url;
+    fixed = fixOkRuUrl(fixed);
+    fixed = fixGoogleDriveUrl(fixed);
+    fixed = fixMegaUrl(fixed);
+    fixed = fixDailymotionUrl(fixed);
+    fixed = fixYoutubeUrl(fixed);
+    return fixed;
+}
+
+// ============================================================
 //  NAVIGASI
 // ============================================================
 function showPage(pageId) {
@@ -364,7 +482,7 @@ function updateServerDropdown() {
 }
 
 // ============================================================
-//  PUTAR VIDEO DARI SOURCE TERTENTU
+//  ★ PLAY SOURCE (OTOMATIS DETEKSI PLATFORM) ★
 // ============================================================
 function playSource(index) {
     if (!currentSources || index >= currentSources.length) return;
@@ -378,16 +496,24 @@ function playSource(index) {
     video.src = '';
     video.style.display = 'block';
 
-    const url = source.url;
-    if (url.includes('ok.ru') || url.includes('youtube') || url.includes('dailymotion') || url.includes('mega.nz')) {
+    let url = source.url;
+
+    // ★ OTOMATIS FIX LINK ★
+    url = fixUrl(url);
+
+    // ★ CEK APAKAH BUTUH IFRAME ★
+    if (isIframePlatform(url)) {
+        // Jika link sudah valid, langsung pakai iframe
         videoWrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>`;
     } else {
+        // Selain itu, anggap sebagai video langsung (MP4, M3U8, dll.)
         videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
         const newVideo = document.getElementById('videoPlayer');
         newVideo.src = url;
         newVideo.play().catch(e => console.log('Autoplay blocked:', e));
     }
 
+    // Update dropdown
     const select = document.getElementById('videoServer');
     if (select) select.value = index;
 }
@@ -411,64 +537,4 @@ function updateEpisodeGrid() {
     if (!grid || !currentEpisodes) return;
 
     grid.innerHTML = currentEpisodes.map((ep, idx) => {
-        const hasLink = (ep.sources && ep.sources.length > 0) || ep.url;
-        return `
-            <div class="episode-square ${idx === currentEpisodeIndex ? 'active' : ''}" onclick="watchEpisode(${idx})">
-                <span class="ep-number">${ep.number}</span>
-                <span class="ep-title">${ep.title ? ep.title.substring(0, 6) : ''}</span>
-                ${!hasLink ? '<span style="font-size:6px;color:#ff4757;">✕</span>' : ''}
-            </div>
-        `;
-    }).join('');
-
-    const counter = document.getElementById('episodeCounter');
-    if (counter) {
-        counter.textContent = `${currentEpisodeIndex + 1} / ${currentEpisodes.length}`;
-    }
-}
-
-// ============================================================
-//  NAVIGASI EPISODE (PANAH)
-// ============================================================
-function navigateEpisode(direction) {
-    if (!currentEpisodes || currentEpisodes.length === 0) return;
-
-    let newIndex = currentEpisodeIndex + direction;
-    if (newIndex < 0) newIndex = 0;
-    if (newIndex >= currentEpisodes.length) newIndex = currentEpisodes.length - 1;
-    if (newIndex === currentEpisodeIndex) return;
-
-    watchEpisode(newIndex);
-}
-
-function updateNavButtons() {
-    const prevBtn = document.getElementById('prevEpBtn');
-    const nextBtn = document.getElementById('nextEpBtn');
-    if (!prevBtn || !nextBtn) return;
-    if (!currentEpisodes || currentEpisodes.length === 0) {
-        prevBtn.disabled = true;
-        nextBtn.disabled = true;
-        return;
-    }
-    prevBtn.disabled = (currentEpisodeIndex <= 0);
-    nextBtn.disabled = (currentEpisodeIndex >= currentEpisodes.length - 1);
-}
-
-// ============================================================
-//  INISIALISASI
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-    history.replaceState({ page: 'page-home' }, '', window.location.href);
-    loadAnimeList('all', 1);
-
-    document.getElementById('searchInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') searchAnime();
-    });
-
-    document.querySelector('.pagination').style.display = 'flex';
-});
-
-console.log('🚀 DONGZE siap!');
-console.log('📌 Support OK.ru & Dailymotion.');
-console.log('📌 Support format "url" lama dan "sources" baru.');
-console.log('📌 Home → Detail → Watch, Back normal.');
+        const hasLink = (ep.sou
