@@ -550,5 +550,5 @@ function updateEpisodeGrid() {
                 <span class="ep-title">${ep.title}</span>
             </div>
         `;
-    }).join(''); // Tambahkan .join('') di sini agar tidak ada koma
+    }).join('');
 }
