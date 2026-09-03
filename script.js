@@ -13,14 +13,9 @@ function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 
-    // Sembunyikan/munculkan header berdasarkan halaman
-    const header = document.getElementById('mainHeader');
-    if (header) {
-        if (pageId === 'page-home') {
-            header.style.display = 'flex';
-        } else {
-            header.style.display = 'none';
-        }
+    const nav = document.getElementById('mainNav');
+    if (nav) {
+        nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
     }
 
     // Push state hanya jika bukan Home
@@ -58,18 +53,15 @@ function goToDetail() {
 // ============================================================
 window.addEventListener('popstate', function(event) {
     const state = event.state;
-
     if (!state || state.page === 'page-home') {
         return;
     }
-
     if (state.page === 'page-detail' && state.animeId) {
         currentAnimeId = state.animeId;
         showPage('page-detail');
         openDetail(currentAnimeId);
         return;
     }
-
     if (state.page === 'page-watch' && state.animeId) {
         currentAnimeId = state.animeId;
         currentEpisodeIndex = state.episodeIndex || 0;
@@ -77,7 +69,6 @@ window.addEventListener('popstate', function(event) {
         watchEpisode(currentEpisodeIndex);
         return;
     }
-
     goHome();
 });
 
@@ -91,7 +82,6 @@ async function loadAnimeList(genre = 'all') {
     try {
         const response = await fetch('anime-list.json');
         if (!response.ok) throw new Error('Gagal load anime list');
-
         const data = await response.json();
         let animeList = data.anime || [];
 
@@ -385,5 +375,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('🚀 AnimeStream siap!');
-console.log('📌 Header muncul hanya di Home.');
-console.log('📌 Back: Watch → Detail → Home → keluar.');
+console.log('📌 Home → Detail → Watch');
+console.log('📌 Back dari Watch → Detail, Back dari Detail → Home, Back dari Home → keluar.');
