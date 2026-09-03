@@ -9,23 +9,38 @@
 </head>
 <body>
 
-    <!-- ==================== HEADER ==================== -->
+    <!-- ============================================================ -->
+    <!-- HEADER                                                       -->
+    <!-- ============================================================ -->
     <header>
-        <div class="logo"><span>Anime</span>Stream</div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Cari anime atau donghua..." onkeyup="searchAnime()">
-            <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
+        <div class="header-top">
+            <div class="logo"><span>Anime</span>Stream</div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Cari anime atau donghua..." onkeyup="searchAnime()">
+                <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
+            </div>
         </div>
+        
+        <nav class="main-nav">
+            <a href="#" class="active" onclick="goHome()"><i class="fas fa-home"></i> Home</a>
+            <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Anime</a>
+            <a href="#" onclick="filterByGenre('donghua')"><i class="fas fa-dragon"></i> Donghua</a>
+            <a href="#" onclick="document.querySelector('.genre-filter').scrollIntoView({behavior:'smooth'})"><i class="fas fa-tags"></i> Genre</a>
+            <a href="#" onclick="alert('Jadwal rilis akan segera hadir!')"><i class="fas fa-calendar-alt"></i> Jadwal Rilis</a>
+        </nav>
     </header>
 
-    <!-- ==================== KONTEN ==================== -->
+    <!-- ============================================================ -->
+    <!-- KONTEN UTAMA                                                 -->
+    <!-- ============================================================ -->
     <div class="container">
 
-        <!-- ==================== HALAMAN HOME ==================== -->
+        <!-- ============================================================ -->
+        <!-- HALAMAN HOME                                                 -->
+        <!-- ============================================================ -->
         <div id="page-home" class="page active">
-            <div class="section-title"><i class="fas fa-film"></i> Daftar Anime</div>
+            <div class="section-title"><i class="fas fa-fire"></i> Update Anime</div>
 
-            <!-- ★ FILTER GENRE ★ -->
             <div class="genre-filter">
                 <button class="genre-btn active" data-genre="all" onclick="filterByGenre('all')">Semua</button>
                 <button class="genre-btn" data-genre="action" onclick="filterByGenre('action')">Action</button>
@@ -33,60 +48,105 @@
                 <button class="genre-btn" data-genre="comedy" onclick="filterByGenre('comedy')">Comedy</button>
                 <button class="genre-btn" data-genre="drama" onclick="filterByGenre('drama')">Drama</button>
                 <button class="genre-btn" data-genre="fantasy" onclick="filterByGenre('fantasy')">Fantasy</button>
-                <button class="genre-btn" data-genre="horror" onclick="filterByGenre('horror')">Horror</button>
-                <button class="genre-btn" data-genre="mecha" onclick="filterByGenre('mecha')">Mecha</button>
-                <button class="genre-btn" data-genre="mystery" onclick="filterByGenre('mystery')">Mystery</button>
-                <button class="genre-btn" data-genre="psychological" onclick="filterByGenre('psychological')">Psychological</button>
+                <button class="genre-btn" data-genre="donghua" onclick="filterByGenre('donghua')">Donghua</button>
                 <button class="genre-btn" data-genre="romance" onclick="filterByGenre('romance')">Romance</button>
-                <button class="genre-btn" data-genre="sci-fi" onclick="filterByGenre('sci-fi')">Sci-Fi</button>
                 <button class="genre-btn" data-genre="shonen" onclick="filterByGenre('shonen')">Shonen</button>
                 <button class="genre-btn" data-genre="slice-of-life" onclick="filterByGenre('slice-of-life')">Slice of Life</button>
-                <button class="genre-btn" data-genre="sports" onclick="filterByGenre('sports')">Sports</button>
-                <button class="genre-btn" data-genre="supernatural" onclick="filterByGenre('supernatural')">Supernatural</button>
-                <button class="genre-btn" data-genre="thriller" onclick="filterByGenre('thriller')">Thriller</button>
-                <button class="genre-btn" data-genre="donghua" onclick="filterByGenre('donghua')">Donghua</button>
                 <button class="genre-btn" data-genre="wuxia" onclick="filterByGenre('wuxia')">Wuxia</button>
                 <button class="genre-btn" data-genre="xianxia" onclick="filterByGenre('xianxia')">Xianxia</button>
                 <button class="genre-btn" data-genre="cultivation" onclick="filterByGenre('cultivation')">Cultivation</button>
-                <button class="genre-btn" data-genre="historical" onclick="filterByGenre('historical')">Historical</button>
-                <button class="genre-btn" data-genre="martial-arts" onclick="filterByGenre('martial-arts')">Martial Arts</button>
             </div>
 
             <div id="animeGrid" class="anime-grid"></div>
         </div>
 
-        <!-- ==================== HALAMAN DETAIL ==================== -->
+        <!-- ============================================================ -->
+        <!-- HALAMAN DETAIL                                               -->
+        <!-- ============================================================ -->
         <div id="page-detail" class="page">
-            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Kembali</button>
+            <div class="breadcrumb">
+                <a href="#" onclick="goHome()">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <span id="breadcrumbSeries">Series</span>
+            </div>
             <div id="detailContent"></div>
         </div>
 
-        <!-- ==================== HALAMAN TONTON ==================== -->
+        <!-- ============================================================ -->
+        <!-- HALAMAN TONTON - MULAI DARI SINI                             -->
+        <!-- ============================================================ -->
         <div id="page-watch" class="page">
-            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Kembali</button>
+
+            <!-- Breadcrumb (navigasi) -->
+            <div class="breadcrumb">
+                <a href="#" onclick="goHome()">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="#" id="breadcrumbSeriesLink" onclick="goHome()">Series</a>
+                <i class="fas fa-chevron-right"></i>
+                <span id="breadcrumbEpisode">Episode</span>
+            </div>
+
+            <!-- Pengumuman -->
+            <div class="announcement">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Wajib di baca!</strong> Jika server <strong>Dailymotion</strong> iklannya lama lebih dari 30 detik refresh aja (Reload) halaman nya. Jika masih tidak bisa, ganti server di bagian <strong>Select Video Server</strong> di bawah.
+                </div>
+            </div>
+
             <div id="watchContent">
+
+                <!-- Video Player -->
                 <div class="video-wrapper">
                     <video id="videoPlayer" controls autoplay></video>
                 </div>
-                <div class="watch-info">
+
+                <!-- Select Video Server (Dropdown) -->
+                <div class="server-selector">
+                    <label><i class="fas fa-server"></i> Select Video Server</label>
+                    <select id="videoServer" onchange="changeServer()">
+                        <option value="default">Default</option>
+                        <option value="okru">OK.ru</option>
+                        <option value="dailymotion">Dailymotion</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="mega">Mega.nz</option>
+                    </select>
+                </div>
+
+                <!-- Info Episode -->
+                <div class="episode-info">
                     <h2 id="watchTitle">Memuat...</h2>
-                    <div class="watch-nav">
-                        <button id="prevEpBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
-                        <button id="nextEpBtn" onclick="navigateEpisode(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
+                    <div class="episode-meta">
+                        <span id="episodeReleaseDate"><i class="far fa-calendar-alt"></i> Loading...</span>
+                        <span id="episodePostedBy"><i class="far fa-user"></i> Posted by admin</span>
+                        <span id="episodeSeries"><i class="fas fa-tv"></i> Series: <span id="episodeSeriesName">-</span></span>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- ==================== LOADING ==================== -->
+                <!-- Tombol Navigasi Episode -->
+                <div class="watch-nav">
+                    <button id="prevEpBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
+                    <button id="nextEpBtn" onclick="navigateEpisode(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
+                </div>
+
+                <!-- Daftar Episode (Sidebar) -->
+                <div class="episode-sidebar">
+                    <h3><i class="fas fa-list-ul"></i> Daftar Episode</h3>
+                    <div id="episodeListSidebar" class="episode-list-sidebar"></div>
+                </div>
+
+            </div> <!-- end #watchContent -->
+        </div> <!-- end #page-watch -->
+
+        <!-- ============================================================ -->
+        <!-- LOADING                                                      -->
+        <!-- ============================================================ -->
         <div id="globalLoader" class="loader" style="display:none;">
             <i class="fas fa-spinner"></i>
         </div>
 
-    </div>
+    </div> <!-- end .container -->
 
-    <!-- ==================== JAVASCRIPT ==================== -->
     <script src="script.js"></script>
-
 </body>
 </html>
