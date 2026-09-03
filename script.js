@@ -38,7 +38,6 @@ function goHome() {
     showPage('page-home');
     loadAnimeList(currentGenre);
     currentAnimeId = null;
-    currentEpisodeIndex = 0;
 }
 
 function goToDetail() {
@@ -387,4 +386,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('🚀 AnimeStream siap!');
-console.log('📌 Home → Detail → Watch, Back kembali ke Detail, lalu Home, lalu keluar.');
+console.log('📌 Home → Detail → Watch');
+console.log('📌 Back dari Watch → Detail, Back dari Detail → Home, Back dari Home → keluar.');
