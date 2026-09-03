@@ -35,6 +35,7 @@ header {
     font-size: 24px;
     font-weight: 800;
     letter-spacing: 1px;
+    font-style: normal !important;
 }
 .logo .red { color: #ff4757; }
 .logo .blue { color: #4a9eff; }
@@ -66,6 +67,7 @@ header {
 }
 .search-box button:hover { color: #ff4757; }
 
+/* ========== MAIN NAV ========== */
 .main-nav {
     display: flex;
     flex-wrap: wrap;
@@ -91,6 +93,7 @@ header {
 .main-nav a.active { color: #ff4757; border-bottom: 2px solid #ff4757; }
 .main-nav a.active i { color: #ff4757; }
 
+/* ========== BREADCRUMB ========== */
 .breadcrumb {
     display: flex;
     align-items: center;
@@ -108,6 +111,7 @@ header {
 .breadcrumb i { font-size: 12px; color: #3a3a5a; }
 .breadcrumb span { color: #e8e8e8; }
 
+/* ========== ANNOUNCEMENT ========== */
 .announcement {
     background: #1a1a2e;
     border-left: 4px solid #ff4757;
@@ -129,6 +133,7 @@ header {
 }
 .announcement strong { color: #e8e8e8; }
 
+/* ========== KONTEN ========== */
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -138,6 +143,7 @@ header {
 .page { display: none; }
 .page.active { display: block; }
 
+/* ========== SECTION TITLE (UPDATE DONGHUA) ========== */
 .section-title {
     font-size: 20px;
     font-weight: 700;
@@ -146,9 +152,11 @@ header {
     display: flex;
     align-items: center;
     gap: 10px;
+    font-style: normal !important;
 }
 .section-title i { color: #ff4757; }
 
+/* ========== GENRE FILTER ========== */
 .genre-filter {
     display: flex;
     flex-wrap: wrap;
@@ -160,6 +168,7 @@ header {
     border: 1px solid #2a2a3a;
     max-height: 130px;
     overflow-y: auto;
+    font-style: normal !important;
 }
 .genre-filter::-webkit-scrollbar { width: 4px; }
 .genre-filter::-webkit-scrollbar-track { background: #0d0d1a; border-radius: 10px; }
@@ -176,15 +185,18 @@ header {
     font-weight: 500;
     transition: 0.3s;
     white-space: nowrap;
+    font-style: normal !important;
 }
 .genre-btn:hover { background: #2a2a3a; color: #e8e8e8; border-color: #ff4757; }
 .genre-btn.active { background: #ff4757; color: #fff; border-color: #ff4757; }
 .genre-btn.active:hover { background: #e03e4e; }
 
+/* ========== GRID ANIME ========== */
 .anime-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 25px;
+    margin-top: 10px;
 }
 
 .anime-card {
@@ -222,6 +234,7 @@ header {
     color: #7a7a9a;
 }
 
+/* ========== PAGINATION ========== */
 .pagination {
     display: flex;
     align-items: center;
@@ -259,6 +272,7 @@ header {
     text-align: center;
 }
 
+/* ========== DETAIL ========== */
 .detail-banner {
     background: #141425;
     border-radius: 16px;
@@ -327,6 +341,7 @@ header {
     margin-right: 5px;
 }
 
+/* ========== EPISODE LIST (di Detail) ========== */
 .episode-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -347,6 +362,7 @@ header {
 }
 .episode-btn:hover { background: #ff4757; border-color: #ff4757; }
 
+/* ========== VIDEO PLAYER ========== */
 .video-wrapper {
     background: #000;
     border-radius: 16px;
@@ -358,6 +374,7 @@ header {
 .video-wrapper video { width: 100%; height: 100%; display: block; }
 .video-wrapper iframe { width: 100%; height: 100%; border: none; }
 
+/* ========== SERVER SELECTOR ========== */
 .server-selector {
     display: flex;
     align-items: center;
@@ -388,6 +405,7 @@ header {
 .server-selector select:hover { border-color: #ff4757; }
 .server-selector select option { background: #141425; }
 
+/* ========== EPISODE INFO (di Watch) ========== */
 .episode-info {
     margin: 15px 0;
     padding: 15px 0;
@@ -414,6 +432,7 @@ header {
     align-items: center;
 }
 
+/* ========== WATCH NAV (PANAH) ========== */
 .watch-nav {
     display: flex;
     align-items: center;
@@ -450,6 +469,7 @@ header {
     text-align: center;
 }
 
+/* ========== EPISODE GRID (PERSEGI) ========== */
 .episode-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
@@ -504,6 +524,7 @@ header {
     color: #fff;
 }
 
+/* ========== WATCH FOOTER ========== */
 .watch-footer {
     margin-top: 30px;
     padding: 15px 20px;
@@ -523,6 +544,7 @@ header {
     color: #a0a0c0;
 }
 
+/* ========== LOADING ========== */
 .loader {
     display: flex;
     justify-content: center;
@@ -545,6 +567,7 @@ header {
 }
 .empty-state i { font-size: 40px; margin-bottom: 10px; color: #2a2a3a; }
 
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     header { padding: 6px 15px; }
     .header-top { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -574,4 +597,4 @@ header {
     .anime-card img { height: 200px; }
     .section-title { font-size: 18px; }
     .logo { font-size: 18px; }
-}
+                       }
