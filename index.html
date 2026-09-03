@@ -18,46 +18,34 @@
     </header>
 
     <div class="container">
-        <!-- HALAMAN HOME -->
-<div id="page-home" class="page active">
-    <div class="section-title"><i class="fas fa-film"></i> Daftar Anime</div>
-    
-    <!-- ★ TAMBAHAN: FILTER GENRE ★ -->
-<div class="genre-filter">
-    <button class="genre-btn active" data-genre="all" onclick="filterByGenre('all')">Semua</button>
-    <button class="genre-btn" data-genre="action" onclick="filterByGenre('action')">Action</button>
-    ...
-</div>
-    <div class="genre-filter">
-    <label for="genreSelect" style="color:#7a849b; margin-right:10px; font-weight:600;">
-        <i class="fas fa-tags"></i> Genre:
-    </label>
-    <select id="genreSelect" onchange="filterByGenre(this.value)">
-        <option value="all">Semua Genre</option>
-        <option value="action">Action</option>
-        <option value="adventure">Adventure</option>
-        <option value="comedy">Comedy</option>
-        <option value="donghua">Donghua</option>
-        <option value="fantasy">Fantasy</option>
-        <option value="romance">Romance</option>
-        <option value="shonen">Shonen</option>
-        <option value="slice-of-life">Slice of Life</option>
-        <!-- tambahkan genre lain sesuai kebutuhan -->
-    </select>
-    </div>
-    
-    <div id="animeGrid" class="anime-grid"></div>
-</div>
+        
+        <!-- ==================== HALAMAN HOME ==================== -->
+        <div id="page-home" class="page active">
+            <div class="section-title"><i class="fas fa-film"></i> Daftar Anime</div>
+            
+            <!-- ★ FILTER GENRE ★ -->
+            <div class="genre-filter">
+                <button class="genre-btn active" data-genre="all" onclick="filterByGenre('all')">Semua</button>
+                <button class="genre-btn" data-genre="action" onclick="filterByGenre('action')">Action</button>
+                <button class="genre-btn" data-genre="adventure" onclick="filterByGenre('adventure')">Adventure</button>
+                <button class="genre-btn" data-genre="comedy" onclick="filterByGenre('comedy')">Comedy</button>
+                <button class="genre-btn" data-genre="donghua" onclick="filterByGenre('donghua')">Donghua</button>
+                <button class="genre-btn" data-genre="fantasy" onclick="filterByGenre('fantasy')">Fantasy</button>
+                <button class="genre-btn" data-genre="romance" onclick="filterByGenre('romance')">Romance</button>
+                <button class="genre-btn" data-genre="shonen" onclick="filterByGenre('shonen')">Shonen</button>
+                <button class="genre-btn" data-genre="slice-of-life" onclick="filterByGenre('slice-of-life')">Slice of Life</button>
+            </div>
+            
             <div id="animeGrid" class="anime-grid"></div>
         </div>
 
-        <!-- HALAMAN DETAIL -->
+        <!-- ==================== HALAMAN DETAIL ==================== -->
         <div id="page-detail" class="page">
             <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Kembali</button>
             <div id="detailContent"></div>
         </div>
 
-        <!-- HALAMAN TONTON -->
+        <!-- ==================== HALAMAN TONTON ==================== -->
         <div id="page-watch" class="page">
             <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Kembali</button>
             <div id="watchContent">
@@ -74,12 +62,15 @@
             </div>
         </div>
 
+        <!-- ==================== LOADING ==================== -->
         <div id="globalLoader" class="loader" style="display:none;">
             <i class="fas fa-spinner"></i>
         </div>
 
     </div>
 
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script src="script.js"></script>
+
 </body>
 </html>
