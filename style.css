@@ -31,13 +31,20 @@ header {
     margin-bottom: 6px;
 }
 
+/* ========== LOGO DENGAN WARNA BERGANTIAN ========== */
 .logo {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 800;
-    color: #ff4757;
+    letter-spacing: 1px;
 }
-.logo span { color: #e8e8e8; }
+.logo .red {
+    color: #ff4757; /* Merah */
+}
+.logo .blue {
+    color: #4a9eff; /* Biru */
+}
 
+/* ========== SEARCH BOX ========== */
 .search-box {
     display: flex;
     align-items: center;
@@ -141,7 +148,7 @@ header {
 .page { display: none; }
 .page.active { display: block; }
 
-/* ========== SECTION TITLE (UPDATE ANIME) ========== */
+/* ========== SECTION TITLE (UPDATE DONGHUA) ========== */
 .section-title {
     font-size: 20px;
     font-weight: 700;
@@ -591,10 +598,12 @@ header {
     .breadcrumb { font-size: 12px; flex-wrap: wrap; }
     .pagination { flex-wrap: wrap; gap: 10px; }
     .pagination button { font-size: 12px; padding: 6px 14px; }
+    .logo { font-size: 20px; }
 }
 
 @media (max-width: 480px) {
     .anime-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
     .anime-card img { height: 200px; }
     .section-title { font-size: 18px; }
+    .logo { font-size: 18px; }
 }
