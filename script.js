@@ -71,7 +71,7 @@ function fixUrl(url) {
 }
 
 // ============================================================
-//  ★ NAVIGASI (DIPERBAIKI) ★
+//  NAVIGASI
 // ============================================================
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -81,8 +81,8 @@ function showPage(pageId) {
 }
 
 function goHome() {
-    // ★ REPLACE STATE HOME ★
-    history.replaceState({ page: 'home' }, '', window.location.href);
+    // ★ REPLACE STATE MENJADI null AGAR BACK DARI HOME LANGSUNG KELUAR ★
+    history.replaceState(null, '', window.location.href);
     showPage('page-home');
     loadAnimeList(currentGenre, 1);
     currentAnimeId = null;
@@ -98,22 +98,15 @@ function goToDetail() {
 }
 
 // ============================================================
-//  ★ BACK BROWSER (POPSTATE) ★
+//  BACK BROWSER (POPSTATE)
 // ============================================================
 window.addEventListener('popstate', function(e) {
     const state = e.state;
     console.log('popstate:', state);
     
-    // Jika state null, biarkan browser keluar (dari Home)
+    // ★ Jika state null, biarkan browser keluar (dari Home) ★
     if (!state) {
         console.log('State null, biarkan browser keluar');
-        return;
-    }
-    
-    // Jika state Home, kembali ke Home
-    if (state.page === 'home') {
-        console.log('State Home, kembali ke Home');
-        goHome();
         return;
     }
     
@@ -136,7 +129,7 @@ window.addEventListener('popstate', function(e) {
         return;
     }
     
-    // Fallback
+    // Fallback ke Home
     console.log('Fallback ke Home');
     goHome();
 });
@@ -260,7 +253,7 @@ async function searchAnime() {
 }
 
 // ============================================================
-//  ★ OPEN DETAIL ★
+//  OPEN DETAIL
 // ============================================================
 async function openDetail(animeId) {
     currentAnimeId = animeId;
@@ -331,7 +324,7 @@ async function openDetail(animeId) {
 }
 
 // ============================================================
-//  ★ WATCH EPISODE ★
+//  WATCH EPISODE
 // ============================================================
 function watchEpisode(index) {
     if (!currentEpisodes || currentEpisodes.length === 0) {
@@ -511,8 +504,8 @@ function updateNavButtons() {
 //  INISIALISASI
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // ★ SET STATE HOME AWAL ★
-    history.replaceState({ page: 'home' }, '', window.location.href);
+    // ★ SET STATE AWAL MENJADI null ★
+    history.replaceState(null, '', window.location.href);
     loadAnimeList('all', 1);
     
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
@@ -524,4 +517,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 console.log('🚀 DONGZE siap!');
 console.log('📌 Alur navigasi: Home → Detail → Watch');
-console.log('📌 Back: Watch → Detail → Home → keluar');
+console.log('📌 Back: Watch → Detail → Home → keluar (sekali)');
