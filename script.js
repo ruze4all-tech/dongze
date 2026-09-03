@@ -5,6 +5,16 @@ let currentAnimeId = null;
 let currentEpisodes = [];
 let currentEpisodeIndex = 0;
 let currentGenre = 'all';
+let currentSources = [];
+let currentSourceIndex = 0;
+
+// ============================================================
+//  PAGINATION STATE
+// ============================================================
+let currentPage = 1;
+const itemsPerPage = 24;
+let totalPages = 1;
+let allAnimeData = [];
 
 // ============================================================
 //  NAVIGASI
@@ -18,7 +28,6 @@ function showPage(pageId) {
         nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
     }
 
-    // Push state hanya jika bukan Home
     if (pageId !== 'page-home') {
         const stateData = { page: pageId };
         if (pageId === 'page-detail' && currentAnimeId) {
@@ -35,7 +44,7 @@ function showPage(pageId) {
 function goHome() {
     history.replaceState({ page: 'page-home' }, '', window.location.href);
     showPage('page-home');
-    loadAnimeList(currentGenre);
+    loadAnimeList(currentGenre, 1);
     currentAnimeId = null;
 }
 
@@ -73,9 +82,9 @@ window.addEventListener('popstate', function(event) {
 });
 
 // ============================================================
-//  LOAD DAFTAR ANIME
+//  LOAD DAFTAR ANIME (DENGAN PAGINATION)
 // ============================================================
-async function loadAnimeList(genre = 'all') {
+async function loadAnimeList(genre = 'all', page = 1) {
     const grid = document.getElementById('animeGrid');
     grid.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
 
@@ -85,6 +94,7 @@ async function loadAnimeList(genre = 'all') {
         const data = await response.json();
         let animeList = data.anime || [];
 
+        // Filter genre
         if (genre !== 'all') {
             animeList = animeList.filter(anime => {
                 const genres = anime.genre.toLowerCase().split(', ');
@@ -92,12 +102,24 @@ async function loadAnimeList(genre = 'all') {
             });
         }
 
-        if (animeList.length === 0) {
+        // Hitung total halaman
+        totalPages = Math.ceil(animeList.length / itemsPerPage) || 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        currentPage = page;
+
+        // Potong array sesuai halaman
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = animeList.slice(start, end);
+
+        if (pageItems.length === 0) {
             grid.innerHTML = `<div class="empty-state"><i class="fas fa-frown"></i><p>Tidak ada anime dengan genre ini.</p></div>`;
+            updatePaginationButtons();
             return;
         }
 
-        grid.innerHTML = animeList.map(anime => `
+        grid.innerHTML = pageItems.map(anime => `
             <div class="anime-card" onclick="openDetail('${anime.id}')">
                 <img src="${anime.image}" alt="${anime.title}" 
                      onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
@@ -107,10 +129,35 @@ async function loadAnimeList(genre = 'all') {
                 </div>
             </div>
         `).join('');
+
+        updatePaginationButtons();
+
     } catch (error) {
         console.error('Error loading anime list:', error);
         grid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat daftar anime.</p></div>`;
     }
+}
+
+// ============================================================
+//  PAGINATION: GANTI HALAMAN
+// ============================================================
+function changePage(delta) {
+    const newPage = currentPage + delta;
+    if (newPage < 1 || newPage > totalPages) return;
+    loadAnimeList(currentGenre, newPage);
+}
+
+// ============================================================
+//  UPDATE TOMBOL PAGINATION
+// ============================================================
+function updatePaginationButtons() {
+    const prevBtn = document.getElementById('prevPageBtn');
+    const nextBtn = document.getElementById('nextPageBtn');
+    const info = document.getElementById('pageInfo');
+    
+    if (prevBtn) prevBtn.disabled = (currentPage <= 1);
+    if (nextBtn) nextBtn.disabled = (currentPage >= totalPages);
+    if (info) info.textContent = `Halaman ${currentPage} dari ${totalPages}`;
 }
 
 // ============================================================
@@ -121,7 +168,7 @@ function filterByGenre(genre) {
     document.querySelectorAll('.genre-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.genre === genre);
     });
-    loadAnimeList(genre);
+    loadAnimeList(genre, 1);
     if (document.getElementById('page-detail').classList.contains('active') ||
         document.getElementById('page-watch').classList.contains('active')) {
         goHome();
@@ -135,7 +182,7 @@ async function searchAnime() {
     const query = document.getElementById('searchInput').value.toLowerCase().trim();
     const grid = document.getElementById('animeGrid');
 
-    if (!query) { loadAnimeList(currentGenre); return; }
+    if (!query) { loadAnimeList(currentGenre, 1); return; }
 
     try {
         const response = await fetch('anime-list.json');
@@ -154,6 +201,7 @@ async function searchAnime() {
             return;
         }
 
+        // Untuk pencarian, tampilkan semua hasil tanpa pagination
         grid.innerHTML = results.map(anime => `
             <div class="anime-card" onclick="openDetail('${anime.id}')">
                 <img src="${anime.image}" alt="${anime.title}" 
@@ -164,6 +212,9 @@ async function searchAnime() {
                 </div>
             </div>
         `).join('');
+
+        // Sembunyikan pagination saat pencarian
+        document.querySelector('.pagination').style.display = 'none';
 
         if (document.getElementById('page-detail').classList.contains('active') ||
             document.getElementById('page-watch').classList.contains('active')) {
@@ -245,7 +296,7 @@ async function openDetail(animeId) {
 }
 
 // ============================================================
-//  WATCH EPISODE
+//  WATCH EPISODE (DENGAN MULTIPLE SOURCES)
 // ============================================================
 function watchEpisode(index) {
     if (!currentEpisodes || currentEpisodes.length === 0) {
@@ -260,8 +311,19 @@ function watchEpisode(index) {
     const episode = currentEpisodes[index];
     currentEpisodeIndex = index;
 
+    // Ambil daftar sumber dari episode
+    currentSources = episode.sources || [];
+    currentSourceIndex = 0;
+
+    // Jika tidak ada sumber, tampilkan pesan
+    if (currentSources.length === 0) {
+        alert('Episode ini belum memiliki link video.');
+        return;
+    }
+
     showPage('page-watch');
 
+    // Update breadcrumb & info
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
     document.getElementById('breadcrumbSeriesLink').textContent = seriesName;
     document.getElementById('breadcrumbSeriesLink').onclick = function(e) {
@@ -270,35 +332,98 @@ function watchEpisode(index) {
     };
     document.getElementById('breadcrumbEpisode').textContent = `Episode ${episode.number}`;
     document.getElementById('episodeSeriesName').textContent = seriesName;
-
     document.getElementById('watchTitle').textContent = `${seriesName} Episode ${episode.number} - ${episode.title || 'Subtitle Indonesia'}`;
     document.getElementById('episodeReleaseDate').innerHTML = `<i class="far fa-calendar-alt"></i> Released on ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
     document.getElementById('episodePostedBy').innerHTML = `<i class="far fa-user"></i> Posted by admin`;
     document.getElementById('episodeSeries').innerHTML = `<i class="fas fa-tv"></i> Series: <span id="episodeSeriesName">${seriesName}</span>`;
+
+    // Update dropdown server
+    updateServerDropdown();
+
+    // Putar video dari sumber pertama
+    playSource(0);
+
+    // Update episode grid dan navigasi
+    updateEpisodeGrid();
+    updateNavButtons();
+}
+
+// ============================================================
+//  UPDATE DROPDOWN SERVER
+// ============================================================
+function updateServerDropdown() {
+    const select = document.getElementById('videoServer');
+    if (!select) return;
+
+    // Kosongkan dropdown
+    select.innerHTML = '';
+
+    if (!currentSources || currentSources.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'Tidak ada server';
+        select.appendChild(option);
+        select.disabled = true;
+        return;
+    }
+
+    // Tambahkan opsi berdasarkan sumber yang tersedia
+    currentSources.forEach((source, idx) => {
+        const option = document.createElement('option');
+        option.value = idx;
+        option.textContent = source.server || 'Server ' + (idx + 1);
+        select.appendChild(option);
+    });
+
+    select.disabled = false;
+    select.value = currentSourceIndex;
+
+    // Sembunyikan selector jika hanya 1 server
+    const selector = document.querySelector('.server-selector');
+    if (selector) {
+        selector.style.display = (currentSources.length <= 1) ? 'none' : 'flex';
+    }
+}
+
+// ============================================================
+//  PUTAR VIDEO DARI SOURCE TERTENTU
+// ============================================================
+function playSource(index) {
+    if (!currentSources || index >= currentSources.length) return;
+
+    const source = currentSources[index];
+    currentSourceIndex = index;
 
     const video = document.getElementById('videoPlayer');
     const videoWrapper = document.querySelector('.video-wrapper');
     video.pause();
     video.src = '';
     video.style.display = 'block';
-    videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
-    const newVideo = document.getElementById('videoPlayer');
 
-    if (episode.url) {
-        const url = episode.url;
-        if (url.includes('ok.ru') || url.includes('youtube') || url.includes('dailymotion') || url.includes('mega.nz')) {
-            videoWrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>`;
-        } else {
-            newVideo.src = url;
-            newVideo.play().catch(e => console.log('Autoplay blocked:', e));
-        }
+    const url = source.url;
+    if (url.includes('ok.ru') || url.includes('youtube') || url.includes('dailymotion') || url.includes('mega.nz')) {
+        videoWrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>`;
     } else {
-        videoWrapper.innerHTML = `<div class="empty-state"><p>Link video tidak tersedia.</p></div>`;
+        videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
+        const newVideo = document.getElementById('videoPlayer');
+        newVideo.src = url;
+        newVideo.play().catch(e => console.log('Autoplay blocked:', e));
     }
 
-    // Update episode grid dan counter
-    updateEpisodeGrid();
-    updateNavButtons();
+    // Update dropdown
+    const select = document.getElementById('videoServer');
+    if (select) select.value = index;
+}
+
+// ============================================================
+//  CHANGE SERVER (dari dropdown)
+// ============================================================
+function changeServer() {
+    const select = document.getElementById('videoServer');
+    const index = parseInt(select.value);
+    if (!isNaN(index) && index >= 0 && index < currentSources.length) {
+        playSource(index);
+    }
 }
 
 // ============================================================
@@ -350,40 +475,22 @@ function updateNavButtons() {
 }
 
 // ============================================================
-//  SERVER SELECTOR
-// ============================================================
-function changeServer() {
-    const select = document.getElementById('videoServer');
-    const server = select.value;
-    localStorage.setItem('preferredServer', server);
-    if (currentEpisodeIndex !== undefined && currentEpisodes.length > 0) {
-        watchEpisode(currentEpisodeIndex);
-    }
-}
-
-// ============================================================
 //  INISIALISASI
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     history.replaceState({ page: 'page-home' }, '', window.location.href);
-    loadAnimeList('all');
+    loadAnimeList('all', 1);
 
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') searchAnime();
     });
 
-    const savedServer = localStorage.getItem('preferredServer');
-    if (savedServer) {
-        const select = document.getElementById('videoServer');
-        if (select) select.value = savedServer;
-    }
-
-    document.getElementById('videoServer')?.addEventListener('change', () => {
-        localStorage.setItem('preferredServer', document.getElementById('videoServer').value);
-    });
+    // Tampilkan pagination saat home
+    document.querySelector('.pagination').style.display = 'flex';
 });
 
 console.log('🚀 AnimeStream siap!');
 console.log('📌 Home → Detail → Watch');
 console.log('📌 Back dari Watch → Detail, Back dari Detail → Home, Back dari Home → keluar.');
-console.log('📌 Episode grid persegi dengan navigasi panah kiri/kanan.');
+console.log('📌 Pagination 24 anime per halaman.');
+console.log('📌 Multiple video sources dinamis.');
