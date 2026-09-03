@@ -1,0 +1,22 @@
+{
+    "anime": [
+        {
+            "id": "renegade-immortal",
+            "title": "Renegade Immortal",
+            "image": "https://via.placeholder.com/300x400/ff4757/fff?text=Renegade+Immortal",
+            "genre": "Donghua, Fantasy"
+        },
+        {
+            "id": "one-piece",
+            "title": "One Piece",
+            "image": "https://via.placeholder.com/300x400/ff6b35/fff?text=One+Piece",
+            "genre": "Shonen, Adventure"
+        },
+        {
+            "id": "naruto",
+            "title": "Naruto",
+            "image": "https://via.placeholder.com/300x400/f39c12/fff?text=Naruto",
+            "genre": "Shonen, Action"
+        }
+    ]
+}
