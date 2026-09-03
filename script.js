@@ -16,7 +16,7 @@ const itemsPerPage = 24;
 let totalPages = 1;
 
 // ============================================================
-//  CEK PLATFORM
+//  CEK PLATFORM (TAMBAH M4UPLOAD & DOODSTREAM)
 // ============================================================
 function isIframeUrl(url) {
     if (!url) return false;
@@ -27,11 +27,14 @@ function isIframeUrl(url) {
            u.includes('youtu.be') ||
            u.includes('mega.nz') ||
            u.includes('drive.google.com') ||
-           u.includes('rumble.com');
+           u.includes('rumble.com') ||
+           u.includes('m4upload.com') ||
+           u.includes('doodstream.com') ||
+           u.includes('dood.to');
 }
 
 // ============================================================
-//  FIX LINK
+//  FIX LINK (TAMBAH M4UPLOAD & DOODSTREAM)
 // ============================================================
 function fixDailymotion(url) {
     if (!url) return url;
@@ -64,12 +67,44 @@ function fixOkru(url) {
 
 function fixRumble(url) {
     if (!url) return url;
-    // Rumble: pastikan pakai /embed/
     if (url.includes('rumble.com/') && !url.includes('embed')) {
         const parts = url.split('/');
         const videoId = parts[parts.length - 1]?.split('?')[0];
         if (videoId) {
             return `https://rumble.com/embed/${videoId}/`;
+        }
+    }
+    return url;
+}
+
+// ★ TAMBAH: FIX M4UPLOAD ★
+function fixM4Upload(url) {
+    if (!url) return url;
+    if (url.includes('m4upload.com/') && !url.includes('/embed/')) {
+        const parts = url.split('/');
+        const id = parts[parts.length - 1]?.split('?')[0];
+        if (id) {
+            return `https://m4upload.com/embed/${id}`;
+        }
+    }
+    return url;
+}
+
+// ★ TAMBAH: FIX DOODSTREAM ★
+function fixDoodstream(url) {
+    if (!url) return url;
+    if (url.includes('doodstream.com/') && !url.includes('/e/')) {
+        const parts = url.split('/');
+        const id = parts[parts.length - 1]?.split('?')[0];
+        if (id) {
+            return `https://doodstream.com/e/${id}`;
+        }
+    }
+    if (url.includes('dood.to/') && !url.includes('/e/')) {
+        const parts = url.split('/');
+        const id = parts[parts.length - 1]?.split('?')[0];
+        if (id) {
+            return `https://dood.to/e/${id}`;
         }
     }
     return url;
@@ -82,6 +117,8 @@ function fixUrl(url) {
     fixed = fixDailymotion(fixed);
     fixed = fixYoutube(fixed);
     fixed = fixRumble(fixed);
+    fixed = fixM4Upload(fixed);
+    fixed = fixDoodstream(fixed);
     return fixed;
 }
 
@@ -112,23 +149,17 @@ function goToDetail() {
 }
 
 // ============================================================
-//  BACK BROWSER (POPSTATE)
+//  BACK BROWSER
 // ============================================================
 window.addEventListener('popstate', function(e) {
     const state = e.state;
-    console.log('popstate:', state);
-
-    if (!state || state.page === 'home') {
-        return;
-    }
-
+    if (!state || state.page === 'home') return;
     if (state.page === 'detail' && state.animeId) {
         currentAnimeId = state.animeId;
         showPage('page-detail');
         openDetail(currentAnimeId);
         return;
     }
-
     if (state.page === 'watch' && state.animeId !== undefined) {
         currentAnimeId = state.animeId;
         currentEpisodeIndex = state.episodeIndex || 0;
@@ -136,7 +167,6 @@ window.addEventListener('popstate', function(e) {
         watchEpisode(currentEpisodeIndex);
         return;
     }
-
     goHome();
 });
 
@@ -170,7 +200,7 @@ async function loadAnimeList(genre = 'all', page = 1) {
         const items = list.slice(start, end);
 
         if (items.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><i class="fas fa-frown"></i><p>Tidak ada donghua.</p></div>`;
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-frown"></i><p>Tidak ada anime.</p></div>`;
             updatePaginationButtons();
             return;
         }
@@ -180,7 +210,7 @@ async function loadAnimeList(genre = 'all', page = 1) {
                 <img src="${a.image}" alt="${a.title}" onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
                 <div class="info">
                     <h3>${a.title}</h3>
-                    <p>${a.genre || 'Donghua'}</p>
+                    <p>${a.genre || 'Anime'}</p>
                 </div>
             </div>
         `).join('');
@@ -246,7 +276,7 @@ async function searchAnime() {
                 <img src="${a.image}" alt="${a.title}" onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
                 <div class="info">
                     <h3>${a.title}</h3>
-                    <p>${a.genre || 'Donghua'}</p>
+                    <p>${a.genre || 'Anime'}</p>
                 </div>
             </div>
         `).join('');
@@ -410,7 +440,7 @@ function updateServerDropdown() {
 }
 
 // ============================================================
-//  ★ PLAY SOURCE (LENGKAP - OK.ru, Rumble, Dailymotion) ★
+//  ★ PLAY SOURCE (TAMBAH M4UPLOAD & DOODSTREAM) ★
 // ============================================================
 function playSource(index) {
     if (!currentSources || index >= currentSources.length) return;
@@ -427,7 +457,23 @@ function playSource(index) {
     let url = source.url;
     const serverName = source.server || '';
 
-    // ★ FIX OK.ru ★
+    // ★ M4UPLOAD ★
+    if (serverName === 'M4Upload' || url.includes('m4upload.com')) {
+        url = fixM4Upload(url);
+        wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
+        console.log('✅ Memutar M4Upload:', url);
+        return;
+    }
+
+    // ★ DOODSTREAM ★
+    if (serverName === 'Doodstream' || url.includes('doodstream.com') || url.includes('dood.to')) {
+        url = fixDoodstream(url);
+        wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;" allow="autoplay; encrypted-media; fullscreen"></iframe>`;
+        console.log('✅ Memutar Doodstream:', url);
+        return;
+    }
+
+    // ★ OK.ru ★
     if (serverName === 'OK.ru' || url.includes('ok.ru')) {
         if (url.includes('ok.ru/video/') && !url.includes('videoembed')) {
             url = url.replace('ok.ru/video/', 'ok.ru/videoembed/');
@@ -448,21 +494,15 @@ function playSource(index) {
         return;
     }
 
-    // ★ FIX Rumble ★
+    // ★ Rumble ★
     if (serverName === 'Rumble' || url.includes('rumble.com')) {
-        if (!url.includes('embed')) {
-            const parts = url.split('/');
-            const videoId = parts[parts.length - 1]?.split('?')[0];
-            if (videoId) {
-                url = `https://rumble.com/embed/${videoId}/`;
-            }
-        }
+        url = fixRumble(url);
         wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
         console.log('✅ Memutar Rumble:', url);
         return;
     }
 
-    // ★ FIX Dailymotion ★
+    // ★ Dailymotion ★
     if (serverName === 'Dailymotion' || url.includes('dailymotion.com')) {
         url = fixDailymotion(url);
         wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
@@ -493,7 +533,7 @@ function playSource(index) {
 }
 
 // ============================================================
-//  CHANGE SERVER (dari dropdown)
+//  CHANGE SERVER
 // ============================================================
 function changeServer() {
     const select = document.getElementById('videoServer');
@@ -533,4 +573,42 @@ function updateEpisodeGrid() {
 function navigateEpisode(direction) {
     if (!currentEpisodes || currentEpisodes.length === 0) return;
 
-    let newIndex = cur
+    let newIndex = currentEpisodeIndex + direction;
+    if (newIndex < 0) newIndex = 0;
+    if (newIndex >= currentEpisodes.length) newIndex = currentEpisodes.length - 1;
+    if (newIndex === currentEpisodeIndex) return;
+
+    watchEpisode(newIndex);
+}
+
+function updateNavButtons() {
+    const prev = document.getElementById('prevEpBtn');
+    const next = document.getElementById('nextEpBtn');
+    if (!prev || !next) return;
+    if (!currentEpisodes || currentEpisodes.length === 0) {
+        prev.disabled = true;
+        next.disabled = true;
+        return;
+    }
+    prev.disabled = (currentEpisodeIndex <= 0);
+    next.disabled = (currentEpisodeIndex >= currentEpisodes.length - 1);
+}
+
+// ============================================================
+//  INISIALISASI
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+    history.replaceState({ page: 'home' }, '', window.location.href);
+    loadAnimeList('all', 1);
+
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') searchAnime();
+    });
+
+    document.querySelector('.pagination').style.display = 'flex';
+});
+
+console.log('🚀 Anime siap!');
+console.log('📌 Support: OK.ru, Dailymotion, Rumble, YouTube, Mega, Google Drive, M4Upload, Doodstream.');
+console.log('📌 Alur navigasi: Home → Detail → Watch');
+console.log('📌 Back: Watch → Detail → Home → keluar (sekali)');
