@@ -6,6 +6,9 @@ let currentEpisodes = [];
 let currentEpisodeIndex = 0;
 let currentGenre = 'all';
 let currentAnimeTitle = '';
+let backCount = 0;
+let backTimer = null;
+let isPopState = false;
 
 // ============================================================
 //  NAVIGASI
@@ -19,8 +22,8 @@ function showPage(pageId) {
         nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
     }
 
-    // Push state hanya jika bukan Home
-    if (pageId !== 'page-home') {
+    // Push state hanya jika bukan dari popstate
+    if (!isPopState && pageId !== 'page-home') {
         const stateData = { page: pageId };
         if (pageId === 'page-detail' && currentAnimeId) {
             stateData.animeId = currentAnimeId;
@@ -31,14 +34,23 @@ function showPage(pageId) {
         }
         history.pushState(stateData, '', window.location.href);
     }
+    // Reset flag
+    isPopState = false;
 }
 
 function goHome() {
-    // Replace state Home agar back dari Home langsung keluar
-    history.replaceState({ page: 'page-home' }, '', window.location.href);
+    // Jika dari Detail/Watch ke Home, push state Home agar back dari Home tidak langsung keluar
+    // Tapi jika sudah di Home, tidak perlu push
+    const currentPage = document.querySelector('.page.active');
+    if (currentPage && currentPage.id !== 'page-home') {
+        history.pushState({ page: 'page-home' }, '', window.location.href);
+    }
     showPage('page-home');
     loadAnimeList(currentGenre);
     currentAnimeId = null;
+    // Reset double tap counter saat kembali ke Home
+    backCount = 0;
+    clearTimeout(backTimer);
 }
 
 function goToDetail() {
@@ -51,26 +63,95 @@ function goToDetail() {
 }
 
 // ============================================================
+//  TOAST NOTIFIKASI (UNTUK DOUBLE TAP)
+// ============================================================
+function showToast(message) {
+    // Cek apakah sudah ada toast, jika ada hapus
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) existingToast.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1a1a2e;
+        color: #e8e8e8;
+        padding: 12px 24px;
+        border-radius: 12px;
+        border: 1px solid #ff4757;
+        font-size: 14px;
+        z-index: 9999;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        animation: fadeInUp 0.3s ease;
+        text-align: center;
+        max-width: 90%;
+    `;
+    document.body.appendChild(toast);
+
+    // Hilangkan setelah 2 detik
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
+}
+
+// Tambahkan keyframe animation jika belum ada
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+`;
+document.head.appendChild(style);
+
+// ============================================================
 //  TANGANI BACK BROWSER (POPSTATE)
 // ============================================================
 window.addEventListener('popstate', function(event) {
     const state = event.state;
 
-    // Jika state null atau state Home, biarkan browser keluar
-    if (!state || state.page === 'page-home') {
-        return; // Browser akan keluar dari website
+    // Jika state null (initial load), biarkan browser
+    if (!state) return;
+
+    // Jika state Home -> double tap
+    if (state.page === 'page-home') {
+        if (backCount === 0) {
+            backCount++;
+            // Push state Home lagi agar tidak keluar
+            history.pushState({ page: 'page-home' }, '', window.location.href);
+            showToast('Tekan back sekali lagi untuk keluar');
+            // Reset counter setelah 500ms
+            clearTimeout(backTimer);
+            backTimer = setTimeout(() => {
+                backCount = 0;
+            }, 500);
+            return;
+        } else {
+            // Back kedua, biarkan browser keluar
+            // Hapus state Home agar tidak kembali ke Home setelah keluar
+            history.replaceState(null, '', window.location.href);
+            return;
+        }
     }
 
-    // Jika state Detail, kembali ke Detail
+    // Jika state Detail
     if (state.page === 'page-detail' && state.animeId) {
+        isPopState = true;
         currentAnimeId = state.animeId;
         showPage('page-detail');
         openDetail(currentAnimeId);
         return;
     }
 
-    // Jika state Watch, kembali ke Watch (tapi seharusnya tidak terjadi karena back dari Watch akan ke Detail)
+    // Jika state Watch
     if (state.page === 'page-watch' && state.animeId) {
+        isPopState = true;
         currentAnimeId = state.animeId;
         currentEpisodeIndex = state.episodeIndex || 0;
         showPage('page-watch');
@@ -78,7 +159,8 @@ window.addEventListener('popstate', function(event) {
         return;
     }
 
-    // Fallback: kembali ke Home
+    // Fallback: jika state tidak dikenal, kembali ke Home
+    isPopState = true;
     goHome();
 });
 
@@ -394,4 +476,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 console.log('🚀 AnimeStream siap!');
 console.log('📌 Home → Detail → Watch, Back kembali ke Detail.');
-console.log('📌 Dari Home, Back keluar dari website.');
+console.log('📌 Dari Home, back pertama = notifikasi, back kedua = keluar.');
