@@ -12,7 +12,14 @@
     <!-- ==================== HEADER ==================== -->
     <header>
         <div class="header-top">
-            <div class="logo"><span>DONGZE</span></div>
+            <div class="logo">
+                <span class="red">D</span>
+                <span class="blue">O</span>
+                <span class="red">N</span>
+                <span class="blue">G</span>
+                <span class="red">Z</span>
+                <span class="blue">E</span>
+            </div>
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Cari donghua..." onkeyup="searchAnime()">
                 <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
@@ -109,14 +116,14 @@
                     </div>
                 </div>
 
-                <!-- ★ TOMBOL PANAH + COUNTER ★ -->
+                <!-- TOMBOL PANAH + COUNTER -->
                 <div class="watch-nav">
                     <button id="prevEpBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i></button>
                     <span id="episodeCounter">1 / 10</span>
                     <button id="nextEpBtn" onclick="navigateEpisode(1)"><i class="fas fa-chevron-right"></i></button>
                 </div>
 
-                <!-- ★ GRID EPISODE PERSEGI ★ -->
+                <!-- GRID EPISODE PERSEGI -->
                 <div class="episode-sidebar">
                     <h3><i class="fas fa-list-ul"></i> Daftar Episode</h3>
                     <div id="episodeGrid" class="episode-grid"></div>
