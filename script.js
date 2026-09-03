@@ -8,20 +8,19 @@ let currentGenre = 'all';
 let currentAnimeTitle = '';
 
 // ============================================================
-//  NAVIGASI DENGAN BACK BROWSER (SEKALI LANGSUNG KELUAR)
+//  NAVIGASI DENGAN BACK BROWSER (SEKALI LANGSUNG KELUAR DARI HOME)
 // ============================================================
+
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 
-    // Sembunyikan/munculkan navigasi utama
     const nav = document.getElementById('mainNav');
     if (nav) {
         nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
     }
 
-    // ★ PUSH STATE HANYA JIKA BUKAN HOME ★
-    // Dengan ini, dari Home back sekali langsung keluar
+    // Hanya push state jika bukan Home
     if (pageId !== 'page-home') {
         history.pushState({ page: pageId, animeId: currentAnimeId }, '', window.location.href);
     }
@@ -32,15 +31,8 @@ function goHome() {
     loadAnimeList(currentGenre);
     currentAnimeId = null;
     
-    // ★ REPLACE STATE AGAR HISTORY TIDAK NUMBUK ★
-    // Saat kembali ke Home, ganti state terakhir dengan state Home
-    // sehingga back dari Home langsung keluar
-    if (window.history.state && window.history.state.page !== 'page-home') {
-        history.replaceState({ page: 'page-home' }, '', window.location.href);
-    } else {
-        // Jika tidak ada state, replace dengan state Home
-        history.replaceState({ page: 'page-home' }, '', window.location.href);
-    }
+    // Replace state agar back dari Home langsung keluar
+    history.replaceState({ page: 'page-home' }, '', window.location.href);
 }
 
 function goToDetail() {
@@ -57,25 +49,28 @@ function goToDetail() {
 // ============================================================
 window.addEventListener('popstate', function(event) {
     const state = event.state;
+    
     if (state && state.page === 'page-home') {
-        // Jika state Home, biarkan browser menangani (keluar atau ke sebelumnya)
-        // Tidak perlu intervensi
-        return;
+        return; // Biarkan browser keluar dari website
     }
+    
     if (state && state.page === 'page-detail' && state.animeId) {
         currentAnimeId = state.animeId;
         showPage('page-detail');
         openDetail(currentAnimeId);
-    } else if (state && state.page === 'page-watch' && state.animeId) {
+        return;
+    }
+    
+    if (state && state.page === 'page-watch' && state.animeId) {
         currentAnimeId = state.animeId;
         showPage('page-watch');
         if (currentEpisodeIndex !== undefined) {
             watchEpisode(currentEpisodeIndex);
         }
-    } else {
-        // Jika state tidak dikenal, kembali ke Home
-        goHome();
+        return;
     }
+    
+    goHome();
 });
 
 // ============================================================
