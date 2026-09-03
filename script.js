@@ -180,11 +180,18 @@ async function openDetail(animeId) {
 }
 
 // ============================================================
+// ============================================================
 //  WATCH EPISODE
 // ============================================================
 function watchEpisode(index) {
-    if (!currentEpisodes || index >= currentEpisodes.length) {
-        alert('Episode tidak tersedia!');
+    // Cek apakah currentEpisodes ada dan index valid
+    if (!currentEpisodes || currentEpisodes.length === 0) {
+        alert('Tidak ada episode tersedia!');
+        return;
+    }
+    
+    if (index < 0 || index >= currentEpisodes.length) {
+        alert('Episode tidak valid!');
         return;
     }
 
@@ -198,18 +205,23 @@ function watchEpisode(index) {
     const videoWrapper = document.querySelector('.video-wrapper');
 
     // Reset player
-    video.pause();
-    video.src = '';
-    video.style.display = 'block';
+    if (video) {
+        video.pause();
+        video.src = '';
+        video.style.display = 'block';
+    }
+    
+    // Reset wrapper
     videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
     const newVideo = document.getElementById('videoPlayer');
 
+    // Set judul
     titleEl.innerText = `Episode ${episode.number} - ${episode.title || 'Memutar...'}`;
 
     // Cek tipe link
     if (episode.url) {
         const url = episode.url;
-        if (url.includes('ok.ru') || url.includes('youtube') || url.includes('dailymotion')) {
+        if (url.includes('ok.ru') || url.includes('youtube') || url.includes('dailymotion') || url.includes('mega.nz')) {
             // Pakai iframe untuk embed
             videoWrapper.innerHTML = `
                 <iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>
@@ -221,8 +233,10 @@ function watchEpisode(index) {
         }
     } else {
         alert('Link video tidak tersedia!');
+        videoWrapper.innerHTML = `<div class="empty-state"><p>Link video tidak tersedia.</p></div>`;
     }
 
+    // ★ UPDATE TOMBOL NAVIGASI ★
     updateNavButtons();
 }
 
@@ -230,22 +244,48 @@ function watchEpisode(index) {
 //  NAVIGASI EPISODE
 // ============================================================
 function navigateEpisode(direction) {
-    if (!currentEpisodes || currentEpisodes.length === 0) return;
+    // Cek apakah ada episode
+    if (!currentEpisodes || currentEpisodes.length === 0) {
+        alert('Tidak ada episode!');
+        return;
+    }
 
+    // Hitung indeks baru
     let newIndex = currentEpisodeIndex + direction;
-    if (newIndex < 0) newIndex = 0;
-    if (newIndex >= currentEpisodes.length) newIndex = currentEpisodes.length - 1;
+    
+    // Batasi agar tidak keluar dari range
+    if (newIndex < 0) {
+        newIndex = 0;
+        return; // Tidak bisa ke sebelumnya karena sudah episode pertama
+    }
+    if (newIndex >= currentEpisodes.length) {
+        newIndex = currentEpisodes.length - 1;
+        return; // Tidak bisa ke selanjutnya karena sudah episode terakhir
+    }
 
-    if (newIndex === currentEpisodeIndex) return;
-
+    // Panggil watchEpisode dengan indeks baru
     watchEpisode(newIndex);
 }
 
+// ============================================================
+//  UPDATE TOMBOL NAVIGASI
+// ============================================================
 function updateNavButtons() {
     const prevBtn = document.getElementById('prevEpBtn');
     const nextBtn = document.getElementById('nextEpBtn');
-    if (prevBtn) prevBtn.disabled = (currentEpisodeIndex <= 0);
-    if (nextBtn) nextBtn.disabled = (currentEpisodeIndex >= currentEpisodes.length - 1);
+    
+    if (!prevBtn || !nextBtn) return;
+    
+    // Jika tidak ada episode, disable semua
+    if (!currentEpisodes || currentEpisodes.length === 0) {
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        return;
+    }
+    
+    // Disable tombol jika di episode pertama atau terakhir
+    prevBtn.disabled = (currentEpisodeIndex <= 0);
+    nextBtn.disabled = (currentEpisodeIndex >= currentEpisodes.length - 1);
 }
 
 // ============================================================
