@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DONGZE - Nonton Anime & Donghua</title>
+    <title>DonghuaStream - Nonton Donghua</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,16 +12,16 @@
     <!-- ==================== HEADER ==================== -->
     <header>
         <div class="header-top">
-            <div class="logo"><span>Dongze</span>Stream</div>
+            <div class="logo"><span>Donghua</span>Stream</div>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Cari anime atau donghua..." onkeyup="searchAnime()">
+                <input type="text" id="searchInput" placeholder="Cari donghua..." onkeyup="searchAnime()">
                 <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
             </div>
         </div>
         
         <nav class="main-nav" id="mainNav">
             <a href="#" class="active" onclick="goHome()"><i class="fas fa-home"></i> Home</a>
-            <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Anime</a>
+            <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Donghua</a>
             <a href="#" onclick="filterByGenre('donghua')"><i class="fas fa-dragon"></i> Donghua</a>
             <a href="#" onclick="document.querySelector('.genre-filter').scrollIntoView({behavior:'smooth'})"><i class="fas fa-tags"></i> Genre</a>
             <a href="#" onclick="alert('Jadwal rilis akan segera hadir!')"><i class="fas fa-calendar-alt"></i> Jadwal Rilis</a>
@@ -33,7 +33,7 @@
 
         <!-- ==================== HALAMAN HOME ==================== -->
         <div id="page-home" class="page active">
-            <div class="section-title"><i class="fas fa-fire"></i> Update Anime</div>
+            <div class="section-title"><i class="fas fa-fire"></i> Update Donghua</div>
 
             <div class="genre-filter">
                 <button class="genre-btn active" data-genre="all" onclick="filterByGenre('all')">Semua</button>
