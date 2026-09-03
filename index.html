@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DONGZE - Nonton Donghua</title>
+    <title>Anime - Nonton Anime & Donghua</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 
@@ -17,21 +17,17 @@
     <header>
         <div class="header-top">
             <div class="logo">
-                <span class="red">D</span>
-                <span class="blue">O</span>
-                <span class="red">N</span>
-                <span class="blue">G</span>
-                <span class="red">Z</span>
-                <span class="blue">E</span>
+                <span class="blue">A</span><span>n</span><span class="green">i</span><span>me</span>
             </div>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Cari donghua..." onkeyup="searchAnime()">
+                <input type="text" id="searchInput" placeholder="Cari anime..." onkeyup="searchAnime()">
                 <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
             </div>
         </div>
 
         <nav class="main-nav" id="mainNav">
             <a href="#" class="active" onclick="goHome()"><i class="fas fa-home"></i> Home</a>
+            <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Anime</a>
             <a href="#" onclick="filterByGenre('donghua')"><i class="fas fa-dragon"></i> Donghua</a>
             <a href="#" onclick="document.querySelector('.genre-filter').scrollIntoView({behavior:'smooth'})"><i class="fas fa-tags"></i> Genre</a>
             <a href="#" onclick="alert('Jadwal rilis akan segera hadir!')"><i class="fas fa-calendar-alt"></i> Jadwal Rilis</a>
@@ -43,7 +39,7 @@
 
         <!-- ==================== HALAMAN HOME ==================== -->
         <div id="page-home" class="page active">
-            <div class="section-title"><i class="fas fa-fire"></i> Update Donghua</div>
+            <div class="section-title"><i class="fas fa-fire"></i> Update Anime</div>
 
             <div class="genre-filter">
                 <button class="genre-btn active" data-genre="all" onclick="filterByGenre('all')">Semua</button>
@@ -69,10 +65,9 @@
                 <button id="nextPageBtn" onclick="changePage(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
             </div>
 
-            <!-- ★ SEMUA IKLAN DI FOOTER HOME ★ -->
+            <!-- ★ IKLAN BANNER - FOOTER HOME ★ -->
             <div class="ad-footer">
                 <div class="ad-container">
-                    <!-- Banner 320x50 -->
                     <script>
                         atOptions = {
                             'key' : 'a8d36c10a5a6fd39ae4b31451290d5e4',
@@ -85,7 +80,6 @@
                     <script src="https://www.highrevenueformat.com/a8d36c10a5a6fd39ae4b31451290d5e4/invoke.js"></script>
                 </div>
                 <div class="ad-container" style="margin-top:10px;">
-                    <!-- Banner 728x90 -->
                     <script>
                         atOptions = {
                             'key' : '14052f59aafd44c825f42826ef533d62',
@@ -96,19 +90,6 @@
                         };
                     </script>
                     <script src="https://www.highrevenueformat.com/14052f59aafd44c825f42826ef533d62/invoke.js"></script>
-                </div>
-                <div class="ad-container" style="margin-top:10px;">
-                    <!-- Banner 160x600 (tetap di footer) -->
-                    <script>
-                        atOptions = {
-                            'key' : 'ef46de48acff810fc46db39f71ea2f2a',
-                            'format' : 'iframe',
-                            'height' : 600,
-                            'width' : 160,
-                            'params' : {}
-                        };
-                    </script>
-                    <script src="https://www.highrevenueformat.com/ef46de48acff810fc46db39f71ea2f2a/invoke.js"></script>
                 </div>
             </div>
         </div>
@@ -122,10 +103,9 @@
             </div>
             <div id="detailContent"></div>
 
-            <!-- ★ SEMUA IKLAN DI FOOTER DETAIL ★ -->
+            <!-- ★ IKLAN BANNER - FOOTER DETAIL ★ -->
             <div class="ad-footer">
                 <div class="ad-container">
-                    <!-- Banner 468x60 -->
                     <script>
                         atOptions = {
                             'key' : 'd5532a357bb444b2ff669486d54286ba',
@@ -136,19 +116,6 @@
                         };
                     </script>
                     <script src="https://www.highrevenueformat.com/d5532a357bb444b2ff669486d54286ba/invoke.js"></script>
-                </div>
-                <div class="ad-container" style="margin-top:10px;">
-                    <!-- Banner 300x250 (cadangan) -->
-                    <script>
-                        atOptions = {
-                            'key' : '29a2dd6ff32ebb1a28c60c93a4229b4f',
-                            'format' : 'iframe',
-                            'height' : 250,
-                            'width' : 300,
-                            'params' : {}
-                        };
-                    </script>
-                    <script src="https://www.highrevenueformat.com/29a2dd6ff32ebb1a28c60c93a4229b4f/invoke.js"></script>
                 </div>
             </div>
         </div>
@@ -174,8 +141,6 @@
                 <div class="video-wrapper">
                     <video id="videoPlayer" controls autoplay></video>
                 </div>
-
-                <!-- ★ TIDAK ADA IKLAN DI BAWAH VIDEO ★ -->
 
                 <div class="server-selector">
                     <label><i class="fas fa-server"></i> Select Video Server</label>
@@ -204,10 +169,9 @@
                     <div id="episodeGrid" class="episode-grid"></div>
                 </div>
 
-                <!-- ★ SEMUA IKLAN DI FOOTER WATCH ★ -->
+                <!-- ★ IKLAN BANNER - FOOTER WATCH ★ -->
                 <div class="ad-footer">
                     <div class="ad-container">
-                        <!-- Banner 160x300 -->
                         <script>
                             atOptions = {
                                 'key' : '13d64538044a84a2f0831d2769234f44',
@@ -219,25 +183,12 @@
                         </script>
                         <script src="https://www.highrevenueformat.com/13d64538044a84a2f0831d2769234f44/invoke.js"></script>
                     </div>
-                    <div class="ad-container" style="margin-top:10px;">
-                        <!-- Banner 300x250 (cadangan) -->
-                        <script>
-                            atOptions = {
-                                'key' : '29a2dd6ff32ebb1a28c60c93a4229b4f',
-                                'format' : 'iframe',
-                                'height' : 250,
-                                'width' : 300,
-                                'params' : {}
-                            };
-                        </script>
-                        <script src="https://www.highrevenueformat.com/29a2dd6ff32ebb1a28c60c93a4229b4f/invoke.js"></script>
-                    </div>
                 </div>
 
                 <div class="watch-footer">
-                    <p><i class="fas fa-film"></i> Selamat menikmati tayangan donghua favoritmu di <strong>DONGZE</strong>. Nonton gratis, kapan saja, di mana saja! 🎬</p>
-                    <p style="font-size:12px; margin-top:5px; color:#5a5a7a;">
-                        DONGZE © 2026 | All Rights Reserved
+                    <p><i class="fas fa-film"></i> Selamat menikmati tayangan anime favoritmu di <strong>Anime</strong>. Nonton gratis, kapan saja, di mana saja! 🎬</p>
+                    <p style="font-size:12px; margin-top:5px; color:#6c757d;">
+                        Anime © 2026 | All Rights Reserved
                     </p>
                 </div>
             </div>
