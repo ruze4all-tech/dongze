@@ -7,110 +7,79 @@ let currentEpisodeIndex = 0;
 let currentGenre = 'all';
 
 // ============================================================
-//  NAVIGASI BERBASIS HASH
+//  NAVIGASI
 // ============================================================
-function navigateTo(page, data) {
-    let hash = '#home';
-    if (page === 'detail' && data) {
-        hash = `#detail-${data}`;
-    } else if (page === 'watch' && data) {
-        hash = `#watch-${data.animeId}-${data.epIndex}`;
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+
+    // Sembunyikan/munculkan header berdasarkan halaman
+    const header = document.getElementById('mainHeader');
+    if (header) {
+        if (pageId === 'page-home') {
+            header.style.display = 'flex';
+        } else {
+            header.style.display = 'none';
+        }
     }
-    if (window.location.hash !== hash) {
-        window.location.hash = hash;
-    } else {
-        // Jika hash sama, paksa reload konten
-        handleHashChange();
+
+    // Push state hanya jika bukan Home
+    if (pageId !== 'page-home') {
+        const stateData = { page: pageId };
+        if (pageId === 'page-detail' && currentAnimeId) {
+            stateData.animeId = currentAnimeId;
+        }
+        if (pageId === 'page-watch' && currentAnimeId) {
+            stateData.animeId = currentAnimeId;
+            stateData.episodeIndex = currentEpisodeIndex;
+        }
+        history.pushState(stateData, '', window.location.href);
     }
 }
 
 function goHome() {
-    navigateTo('home');
+    history.replaceState({ page: 'page-home' }, '', window.location.href);
+    showPage('page-home');
+    loadAnimeList(currentGenre);
+    currentAnimeId = null;
 }
 
-function goToDetail(animeId) {
-    currentAnimeId = animeId;
-    navigateTo('detail', animeId);
-}
-
-function goToWatch(epIndex) {
+function goToDetail() {
     if (currentAnimeId) {
-        navigateTo('watch', { animeId: currentAnimeId, epIndex: epIndex });
-    }
-}
-
-// ============================================================
-//  TANGANI PERUBAHAN HASH
-// ============================================================
-function handleHashChange() {
-    const hash = window.location.hash || '#home';
-    const parts = hash.split('-');
-
-    if (hash === '#home' || hash === '') {
-        showPage('page-home');
-        loadAnimeList(currentGenre);
-        currentAnimeId = null;
-        return;
-    }
-
-    if (parts[0] === '#detail' && parts[1]) {
-        const animeId = parts[1];
-        currentAnimeId = animeId;
         showPage('page-detail');
-        openDetail(animeId);
-        return;
-    }
-
-    if (parts[0] === '#watch' && parts[1] && parts[2]) {
-        const animeId = parts[1];
-        const epIndex = parseInt(parts[2], 10);
-        if (!isNaN(epIndex)) {
-            currentAnimeId = animeId;
-            currentEpisodeIndex = epIndex;
-            showPage('page-watch');
-            // Load detail dulu biar currentEpisodes terisi
-            loadDetailForWatch(animeId, epIndex);
-        }
-        return;
-    }
-
-    // Fallback ke home
-    navigateTo('home');
-}
-
-// ============================================================
-//  FUNGSI BANTU UNTUK WATCH
-// ============================================================
-async function loadDetailForWatch(animeId, epIndex) {
-    try {
-        const epRes = await fetch(`${animeId}/episodes.json`);
-        if (!epRes.ok) throw new Error('Episodes not found');
-        const epData = await epRes.json();
-        currentEpisodes = epData.episodes || [];
-        if (currentEpisodes.length > 0 && epIndex < currentEpisodes.length) {
-            watchEpisode(epIndex);
-        } else {
-            alert('Episode tidak ditemukan');
-            goHome();
-        }
-    } catch (error) {
-        console.error('Error loading episodes:', error);
-        alert('Gagal memuat episode');
+        openDetail(currentAnimeId);
+    } else {
         goHome();
     }
 }
 
 // ============================================================
-//  SHOW PAGE
+//  TANGANI BACK BROWSER (POPSTATE)
 // ============================================================
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    const nav = document.getElementById('mainNav');
-    if (nav) {
-        nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
+window.addEventListener('popstate', function(event) {
+    const state = event.state;
+
+    if (!state || state.page === 'page-home') {
+        return;
     }
-}
+
+    if (state.page === 'page-detail' && state.animeId) {
+        currentAnimeId = state.animeId;
+        showPage('page-detail');
+        openDetail(currentAnimeId);
+        return;
+    }
+
+    if (state.page === 'page-watch' && state.animeId) {
+        currentAnimeId = state.animeId;
+        currentEpisodeIndex = state.episodeIndex || 0;
+        showPage('page-watch');
+        watchEpisode(currentEpisodeIndex);
+        return;
+    }
+
+    goHome();
+});
 
 // ============================================================
 //  LOAD DAFTAR ANIME
@@ -139,7 +108,7 @@ async function loadAnimeList(genre = 'all') {
         }
 
         grid.innerHTML = animeList.map(anime => `
-            <div class="anime-card" onclick="goToDetail('${anime.id}')">
+            <div class="anime-card" onclick="openDetail('${anime.id}')">
                 <img src="${anime.image}" alt="${anime.title}" 
                      onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
                 <div class="info">
@@ -196,7 +165,7 @@ async function searchAnime() {
         }
 
         grid.innerHTML = results.map(anime => `
-            <div class="anime-card" onclick="goToDetail('${anime.id}')">
+            <div class="anime-card" onclick="openDetail('${anime.id}')">
                 <img src="${anime.image}" alt="${anime.title}" 
                      onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
                 <div class="info">
@@ -217,6 +186,9 @@ async function searchAnime() {
 //  OPEN DETAIL
 // ============================================================
 async function openDetail(animeId) {
+    currentAnimeId = animeId;
+    showPage('page-detail');
+
     const container = document.getElementById('detailContent');
     container.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
 
@@ -240,7 +212,7 @@ async function openDetail(animeId) {
         let episodeButtons = '';
         if (currentEpisodes.length > 0) {
             episodeButtons = currentEpisodes.map((ep, idx) => `
-                <div class="episode-btn" onclick="goToWatch(${idx})">
+                <div class="episode-btn" onclick="watchEpisode(${idx})">
                     EP ${ep.number} ${ep.title ? '- ' + ep.title : ''}
                 </div>
             `).join('');
@@ -272,7 +244,7 @@ async function openDetail(animeId) {
             seriesLink.textContent = info.title;
             seriesLink.onclick = function(e) {
                 e.preventDefault();
-                goToDetail(currentAnimeId);
+                goToDetail();
             };
         }
 
@@ -298,11 +270,13 @@ function watchEpisode(index) {
     const episode = currentEpisodes[index];
     currentEpisodeIndex = index;
 
+    showPage('page-watch');
+
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
     document.getElementById('breadcrumbSeriesLink').textContent = seriesName;
     document.getElementById('breadcrumbSeriesLink').onclick = function(e) {
         e.preventDefault();
-        goToDetail(currentAnimeId);
+        goToDetail();
     };
     document.getElementById('breadcrumbEpisode').textContent = `Episode ${episode.number}`;
     document.getElementById('episodeSeriesName').textContent = seriesName;
@@ -344,7 +318,7 @@ function updateEpisodeSidebar() {
     if (!sidebar || !currentEpisodes) return;
 
     sidebar.innerHTML = currentEpisodes.map((ep, idx) => `
-        <div class="episode-item ${idx === currentEpisodeIndex ? 'active' : ''}" onclick="goToWatch(${idx})">
+        <div class="episode-item ${idx === currentEpisodeIndex ? 'active' : ''}" onclick="watchEpisode(${idx})">
             <span class="ep-number">Episode ${ep.number}</span>
             <span class="ep-title">${ep.title || 'Subtitle Indonesia'}</span>
             <span class="ep-date">${new Date().toLocaleDateString('id-ID')}</span>
@@ -360,7 +334,7 @@ function navigateEpisode(direction) {
     if (newIndex >= currentEpisodes.length) newIndex = currentEpisodes.length - 1;
     if (newIndex === currentEpisodeIndex) return;
 
-    goToWatch(newIndex);
+    watchEpisode(newIndex);
 }
 
 function updateNavButtons() {
@@ -384,22 +358,16 @@ function changeServer() {
     const server = select.value;
     localStorage.setItem('preferredServer', server);
     if (currentEpisodeIndex !== undefined && currentEpisodes.length > 0) {
-        goToWatch(currentEpisodeIndex);
+        watchEpisode(currentEpisodeIndex);
     }
 }
 
 // ============================================================
 //  INISIALISASI
 // ============================================================
-window.addEventListener('hashchange', handleHashChange);
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Set hash default jika kosong
-    if (!window.location.hash || window.location.hash === '') {
-        window.location.hash = '#home';
-    }
-    // Proses hash awal
-    handleHashChange();
+    history.replaceState({ page: 'page-home' }, '', window.location.href);
+    loadAnimeList('all');
 
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') searchAnime();
@@ -416,6 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-console.log('🚀 AnimeStream siap (hash-based navigation)');
-console.log('📌 URL hash: #home, #detail-{id}, #watch-{id}-{ep}');
-console.log('📌 Back browser bekerja normal seperti browser biasa.');
+console.log('🚀 AnimeStream siap!');
+console.log('📌 Header muncul hanya di Home.');
+console.log('📌 Back: Watch → Detail → Home → keluar.');
