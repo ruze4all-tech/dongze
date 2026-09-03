@@ -16,7 +16,13 @@ const itemsPerPage = 24;
 let totalPages = 1;
 
 // ============================================================
-//  FUNGSI CEK PLATFORM
+//  ELEMEN VIDEO (DISIMPAN GLOBAL)
+// ============================================================
+let videoElement = null;
+let videoWrapper = null;
+
+// ============================================================
+//  CEK PLATFORM
 // ============================================================
 function isIframeUrl(url) {
     if (!url) return false;
@@ -71,7 +77,7 @@ function fixUrl(url) {
 }
 
 // ============================================================
-//  NAVIGASI
+//  NAVIGASI HALAMAN
 // ============================================================
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -309,8 +315,6 @@ async function openDetail(animeId) {
 //  ★ WATCH EPISODE (DIPERBAIKI) ★
 // ============================================================
 function watchEpisode(index) {
-    console.log('watchEpisode dipanggil dengan index:', index);
-    
     if (!currentEpisodes || currentEpisodes.length === 0) {
         alert('Tidak ada episode!');
         return;
@@ -321,9 +325,9 @@ function watchEpisode(index) {
     }
 
     const ep = currentEpisodes[index];
-    currentEpisodeIndex = index; // ★ UPDATE INDEX ★
-    console.log('currentEpisodeIndex sekarang:', currentEpisodeIndex);
+    currentEpisodeIndex = index;
 
+    // Siapkan sumber
     if (ep.sources && ep.sources.length > 0) {
         currentSources = ep.sources;
     } else if (ep.url) {
@@ -336,6 +340,7 @@ function watchEpisode(index) {
 
     showPage('page-watch');
 
+    // Update info
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
     document.getElementById('breadcrumbSeriesLink').textContent = seriesName;
     document.getElementById('breadcrumbSeriesLink').onclick = function(e) { e.preventDefault(); goToDetail(); };
@@ -346,11 +351,11 @@ function watchEpisode(index) {
     document.getElementById('episodePostedBy').innerHTML = `<i class="far fa-user"></i> Posted by admin`;
     document.getElementById('episodeSeries').innerHTML = `<i class="fas fa-tv"></i> Series: <span id="episodeSeriesName">${seriesName}</span>`;
 
+    // Update dropdown & putar
     updateServerDropdown();
     playSource(0);
     updateEpisodeGrid();
-    updateNavButtons(); // ★ PASTIKAN DIPANGGIL ★
-    console.log('updateNavButtons dipanggil');
+    updateNavButtons();
 }
 
 // ============================================================
@@ -381,7 +386,7 @@ function updateServerDropdown() {
 }
 
 // ============================================================
-//  PLAY SOURCE
+//  ★ PLAY SOURCE (TANPA MENGHILANGKAN VIDEO) ★
 // ============================================================
 function playSource(index) {
     if (!currentSources || index >= currentSources.length) return;
@@ -389,23 +394,25 @@ function playSource(index) {
     const source = currentSources[index];
     currentSourceIndex = index;
 
-    const video = document.getElementById('videoPlayer');
+    // Ambil elemen wrapper dan video
     const wrapper = document.querySelector('.video-wrapper');
-    if (!video || !wrapper) return;
-
-    video.pause();
-    video.src = '';
-    video.style.display = 'block';
+    if (!wrapper) {
+        console.error('Video wrapper tidak ditemukan!');
+        return;
+    }
 
     let url = source.url;
     url = fixUrl(url);
 
     const useIframe = isIframeUrl(url);
 
+    // Bersihkan wrapper (tapi pertahankan elemen video jika perlu)
+    // Kita akan buat ulang konten wrapper dengan iframe atau video tag
     if (useIframe) {
         wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
     } else {
-        wrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
+        // Untuk video langsung, kita buat video tag baru
+        wrapper.innerHTML = `<video id="videoPlayer" controls autoplay style="width:100%;height:100%;display:block;"></video>`;
         const newVideo = document.getElementById('videoPlayer');
         if (newVideo) {
             newVideo.src = url;
@@ -413,6 +420,7 @@ function playSource(index) {
         }
     }
 
+    // Update dropdown
     const select = document.getElementById('videoServer');
     if (select) select.value = index;
 }
@@ -426,7 +434,7 @@ function changeServer() {
 }
 
 // ============================================================
-//  ★ UPDATE EPISODE GRID ★
+//  UPDATE EPISODE GRID
 // ============================================================
 function updateEpisodeGrid() {
     const grid = document.getElementById('episodeGrid');
@@ -453,33 +461,13 @@ function updateEpisodeGrid() {
 //  ★ NAVIGASI EPISODE (DIPERBAIKI) ★
 // ============================================================
 function navigateEpisode(direction) {
-    console.log('navigateEpisode dipanggil, direction:', direction);
-    console.log('currentEpisodeIndex:', currentEpisodeIndex);
-    console.log('total episodes:', currentEpisodes.length);
-    
-    if (!currentEpisodes || currentEpisodes.length === 0) {
-        console.log('Tidak ada episode!');
-        return;
-    }
+    if (!currentEpisodes || currentEpisodes.length === 0) return;
     
     let newIndex = currentEpisodeIndex + direction;
-    console.log('newIndex sebelum dibatasi:', newIndex);
+    if (newIndex < 0) newIndex = 0;
+    if (newIndex >= currentEpisodes.length) newIndex = currentEpisodes.length - 1;
+    if (newIndex === currentEpisodeIndex) return;
     
-    if (newIndex < 0) {
-        newIndex = 0;
-        console.log('newIndex dibatasi ke 0 (awal)');
-    }
-    if (newIndex >= currentEpisodes.length) {
-        newIndex = currentEpisodes.length - 1;
-        console.log('newIndex dibatasi ke akhir:', newIndex);
-    }
-    
-    if (newIndex === currentEpisodeIndex) {
-        console.log('newIndex sama dengan currentEpisodeIndex, tidak ada perubahan');
-        return;
-    }
-    
-    console.log('Memanggil watchEpisode dengan index:', newIndex);
     watchEpisode(newIndex);
 }
 
@@ -489,25 +477,14 @@ function navigateEpisode(direction) {
 function updateNavButtons() {
     const prev = document.getElementById('prevEpBtn');
     const next = document.getElementById('nextEpBtn');
-    console.log('updateNavButtons - prev:', prev, 'next:', next);
-    console.log('currentEpisodeIndex:', currentEpisodeIndex);
-    console.log('total episodes:', currentEpisodes.length);
-    
-    if (!prev || !next) {
-        console.log('Tombol tidak ditemukan!');
-        return;
-    }
-    
+    if (!prev || !next) return;
     if (!currentEpisodes || currentEpisodes.length === 0) {
         prev.disabled = true;
         next.disabled = true;
-        console.log('Tidak ada episode, tombol disabled');
         return;
     }
-    
     prev.disabled = (currentEpisodeIndex <= 0);
     next.disabled = (currentEpisodeIndex >= currentEpisodes.length - 1);
-    console.log('prev.disabled:', prev.disabled, 'next.disabled:', next.disabled);
 }
 
 // ============================================================
@@ -522,4 +499,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.pagination').style.display = 'flex';
 });
 
-console.log('🚀 DONGZE siap!'
+console.log('🚀 DONGZE siap!');
+console.log('📌 Navigasi episode sudah diperbaiki.');
+console.log('📌 Video tidak hilang saat ganti episode.');
