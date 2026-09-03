@@ -7,7 +7,6 @@ let currentEpisodeIndex = 0;
 let currentGenre = 'all';
 let currentSources = [];
 let currentSourceIndex = 0;
-let isPopState = false;
 
 // ============================================================
 //  PAGINATION
@@ -22,12 +21,13 @@ let totalPages = 1;
 function isIframeUrl(url) {
     if (!url) return false;
     const u = url.toLowerCase();
-    return u.includes('dailymotion.com') || 
-           u.includes('ok.ru') || 
-           u.includes('youtube.com') || 
+    return u.includes('dailymotion.com') ||
+           u.includes('ok.ru') ||
+           u.includes('youtube.com') ||
            u.includes('youtu.be') ||
            u.includes('mega.nz') ||
-           u.includes('drive.google.com');
+           u.includes('drive.google.com') ||
+           u.includes('rumble.com');
 }
 
 // ============================================================
@@ -62,12 +62,26 @@ function fixOkru(url) {
     return url;
 }
 
+function fixRumble(url) {
+    if (!url) return url;
+    // Rumble: pastikan pakai /embed/
+    if (url.includes('rumble.com/') && !url.includes('embed')) {
+        const parts = url.split('/');
+        const videoId = parts[parts.length - 1]?.split('?')[0];
+        if (videoId) {
+            return `https://rumble.com/embed/${videoId}/`;
+        }
+    }
+    return url;
+}
+
 function fixUrl(url) {
     if (!url) return url;
     let fixed = url;
     fixed = fixOkru(fixed);
     fixed = fixDailymotion(fixed);
     fixed = fixYoutube(fixed);
+    fixed = fixRumble(fixed);
     return fixed;
 }
 
@@ -82,7 +96,6 @@ function showPage(pageId) {
 }
 
 function goHome() {
-    // ★ SET STATE HOME ★
     history.replaceState({ page: 'home' }, '', window.location.href);
     showPage('page-home');
     loadAnimeList(currentGenre, 1);
@@ -105,48 +118,26 @@ window.addEventListener('popstate', function(e) {
     const state = e.state;
     console.log('popstate:', state);
 
-    isPopState = true;
-
-    // ★ Jika state Home, kembali ke Home ★
-    if (state && state.page === 'home') {
-        console.log('State Home, kembali ke Home');
-        goHome();
-        isPopState = false;
+    if (!state || state.page === 'home') {
         return;
     }
 
-    // Jika state null, biarkan browser keluar
-    if (!state) {
-        console.log('State null, biarkan browser keluar');
-        isPopState = false;
-        return;
-    }
-
-    // Jika state Detail
     if (state.page === 'detail' && state.animeId) {
-        console.log('State Detail, kembali ke Detail');
         currentAnimeId = state.animeId;
         showPage('page-detail');
         openDetail(currentAnimeId);
-        isPopState = false;
         return;
     }
 
-    // Jika state Watch
     if (state.page === 'watch' && state.animeId !== undefined) {
-        console.log('State Watch, kembali ke Watch');
         currentAnimeId = state.animeId;
         currentEpisodeIndex = state.episodeIndex || 0;
         showPage('page-watch');
         watchEpisode(currentEpisodeIndex);
-        isPopState = false;
         return;
     }
 
-    // Fallback ke Home
-    console.log('Fallback ke Home');
     goHome();
-    isPopState = false;
 });
 
 // ============================================================
@@ -273,11 +264,7 @@ async function searchAnime() {
 async function openDetail(animeId) {
     currentAnimeId = animeId;
     showPage('page-detail');
-
-    // ★ PUSH STATE DETAIL (jika bukan dari popstate) ★
-    if (!isPopState) {
-        history.pushState({ page: 'detail', animeId: animeId }, '', window.location.href);
-    }
+    history.pushState({ page: 'detail', animeId: animeId }, '', window.location.href);
 
     const container = document.getElementById('detailContent');
     container.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
@@ -356,14 +343,11 @@ function watchEpisode(index) {
     const ep = currentEpisodes[index];
     currentEpisodeIndex = index;
 
-    // ★ PUSH STATE WATCH (jika bukan dari popstate) ★
-    if (!isPopState) {
-        history.pushState({
-            page: 'watch',
-            animeId: currentAnimeId,
-            episodeIndex: index
-        }, '', window.location.href);
-    }
+    history.pushState({
+        page: 'watch',
+        animeId: currentAnimeId,
+        episodeIndex: index
+    }, '', window.location.href);
 
     if (ep.sources && ep.sources.length > 0) {
         currentSources = ep.sources;
@@ -426,7 +410,7 @@ function updateServerDropdown() {
 }
 
 // ============================================================
-//  PLAY SOURCE
+//  ★ PLAY SOURCE (LENGKAP - OK.ru, Rumble, Dailymotion) ★
 // ============================================================
 function playSource(index) {
     if (!currentSources || index >= currentSources.length) return;
@@ -441,12 +425,58 @@ function playSource(index) {
     }
 
     let url = source.url;
-    url = fixUrl(url);
+    const serverName = source.server || '';
 
+    // ★ FIX OK.ru ★
+    if (serverName === 'OK.ru' || url.includes('ok.ru')) {
+        if (url.includes('ok.ru/video/') && !url.includes('videoembed')) {
+            url = url.replace('ok.ru/video/', 'ok.ru/videoembed/');
+        }
+        wrapper.innerHTML = `
+            <iframe 
+                src="${url}" 
+                width="100%" 
+                height="100%" 
+                frameborder="0" 
+                allow="autoplay; encrypted-media; fullscreen" 
+                allowfullscreen 
+                style="border-radius:16px;border:none;"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+            ></iframe>
+        `;
+        console.log('✅ Memutar OK.ru:', url);
+        return;
+    }
+
+    // ★ FIX Rumble ★
+    if (serverName === 'Rumble' || url.includes('rumble.com')) {
+        if (!url.includes('embed')) {
+            const parts = url.split('/');
+            const videoId = parts[parts.length - 1]?.split('?')[0];
+            if (videoId) {
+                url = `https://rumble.com/embed/${videoId}/`;
+            }
+        }
+        wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
+        console.log('✅ Memutar Rumble:', url);
+        return;
+    }
+
+    // ★ FIX Dailymotion ★
+    if (serverName === 'Dailymotion' || url.includes('dailymotion.com')) {
+        url = fixDailymotion(url);
+        wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
+        console.log('✅ Memutar Dailymotion:', url);
+        return;
+    }
+
+    // ★ Platform lain (YouTube, Mega, Google Drive, dll) ★
+    url = fixUrl(url);
     const useIframe = isIframeUrl(url);
 
     if (useIframe) {
         wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
+        console.log('✅ Memutar iframe:', url);
     } else {
         wrapper.innerHTML = `<video id="videoPlayer" controls autoplay style="width:100%;height:100%;display:block;"></video>`;
         const newVideo = document.getElementById('videoPlayer');
@@ -454,12 +484,17 @@ function playSource(index) {
             newVideo.src = url;
             newVideo.play().catch(e => console.log('Autoplay blocked:', e));
         }
+        console.log('🎬 Memutar video tag:', url);
     }
 
+    // Update dropdown
     const select = document.getElementById('videoServer');
     if (select) select.value = index;
 }
 
+// ============================================================
+//  CHANGE SERVER (dari dropdown)
+// ============================================================
 function changeServer() {
     const select = document.getElementById('videoServer');
     const idx = parseInt(select.value);
@@ -498,42 +533,4 @@ function updateEpisodeGrid() {
 function navigateEpisode(direction) {
     if (!currentEpisodes || currentEpisodes.length === 0) return;
 
-    let newIndex = currentEpisodeIndex + direction;
-    if (newIndex < 0) newIndex = 0;
-    if (newIndex >= currentEpisodes.length) newIndex = currentEpisodes.length - 1;
-    if (newIndex === currentEpisodeIndex) return;
-
-    watchEpisode(newIndex);
-}
-
-function updateNavButtons() {
-    const prev = document.getElementById('prevEpBtn');
-    const next = document.getElementById('nextEpBtn');
-    if (!prev || !next) return;
-    if (!currentEpisodes || currentEpisodes.length === 0) {
-        prev.disabled = true;
-        next.disabled = true;
-        return;
-    }
-    prev.disabled = (currentEpisodeIndex <= 0);
-    next.disabled = (currentEpisodeIndex >= currentEpisodes.length - 1);
-}
-
-// ============================================================
-//  INISIALISASI
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-    // ★ SET STATE HOME AWAL ★
-    history.replaceState({ page: 'home' }, '', window.location.href);
-    loadAnimeList('all', 1);
-
-    document.getElementById('searchInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') searchAnime();
-    });
-
-    document.querySelector('.pagination').style.display = 'flex';
-});
-
-console.log('🚀 DONGZE siap!');
-console.log('📌 Alur navigasi: Home → Detail → Watch');
-console.log('📌 Back: Watch → Detail → Home → keluar (sekali)');
+    let newIndex = cur
