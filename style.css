@@ -71,7 +71,7 @@ header {
 .main-nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 25px;
     padding: 4px 0;
     border-top: 1px solid #2a2a3a;
 }
@@ -143,7 +143,7 @@ header {
 .page { display: none; }
 .page.active { display: block; }
 
-/* ========== SECTION TITLE (UPDATE DONGHUA) ========== */
+/* ========== SECTION TITLE ========== */
 .section-title {
     font-size: 20px;
     font-weight: 700;
@@ -234,7 +234,7 @@ header {
     color: #7a7a9a;
 }
 
-/* ========== PAGINATION ========== */
+/* ========== PAGINATION (RAPI) ========== */
 .pagination {
     display: flex;
     align-items: center;
@@ -243,6 +243,7 @@ header {
     margin: 30px 0 10px 0;
     padding: 12px 0;
     border-top: 1px solid #2a2a3a;
+    flex-wrap: wrap;
 }
 .pagination button {
     background: #141425;
@@ -268,7 +269,7 @@ header {
 .pagination #pageInfo {
     font-size: 14px;
     color: #7a7a9a;
-    min-width: 120px;
+    min-width: 100px;
     text-align: center;
 }
 
@@ -341,7 +342,6 @@ header {
     margin-right: 5px;
 }
 
-/* ========== EPISODE LIST (di Detail) ========== */
 .episode-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -374,7 +374,6 @@ header {
 .video-wrapper video { width: 100%; height: 100%; display: block; }
 .video-wrapper iframe { width: 100%; height: 100%; border: none; }
 
-/* ========== SERVER SELECTOR ========== */
 .server-selector {
     display: flex;
     align-items: center;
@@ -405,7 +404,6 @@ header {
 .server-selector select:hover { border-color: #ff4757; }
 .server-selector select option { background: #141425; }
 
-/* ========== EPISODE INFO (di Watch) ========== */
 .episode-info {
     margin: 15px 0;
     padding: 15px 0;
@@ -432,7 +430,6 @@ header {
     align-items: center;
 }
 
-/* ========== WATCH NAV (PANAH) ========== */
 .watch-nav {
     display: flex;
     align-items: center;
@@ -469,7 +466,6 @@ header {
     text-align: center;
 }
 
-/* ========== EPISODE GRID (PERSEGI) ========== */
 .episode-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
@@ -524,7 +520,6 @@ header {
     color: #fff;
 }
 
-/* ========== WATCH FOOTER ========== */
 .watch-footer {
     margin-top: 30px;
     padding: 15px 20px;
@@ -544,7 +539,6 @@ header {
     color: #a0a0c0;
 }
 
-/* ========== LOADING ========== */
 .loader {
     display: flex;
     justify-content: center;
@@ -567,34 +561,41 @@ header {
 }
 .empty-state i { font-size: 40px; margin-bottom: 10px; color: #2a2a3a; }
 
-/* ========== RESPONSIVE ========== */
+/* ========== RESPONSIVE HP (DIPERKECIL) ========== */
 @media (max-width: 768px) {
     header { padding: 6px 15px; }
     .header-top { flex-direction: column; align-items: stretch; gap: 6px; }
-    .search-box input { width: 100%; }
+    .search-box input { width: 100%; font-size: 12px; }
     .search-box { width: 100%; padding: 4px 10px; }
     .main-nav { justify-content: center; gap: 12px; }
     .main-nav a { font-size: 12px; }
+    .main-nav a i { font-size: 11px; }
     .container { padding: 10px 15px; }
     .anime-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+    .anime-card img { height: 220px; }
+    .section-title { font-size: 18px; }
+    .genre-filter { max-height: 100px; padding: 10px 12px; gap: 6px; }
+    .genre-btn { font-size: 11px; padding: 5px 12px; }
+    .pagination { gap: 12px; padding: 10px 0; }
+    .pagination button { font-size: 12px; padding: 6px 14px; }
+    .pagination #pageInfo { font-size: 12px; min-width: 80px; }
     .detail-banner .poster { flex: 0 0 100%; height: 220px; }
     .detail-banner .desc { padding: 15px; }
     .detail-banner .desc h1 { font-size: 22px; }
-    .genre-filter { max-height: 100px; padding: 10px 12px; gap: 6px; }
-    .genre-btn { font-size: 11px; padding: 5px 12px; }
     .episode-grid { grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; }
     .watch-nav button { width: 40px; height: 40px; font-size: 16px; }
     .episode-info .episode-meta { flex-direction: column; gap: 8px; }
     .server-selector { flex-direction: column; align-items: stretch; }
     .breadcrumb { font-size: 12px; flex-wrap: wrap; }
-    .pagination { flex-wrap: wrap; gap: 10px; }
-    .pagination button { font-size: 12px; padding: 6px 14px; }
     .logo { font-size: 20px; }
 }
 
 @media (max-width: 480px) {
     .anime-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
-    .anime-card img { height: 200px; }
-    .section-title { font-size: 18px; }
+    .anime-card img { height: 180px; }
+    .section-title { font-size: 16px; }
     .logo { font-size: 18px; }
-                       }
+    .main-nav a { font-size: 11px; }
+    .pagination button { font-size: 11px; padding: 5px 12px; }
+    .pagination #pageInfo { font-size: 11px; min-width: 70px; }
+}
