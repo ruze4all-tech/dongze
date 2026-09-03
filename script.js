@@ -4,7 +4,7 @@
 let currentAnimeId = null;
 let currentEpisodes = [];
 let currentEpisodeIndex = 0;
-let currentGenre = 'all'; // ← tambahan state genre
+let currentGenre = 'all';
 
 // ============================================================
 //  NAVIGASI
@@ -20,6 +20,28 @@ function goHome() {
 }
 
 // ============================================================
+//  TOGGLE GENRE DROPDOWN
+// ============================================================
+function toggleGenre() {
+    const list = document.getElementById('genreList');
+    const arrow = document.getElementById('genreArrow');
+    list.classList.toggle('open');
+    arrow.classList.toggle('fa-chevron-down');
+    arrow.classList.toggle('fa-chevron-up');
+}
+
+// Tutup dropdown jika klik di luar
+document.addEventListener('click', function(event) {
+    const dropdown = document.querySelector('.genre-dropdown');
+    if (dropdown && !dropdown.contains(event.target)) {
+        document.getElementById('genreList').classList.remove('open');
+        const arrow = document.getElementById('genreArrow');
+        arrow.classList.add('fa-chevron-down');
+        arrow.classList.remove('fa-chevron-up');
+    }
+});
+
+// ============================================================
 //  LOAD DAFTAR ANIME (DENGAN FILTER GENRE)
 // ============================================================
 async function loadAnimeList(genre = 'all') {
@@ -33,7 +55,7 @@ async function loadAnimeList(genre = 'all') {
         const data = await response.json();
         let animeList = data.anime || [];
 
-        // ★ FILTER BERDASARKAN GENRE ★
+        // Filter berdasarkan genre
         if (genre !== 'all') {
             animeList = animeList.filter(anime => {
                 const genres = anime.genre.toLowerCase().split(', ');
@@ -72,12 +94,18 @@ function filterByGenre(genre) {
         btn.classList.toggle('active', btn.dataset.genre === genre);
     });
     
-    // Load ulang anime dengan genre yang dipilih
+    // Tutup dropdown setelah memilih genre
+    document.getElementById('genreList').classList.remove('open');
+    const arrow = document.getElementById('genreArrow');
+    arrow.classList.add('fa-chevron-down');
+    arrow.classList.remove('fa-chevron-up');
+    
+    // Load ulang anime
     loadAnimeList(genre);
 }
 
 // ============================================================
-//  PENCARIAN (Tetap Jalan dengan Filter Genre)
+//  PENCARIAN
 // ============================================================
 async function searchAnime() {
     const query = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -95,7 +123,7 @@ async function searchAnime() {
             a.title.toLowerCase().includes(query)
         );
         
-        // ★ Filter juga berdasarkan genre yang sedang aktif ★
+        // Filter juga berdasarkan genre yang sedang aktif
         if (currentGenre !== 'all') {
             results = results.filter(anime => {
                 const genres = anime.genre.toLowerCase().split(', ');
@@ -133,12 +161,10 @@ async function openDetail(animeId) {
     container.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
 
     try {
-        // Load info
         const infoRes = await fetch(`${animeId}/info.json`);
         if (!infoRes.ok) throw new Error('Info not found');
         const info = await infoRes.json();
 
-        // Load episodes
         const epRes = await fetch(`${animeId}/episodes.json`);
         if (!epRes.ok) throw new Error('Episodes not found');
         const epData = await epRes.json();
@@ -197,22 +223,17 @@ function watchEpisode(index) {
     const titleEl = document.getElementById('watchTitle');
     const videoWrapper = document.querySelector('.video-wrapper');
 
-    // Reset player
     video.pause();
     video.src = '';
 
     titleEl.innerText = `Episode ${episode.number} - ${episode.title || 'Memutar...'}`;
 
-    // Cek apakah link dari OK.ru (iframe) atau video langsung
     if (episode.url && (episode.url.includes('ok.ru') || episode.url.includes('youtube') || episode.url.includes('dailymotion'))) {
-        // Pakai iframe untuk embed
         videoWrapper.innerHTML = `
             <iframe src="${episode.url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>
         `;
-        // Sembunyikan video tag
         video.style.display = 'none';
     } else if (episode.url) {
-        // Direct video (MP4, M3U8, dll)
         videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
         const newVideo = document.getElementById('videoPlayer');
         newVideo.src = episode.url;
@@ -250,7 +271,7 @@ function updateNavButtons() {
 //  INISIALISASI
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    loadAnimeList();
+    loadAnimeList('all');
 
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') searchAnime();
@@ -259,3 +280,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 console.log('🚀 AnimeStream siap!');
 console.log('📁 Sistem folder manual aktif.');
+console.log('🎯 Klik tombol "Genre" untuk memfilter.');
