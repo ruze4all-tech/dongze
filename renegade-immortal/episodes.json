@@ -6,7 +6,7 @@
             "sources": [
                 {
                     "server": "Dailymotion",
-                    "url": "https://www.dailymotion.com/embed/video/x9fvxws"
+                    "url": "https://geo.dailymotion.com/player.html?video=x9fvxws"
                 }
             ]
         }
