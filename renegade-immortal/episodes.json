@@ -3,17 +3,20 @@
         {
             "number": 1,
             "title": "Pertemuan dengan Dao",
-            "url": "https://www.dailymotion.com/embed/video/x84sh87"
-        },
-        {
-            "number": 2,
-            "title": "Kultivasi Awal",
-            "url": "https://www.dailymotion.com/embed/video/x84sh88"
-        },
-        {
-            "number": 3,
-            "title": "Ujian",
-            "url": "https://www.dailymotion.com/embed/video/x84sh89"
+            "sources": [
+                {
+                    "server": "Dailymotion",
+                    "url": "https://www.dailymotion.com/embed/video/x8w5k1g"
+                },
+                {
+                    "server": "OK.ru",
+                    "url": "https://ok.ru/videoembed/5979427044412"
+                },
+                {
+                    "server": "Rumble",
+                    "url": "https://rumble.com/embed/v5x8y9z/"
+                }
+            ]
         }
     ]
 }
