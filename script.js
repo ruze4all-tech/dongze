@@ -547,4 +547,8 @@ function updateEpisodeGrid() {
         return `
             <div class="episode-square ${idx === currentEpisodeIndex ? 'active' : ''}" onclick="watchEpisode(${idx})">
                 <span class="ep-number">${ep.number}</span>
-                <span class="ep-title">${ep.tit
+                <span class="ep-title">${ep.title}</span>
+            </div>
+        `;
+    }).join(''); // Tambahkan .join('') di sini agar tidak ada koma
+}
