@@ -20,28 +20,6 @@ function goHome() {
 }
 
 // ============================================================
-//  TOGGLE GENRE DROPDOWN
-// ============================================================
-function toggleGenre() {
-    const list = document.getElementById('genreList');
-    const arrow = document.getElementById('genreArrow');
-    list.classList.toggle('open');
-    arrow.classList.toggle('fa-chevron-down');
-    arrow.classList.toggle('fa-chevron-up');
-}
-
-// Tutup dropdown jika klik di luar
-document.addEventListener('click', function(event) {
-    const dropdown = document.querySelector('.genre-dropdown');
-    if (dropdown && !dropdown.contains(event.target)) {
-        document.getElementById('genreList').classList.remove('open');
-        const arrow = document.getElementById('genreArrow');
-        arrow.classList.add('fa-chevron-down');
-        arrow.classList.remove('fa-chevron-up');
-    }
-});
-
-// ============================================================
 //  LOAD DAFTAR ANIME (DENGAN FILTER GENRE)
 // ============================================================
 async function loadAnimeList(genre = 'all') {
@@ -51,7 +29,7 @@ async function loadAnimeList(genre = 'all') {
     try {
         const response = await fetch('anime-list.json');
         if (!response.ok) throw new Error('Gagal load anime list');
-        
+
         const data = await response.json();
         let animeList = data.anime || [];
 
@@ -64,13 +42,14 @@ async function loadAnimeList(genre = 'all') {
         }
 
         if (animeList.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><p>Tidak ada anime dengan genre ini.</p></div>`;
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-frown"></i><p>Tidak ada anime dengan genre ini.</p></div>`;
             return;
         }
 
         grid.innerHTML = animeList.map(anime => `
             <div class="anime-card" onclick="openDetail('${anime.id}')">
-                <img src="${anime.image}" alt="${anime.title}" onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/7a849b?text=No+Image'">
+                <img src="${anime.image}" alt="${anime.title}" 
+                     onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/7a849b?text=No+Image'">
                 <div class="info">
                     <h3>${anime.title}</h3>
                     <p>${anime.genre || 'Anime'}</p>
@@ -79,7 +58,7 @@ async function loadAnimeList(genre = 'all') {
         `).join('');
     } catch (error) {
         console.error('Error loading anime list:', error);
-        grid.innerHTML = `<div class="empty-state"><p>Gagal memuat daftar anime.</p></div>`;
+        grid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat daftar anime.</p></div>`;
     }
 }
 
@@ -88,19 +67,13 @@ async function loadAnimeList(genre = 'all') {
 // ============================================================
 function filterByGenre(genre) {
     currentGenre = genre;
-    
+
     // Update class active pada tombol genre
     document.querySelectorAll('.genre-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.genre === genre);
     });
-    
-    // Tutup dropdown setelah memilih genre
-    document.getElementById('genreList').classList.remove('open');
-    const arrow = document.getElementById('genreArrow');
-    arrow.classList.add('fa-chevron-down');
-    arrow.classList.remove('fa-chevron-up');
-    
-    // Load ulang anime
+
+    // Load ulang anime dengan genre yang dipilih
     loadAnimeList(genre);
 }
 
@@ -119,10 +92,10 @@ async function searchAnime() {
     try {
         const response = await fetch('anime-list.json');
         const data = await response.json();
-        let results = data.anime.filter(a => 
+        let results = data.anime.filter(a =>
             a.title.toLowerCase().includes(query)
         );
-        
+
         // Filter juga berdasarkan genre yang sedang aktif
         if (currentGenre !== 'all') {
             results = results.filter(anime => {
@@ -132,13 +105,14 @@ async function searchAnime() {
         }
 
         if (results.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><p>Tidak ada hasil untuk "${query}"</p></div>`;
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>Tidak ada hasil untuk "${query}"</p></div>`;
             return;
         }
 
         grid.innerHTML = results.map(anime => `
             <div class="anime-card" onclick="openDetail('${anime.id}')">
-                <img src="${anime.image}" alt="${anime.title}" onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/7a849b?text=No+Image'">
+                <img src="${anime.image}" alt="${anime.title}" 
+                     onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/7a849b?text=No+Image'">
                 <div class="info">
                     <h3>${anime.title}</h3>
                     <p>${anime.genre || 'Anime'}</p>
@@ -201,7 +175,7 @@ async function openDetail(animeId) {
 
     } catch (error) {
         console.error('Error loading detail:', error);
-        container.innerHTML = `<div class="empty-state"><p>Gagal memuat detail anime.</p><button class="back-btn" onclick="goHome()">Kembali</button></div>`;
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat detail anime.</p><button class="back-btn" onclick="goHome()">Kembali</button></div>`;
     }
 }
 
@@ -223,21 +197,28 @@ function watchEpisode(index) {
     const titleEl = document.getElementById('watchTitle');
     const videoWrapper = document.querySelector('.video-wrapper');
 
+    // Reset player
     video.pause();
     video.src = '';
+    video.style.display = 'block';
+    videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
+    const newVideo = document.getElementById('videoPlayer');
 
     titleEl.innerText = `Episode ${episode.number} - ${episode.title || 'Memutar...'}`;
 
-    if (episode.url && (episode.url.includes('ok.ru') || episode.url.includes('youtube') || episode.url.includes('dailymotion'))) {
-        videoWrapper.innerHTML = `
-            <iframe src="${episode.url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>
-        `;
-        video.style.display = 'none';
-    } else if (episode.url) {
-        videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
-        const newVideo = document.getElementById('videoPlayer');
-        newVideo.src = episode.url;
-        newVideo.play().catch(e => console.log('Autoplay blocked:', e));
+    // Cek tipe link
+    if (episode.url) {
+        const url = episode.url;
+        if (url.includes('ok.ru') || url.includes('youtube') || url.includes('dailymotion')) {
+            // Pakai iframe untuk embed
+            videoWrapper.innerHTML = `
+                <iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>
+            `;
+        } else {
+            // Direct video (MP4, M3U8, dll)
+            newVideo.src = url;
+            newVideo.play().catch(e => console.log('Autoplay blocked:', e));
+        }
     } else {
         alert('Link video tidak tersedia!');
     }
@@ -280,4 +261,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 console.log('🚀 AnimeStream siap!');
 console.log('📁 Sistem folder manual aktif.');
-console.log('🎯 Klik tombol "Genre" untuk memfilter.');
+console.log('🎯 Gunakan filter genre untuk mencari anime favorit.');
