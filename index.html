@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- ==================== HEADER ==================== -->
+    <!-- HEADER -->
     <header>
         <div class="header-top">
             <div class="logo"><span>Anime</span>Stream</div>
@@ -18,8 +18,7 @@
                 <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
             </div>
         </div>
-
-        <!-- ★ NAVIGASI UTAMA (HANYA DI HOME) ★ -->
+        
         <nav class="main-nav" id="mainNav">
             <a href="#" class="active" onclick="goHome()"><i class="fas fa-home"></i> Home</a>
             <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Anime</a>
@@ -29,10 +28,10 @@
         </nav>
     </header>
 
-    <!-- ==================== KONTEN ==================== -->
+    <!-- KONTEN -->
     <div class="container">
 
-        <!-- ==================== HALAMAN HOME ==================== -->
+        <!-- HALAMAN HOME -->
         <div id="page-home" class="page active">
             <div class="section-title"><i class="fas fa-fire"></i> Update Anime</div>
 
@@ -55,30 +54,25 @@
             <div id="animeGrid" class="anime-grid"></div>
         </div>
 
-        <!-- ==================== HALAMAN DETAIL ==================== -->
+        <!-- HALAMAN DETAIL -->
         <div id="page-detail" class="page">
             <div class="breadcrumb">
                 <a href="#" onclick="goHome()">Home</a>
                 <i class="fas fa-chevron-right"></i>
                 <span id="breadcrumbSeries">Series</span>
             </div>
-            <!-- ★ TOMBOL KEMBALI (history back) ★ -->
-            <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
             <div id="detailContent"></div>
         </div>
 
-        <!-- ==================== HALAMAN TONTON ==================== -->
+        <!-- HALAMAN TONTON -->
         <div id="page-watch" class="page">
             <div class="breadcrumb">
                 <a href="#" onclick="goHome()">Home</a>
                 <i class="fas fa-chevron-right"></i>
-                <a href="#" id="breadcrumbSeriesLink" onclick="goHome()">Series</a>
+                <a href="#" id="breadcrumbSeriesLink" onclick="goToDetail()">Series</a>
                 <i class="fas fa-chevron-right"></i>
                 <span id="breadcrumbEpisode">Episode</span>
             </div>
-
-            <!-- ★ TOMBOL KEMBALI (history back) ★ -->
-            <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
 
             <div class="announcement">
                 <i class="fas fa-info-circle"></i>
@@ -122,7 +116,6 @@
                     <div id="episodeListSidebar" class="episode-list-sidebar"></div>
                 </div>
 
-                <!-- FOOTER ABU-ABU -->
                 <div class="watch-footer">
                     <p><i class="fas fa-info-circle"></i> Teks abu-abu ini bisa kamu ubah sesuai keinginan. Misalnya watermark, copyright, atau link.</p>
                     <p style="font-size:12px; margin-top:5px; color:#5a5a7a;">
@@ -132,7 +125,6 @@
             </div>
         </div>
 
-        <!-- ==================== LOADING ==================== -->
         <div id="globalLoader" class="loader" style="display:none;">
             <i class="fas fa-spinner"></i>
         </div>
