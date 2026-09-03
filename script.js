@@ -5,7 +5,7 @@ let currentAnimeId = null;
 let currentEpisodes = [];
 let currentEpisodeIndex = 0;
 let currentGenre = 'all';
-let isPopState = false; // Flag untuk mencegah push state saat back
+let isPopState = false;
 
 // ============================================================
 //  NAVIGASI
@@ -19,7 +19,7 @@ function showPage(pageId) {
         nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
     }
 
-    // ★ PUSH STATE HANYA JIKA BUKAN HOME DAN BUKAN DARI POPSTATE ★
+    // Push state hanya jika bukan Home dan bukan dari popstate
     if (!isPopState && pageId !== 'page-home') {
         const stateData = { page: pageId };
         if (pageId === 'page-detail' && currentAnimeId) {
@@ -34,7 +34,7 @@ function showPage(pageId) {
 }
 
 function goHome() {
-    // Saat kembali ke Home, replace state agar back dari Home langsung keluar
+    // Replace state Home agar back dari Home langsung keluar
     history.replaceState({ page: 'page-home' }, '', window.location.href);
     showPage('page-home');
     loadAnimeList(currentGenre);
@@ -58,34 +58,31 @@ window.addEventListener('popstate', function(event) {
 
     // Jika state null atau state Home, biarkan browser keluar
     if (!state || state.page === 'page-home') {
-        return; // Browser akan keluar dari website
-    }
-
-    // ★ SET FLAG POPSTATE ★
-    isPopState = true;
-
-    // Jika state Detail
-    if (state.page === 'page-detail' && state.animeId) {
-        currentAnimeId = state.animeId;
-        showPage('page-detail');
-        openDetail(currentAnimeId);
-        isPopState = false;
         return;
     }
 
-    // Jika state Watch
+    isPopState = true;
+
+    if (state.page === 'page-detail' && state.animeId) {
+        currentAnimeId = state.animeId;
+        // Jangan panggil showPage, karena halaman sudah berubah otomatis
+        // Tapi kita tetap perlu menampilkan konten detail
+        openDetail(currentAnimeId);
+        // Setelah openDetail selesai, reset flag
+        setTimeout(() => { isPopState = false; }, 100);
+        return;
+    }
+
     if (state.page === 'page-watch' && state.animeId) {
         currentAnimeId = state.animeId;
         currentEpisodeIndex = state.episodeIndex || 0;
-        showPage('page-watch');
         watchEpisode(currentEpisodeIndex);
-        isPopState = false;
+        setTimeout(() => { isPopState = false; }, 100);
         return;
     }
 
-    // Fallback: kembali ke Home
     goHome();
-    isPopState = false;
+    setTimeout(() => { isPopState = false; }, 100);
 });
 
 // ============================================================
@@ -195,6 +192,17 @@ async function searchAnime() {
 async function openDetail(animeId) {
     currentAnimeId = animeId;
 
+    // Jika bukan dari popstate, panggil showPage
+    if (!isPopState) {
+        showPage('page-detail');
+    } else {
+        // Jika dari popstate, halaman sudah berubah, tapi kita perlu update class active
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-detail').classList.add('active');
+        const nav = document.getElementById('mainNav');
+        if (nav) nav.style.display = 'none';
+    }
+
     const container = document.getElementById('detailContent');
     container.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
 
@@ -276,11 +284,15 @@ function watchEpisode(index) {
     const episode = currentEpisodes[index];
     currentEpisodeIndex = index;
 
-    // ★ SHOW PAGE SUDAH DIPANGGIL SEBELUMNYA, JADI TIDAK PERLU LAGI ★
-    // Tapi jika dipanggil dari klik episode, showPage dipanggil di watchEpisode
-    // Kita panggil showPage hanya jika bukan dari popstate
+    // Jika bukan dari popstate, panggil showPage
     if (!isPopState) {
         showPage('page-watch');
+    } else {
+        // Jika dari popstate, update class active
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-watch').classList.add('active');
+        const nav = document.getElementById('mainNav');
+        if (nav) nav.style.display = 'none';
     }
 
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
@@ -396,4 +408,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('🚀 AnimeStream siap!');
-console.log('📌 Home → Detail → Watch, Back kembali ke Detail, lalu Home, lalu keluar.');
+console.log('📌 Home → Detail → Watch, Back normal.');
