@@ -3,50 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnimeStream - Nonton Anime & Donghua</title>
-    
-    <!-- Font Awesome -->
+    <title>AnimeStream - Nonton Anime</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ==================== HEADER ==================== -->
     <header>
         <div class="logo"><span>Anime</span>Stream</div>
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Cari anime atau donghua..." onkeydown="if(event.key==='Enter') searchAnime()">
+            <input type="text" id="searchInput" placeholder="Cari anime..." onkeyup="searchAnime()">
             <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
         </div>
     </header>
 
-    <!-- ==================== KONTEN ==================== -->
     <div class="container">
-
+        
         <!-- HALAMAN HOME -->
         <div id="page-home" class="page active">
-            <div class="section-title"><i class="fas fa-fire"></i> Trending Sekarang</div>
-            <div id="trendingGrid" class="anime-grid"></div>
-
-            <div class="section-title"><i class="fas fa-clock"></i> Episode Terbaru</div>
-            <div id="recentGrid" class="anime-grid"></div>
-
-            <!-- ★ DONGHUA PILIHAN ★ -->
-            <div class="section-title"><i class="fas fa-dragon"></i> Donghua Pilihan</div>
-            <div class="anime-grid" id="donghuaGrid">
-                <!-- Kartu Renegade Immortal -->
-                <div class="anime-card" onclick="playOkRuVideo('https://ok.ru/video/5979427044412')">
-                    <img src="https://via.placeholder.com/300x400/ff4757/fff?text=Renegade+Immortal" alt="Renegade Immortal">
-                    <div class="info">
-                        <h3>Renegade Immortal</h3>
-                        <p>Donghua China</p>
-                        <span class="ep-badge">▶ Tonton</span>
-                    </div>
-                </div>
-                <!-- Tambah kartu donghua lain di sini -->
-            </div>
+            <div class="section-title"><i class="fas fa-film"></i> Daftar Anime</div>
+            <div id="animeGrid" class="anime-grid"></div>
         </div>
 
         <!-- HALAMAN DETAIL -->
@@ -57,7 +33,7 @@
 
         <!-- HALAMAN TONTON -->
         <div id="page-watch" class="page">
-            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</button>
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Kembali</button>
             <div id="watchContent">
                 <div class="video-wrapper">
                     <video id="videoPlayer" controls autoplay></video>
@@ -69,29 +45,15 @@
                         <button id="nextEpBtn" onclick="navigateEpisode(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
-
-                <!-- ★ INPUT LINK MANUAL ★ -->
-                <div class="manual-input">
-                    <p><i class="fas fa-link"></i> Atau tempel link video sendiri (OK.ru, YouTube, Dailymotion):</p>
-                    <div class="input-row">
-                        <input type="text" id="manualVideoUrl" placeholder="https://ok.ru/video/...">
-                        <button onclick="playOkRuVideo(document.getElementById('manualVideoUrl').value.trim())">
-                            <i class="fas fa-play"></i> Putar
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- Loading -->
         <div id="globalLoader" class="loader" style="display:none;">
             <i class="fas fa-spinner"></i>
         </div>
 
     </div>
 
-    <!-- ==================== JAVASCRIPT ==================== -->
     <script src="script.js"></script>
-
 </body>
 </html>
