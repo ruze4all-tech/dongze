@@ -219,6 +219,99 @@ function updateNavButtons() {
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     loadAnimeList();
+    // ============================================================
+//  FILTER GENRE
+// ============================================================
+let currentGenre = 'all';
+let allAnimeData = [];
+
+async function filterGenre(genre) {
+    // Update tombol aktif
+    document.querySelectorAll('.genre-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase() === genre || 
+            (genre === 'all' && btn.textContent === 'Semua')) {
+            btn.classList.add('active');
+        }
+    });
+
+    currentGenre = genre;
+    const grid = document.getElementById('animeGrid');
+
+    // Jika data belum dimuat, muat dulu
+    if (allAnimeData.length === 0) {
+        try {
+            const response = await fetch('anime-list.json');
+            const data = await response.json();
+            allAnimeData = data.anime || [];
+        } catch (error) {
+            console.error('Error loading anime list:', error);
+            return;
+        }
+    }
+
+    // Filter berdasarkan genre
+    let filtered = allAnimeData;
+    if (genre !== 'all') {
+        filtered = allAnimeData.filter(anime => {
+            // Cek apakah genre cocok (case insensitive)
+            const animeGenre = anime.genre ? anime.genre.toLowerCase() : '';
+            return animeGenre.includes(genre.toLowerCase());
+        });
+    }
+
+    // Tampilkan hasil
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><p>Tidak ada anime dengan genre "${genre}"</p></div>`;
+        return;
+    }
+
+    grid.innerHTML = filtered.map(anime => `
+        <div class="anime-card" onclick="openDetail('${anime.id}')">
+            <img src="${anime.image}" alt="${anime.title}" onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/7a849b?text=No+Image'">
+            <div class="info">
+                <h3>${anime.title}</h3>
+                <p>${anime.genre || 'Anime'}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ============================================================
+//  LOAD DAFTAR ANIME (DIUBAH agar menyimpan data)
+// ============================================================
+// Ganti fungsi loadAnimeList yang lama dengan ini:
+async function loadAnimeList() {
+    const grid = document.getElementById('animeGrid');
+    grid.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
+
+    try {
+        const response = await fetch('anime-list.json');
+        if (!response.ok) throw new Error('Gagal load anime list');
+        
+        const data = await response.json();
+        allAnimeData = data.anime || [];
+
+        if (allAnimeData.length === 0) {
+            grid.innerHTML = `<div class="empty-state"><p>Belum ada anime.</p></div>`;
+            return;
+        }
+
+        // Tampilkan semua anime
+        grid.innerHTML = allAnimeData.map(anime => `
+            <div class="anime-card" onclick="openDetail('${anime.id}')">
+                <img src="${anime.image}" alt="${anime.title}" onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/7a849b?text=No+Image'">
+                <div class="info">
+                    <h3>${anime.title}</h3>
+                    <p>${anime.genre || 'Anime'}</p>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading anime list:', error);
+        grid.innerHTML = `<div class="empty-state"><p>Gagal memuat daftar anime.</p></div>`;
+    }
+}
 
     document.getElementById('searchInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') searchAnime();
