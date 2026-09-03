@@ -9,83 +9,30 @@ let currentSources = [];
 let currentSourceIndex = 0;
 
 // ============================================================
-//  PAGINATION STATE
+//  PAGINATION
 // ============================================================
 let currentPage = 1;
 const itemsPerPage = 24;
 let totalPages = 1;
 
 // ============================================================
-//  ★ DAFTAR PLATFORM YANG SUPPORT IFRAME ★
+//  FUNGSI CEK PLATFORM (SEDERHANA)
 // ============================================================
-const IFRAME_PLATFORMS = [
-    'ok.ru',
-    'youtube.com',
-    'youtu.be',
-    'dailymotion.com',
-    'mega.nz',
-    'drive.google.com',
-    'streamtape.com',
-    'vimeo.com',
-    'player.vimeo.com',
-    'streamwish.com',
-    'terabox.com',
-    'mediafire.com',
-    'dropbox.com',
-    'pcloud.com',
-    'gofile.io',
-    'sendvid.com',
-    'vidhide.com',
-    'vudeo.net',
-    'voe.sx',
-    'vidplay.site',
-    'vidoza.net',
-    'filemoon.sx',
-    'facebook.com',
-    'fb.watch',
-    'twitch.tv',
-    'player.twitch.tv'
-];
-
-// ============================================================
-//  ★ CEK APAKAH URL BUTUH IFRAME ★
-// ============================================================
-function isIframePlatform(url) {
+function isIframeUrl(url) {
     if (!url) return false;
-    const urlLower = url.toLowerCase();
-    return IFRAME_PLATFORMS.some(platform => urlLower.includes(platform));
+    const u = url.toLowerCase();
+    return u.includes('dailymotion.com') || 
+           u.includes('ok.ru') || 
+           u.includes('youtube.com') || 
+           u.includes('youtu.be') ||
+           u.includes('mega.nz') ||
+           u.includes('drive.google.com');
 }
 
 // ============================================================
-//  ★ FUNGSI FIX LINK (OTOMATIS) ★
+//  FIX LINK Dailymotion
 // ============================================================
-function fixOkRuUrl(url) {
-    if (!url) return url;
-    if (url.includes('ok.ru/video/') && !url.includes('videoembed')) {
-        return url.replace('ok.ru/video/', 'ok.ru/videoembed/');
-    }
-    return url;
-}
-
-function fixGoogleDriveUrl(url) {
-    if (!url) return url;
-    if (url.includes('drive.google.com/file/d/')) {
-        if (!url.endsWith('/preview')) {
-            return url + '/preview';
-        }
-    }
-    return url;
-}
-
-function fixMegaUrl(url) {
-    if (!url) return url;
-    if (url.includes('mega.nz/file/') && !url.includes('embed')) {
-        return url.replace('mega.nz/file/', 'mega.nz/embed/');
-    }
-    return url;
-}
-
-function fixDailymotionUrl(url) {
+function fixDailymotion(url) {
     if (!url) return url;
     if (url.includes('dailymotion.com/video/') && !url.includes('embed')) {
         return url.replace('dailymotion.com/video/', 'dailymotion.com/embed/video/');
@@ -93,40 +40,42 @@ function fixDailymotionUrl(url) {
     return url;
 }
 
-function fixYoutubeUrl(url) {
+// ============================================================
+//  FIX LINK YouTube
+// ============================================================
+function fixYoutube(url) {
     if (!url) return url;
-    if (url.includes('youtube.com/watch?v=') && !url.includes('embed')) {
-        const videoId = url.split('v=')[1]?.split('&')[0];
-        if (videoId) {
-            return `https://www.youtube.com/embed/${videoId}`;
-        }
+    if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1]?.split('?')[0];
+        if (id) return `https://www.youtube.com/embed/${id}`;
     }
-    if (url.includes('youtu.be/') && !url.includes('embed')) {
-        const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-        if (videoId) {
-            return `https://www.youtube.com/embed/${videoId}`;
-        }
+    if (url.includes('watch?v=')) {
+        const id = url.split('v=')[1]?.split('&')[0];
+        if (id) return `https://www.youtube.com/embed/${id}`;
     }
     return url;
 }
 
-function fixStreamtapeUrl(url) {
+// ============================================================
+//  FIX OK.ru
+// ============================================================
+function fixOkru(url) {
     if (!url) return url;
-    if (url.includes('streamtape.com/v/') && !url.includes('/e/')) {
-        return url.replace('streamtape.com/v/', 'streamtape.com/e/');
+    if (url.includes('ok.ru/video/') && !url.includes('videoembed')) {
+        return url.replace('ok.ru/video/', 'ok.ru/videoembed/');
     }
     return url;
 }
 
+// ============================================================
+//  FIX SEMUA LINK
+// ============================================================
 function fixUrl(url) {
     if (!url) return url;
     let fixed = url;
-    fixed = fixOkRuUrl(fixed);
-    fixed = fixGoogleDriveUrl(fixed);
-    fixed = fixMegaUrl(fixed);
-    fixed = fixDailymotionUrl(fixed);
-    fixed = fixYoutubeUrl(fixed);
-    fixed = fixStreamtapeUrl(fixed);
+    fixed = fixOkru(fixed);
+    fixed = fixDailymotion(fixed);
+    fixed = fixYoutube(fixed);
     return fixed;
 }
 
@@ -136,22 +85,16 @@ function fixUrl(url) {
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
-
     const nav = document.getElementById('mainNav');
-    if (nav) {
-        nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
-    }
-
+    if (nav) nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
     if (pageId !== 'page-home') {
-        const stateData = { page: pageId };
-        if (pageId === 'page-detail' && currentAnimeId) {
-            stateData.animeId = currentAnimeId;
-        }
+        const state = { page: pageId };
+        if (pageId === 'page-detail' && currentAnimeId) state.animeId = currentAnimeId;
         if (pageId === 'page-watch' && currentAnimeId) {
-            stateData.animeId = currentAnimeId;
-            stateData.episodeIndex = currentEpisodeIndex;
+            state.animeId = currentAnimeId;
+            state.episodeIndex = currentEpisodeIndex;
         }
-        history.pushState(stateData, '', window.location.href);
+        history.pushState(state, '', window.location.href);
     }
 }
 
@@ -171,14 +114,9 @@ function goToDetail() {
     }
 }
 
-// ============================================================
-//  TANGANI BACK BROWSER (POPSTATE)
-// ============================================================
-window.addEventListener('popstate', function(event) {
-    const state = event.state;
-    if (!state || state.page === 'page-home') {
-        return;
-    }
+window.addEventListener('popstate', function(e) {
+    const state = e.state;
+    if (!state || state.page === 'page-home') return;
     if (state.page === 'page-detail' && state.animeId) {
         currentAnimeId = state.animeId;
         showPage('page-detail');
@@ -196,56 +134,54 @@ window.addEventListener('popstate', function(event) {
 });
 
 // ============================================================
-//  LOAD DAFTAR ANIME (DENGAN PAGINATION)
+//  LOAD DAFTAR ANIME
 // ============================================================
 async function loadAnimeList(genre = 'all', page = 1) {
     const grid = document.getElementById('animeGrid');
     grid.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
 
     try {
-        const response = await fetch('anime-list.json');
-        if (!response.ok) throw new Error('Gagal load anime list');
-        const data = await response.json();
-        let animeList = data.anime || [];
+        const res = await fetch('anime-list.json');
+        if (!res.ok) throw new Error('File anime-list.json tidak ditemukan!');
+        const data = await res.json();
+        let list = data.anime || [];
 
         if (genre !== 'all') {
-            animeList = animeList.filter(anime => {
-                const genres = anime.genre.toLowerCase().split(', ');
-                return genres.some(g => g.includes(genre.toLowerCase()));
+            list = list.filter(a => {
+                const g = a.genre.toLowerCase().split(', ');
+                return g.some(x => x.includes(genre.toLowerCase()));
             });
         }
 
-        totalPages = Math.ceil(animeList.length / itemsPerPage) || 1;
+        totalPages = Math.ceil(list.length / itemsPerPage) || 1;
         if (page > totalPages) page = totalPages;
         if (page < 1) page = 1;
         currentPage = page;
 
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        const pageItems = animeList.slice(start, end);
+        const items = list.slice(start, end);
 
-        if (pageItems.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><i class="fas fa-frown"></i><p>Tidak ada donghua dengan genre ini.</p></div>`;
+        if (items.length === 0) {
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-frown"></i><p>Tidak ada donghua.</p></div>`;
             updatePaginationButtons();
             return;
         }
 
-        grid.innerHTML = pageItems.map(anime => `
-            <div class="anime-card" onclick="openDetail('${anime.id}')">
-                <img src="${anime.image}" alt="${anime.title}" 
-                     onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
+        grid.innerHTML = items.map(a => `
+            <div class="anime-card" onclick="openDetail('${a.id}')">
+                <img src="${a.image}" alt="${a.title}" onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
                 <div class="info">
-                    <h3>${anime.title}</h3>
-                    <p>${anime.genre || 'Donghua'}</p>
+                    <h3>${a.title}</h3>
+                    <p>${a.genre || 'Donghua'}</p>
                 </div>
             </div>
         `).join('');
 
         updatePaginationButtons();
-
-    } catch (error) {
-        console.error('Error loading anime list:', error);
-        grid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat daftar donghua.</p></div>`;
+    } catch (err) {
+        console.error('Error:', err);
+        grid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>${err.message}</p></div>`;
     }
 }
 
@@ -256,12 +192,11 @@ function changePage(delta) {
 }
 
 function updatePaginationButtons() {
-    const prevBtn = document.getElementById('prevPageBtn');
-    const nextBtn = document.getElementById('nextPageBtn');
+    const prev = document.getElementById('prevPageBtn');
+    const next = document.getElementById('nextPageBtn');
     const info = document.getElementById('pageInfo');
-    
-    if (prevBtn) prevBtn.disabled = (currentPage <= 1);
-    if (nextBtn) nextBtn.disabled = (currentPage >= totalPages);
+    if (prev) prev.disabled = (currentPage <= 1);
+    if (next) next.disabled = (currentPage >= totalPages);
     if (info) info.textContent = `Halaman ${currentPage} dari ${totalPages}`;
 }
 
@@ -270,8 +205,8 @@ function updatePaginationButtons() {
 // ============================================================
 function filterByGenre(genre) {
     currentGenre = genre;
-    document.querySelectorAll('.genre-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.genre === genre);
+    document.querySelectorAll('.genre-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.genre === genre);
     });
     loadAnimeList(genre, 1);
     if (document.getElementById('page-detail').classList.contains('active') ||
@@ -281,46 +216,39 @@ function filterByGenre(genre) {
 }
 
 async function searchAnime() {
-    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
     const grid = document.getElementById('animeGrid');
-
     if (!query) { loadAnimeList(currentGenre, 1); return; }
 
     try {
-        const response = await fetch('anime-list.json');
-        const data = await response.json();
+        const res = await fetch('anime-list.json');
+        const data = await res.json();
         let results = data.anime.filter(a => a.title.toLowerCase().includes(query));
-
         if (currentGenre !== 'all') {
-            results = results.filter(anime => {
-                const genres = anime.genre.toLowerCase().split(', ');
-                return genres.some(g => g.includes(currentGenre.toLowerCase()));
+            results = results.filter(a => {
+                const g = a.genre.toLowerCase().split(', ');
+                return g.some(x => x.includes(currentGenre.toLowerCase()));
             });
         }
-
         if (results.length === 0) {
             grid.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>Tidak ada hasil untuk "${query}"</p></div>`;
             return;
         }
-
-        grid.innerHTML = results.map(anime => `
-            <div class="anime-card" onclick="openDetail('${anime.id}')">
-                <img src="${anime.image}" alt="${anime.title}" 
-                     onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
+        grid.innerHTML = results.map(a => `
+            <div class="anime-card" onclick="openDetail('${a.id}')">
+                <img src="${a.image}" alt="${a.title}" onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'">
                 <div class="info">
-                    <h3>${anime.title}</h3>
-                    <p>${anime.genre || 'Donghua'}</p>
+                    <h3>${a.title}</h3>
+                    <p>${a.genre || 'Donghua'}</p>
                 </div>
             </div>
         `).join('');
-
         document.querySelector('.pagination').style.display = 'none';
-
         if (document.getElementById('page-detail').classList.contains('active') ||
             document.getElementById('page-watch').classList.contains('active')) {
             goHome();
         }
-    } catch (error) { console.error('Search error:', error); }
+    } catch (err) { console.error(err); }
 }
 
 // ============================================================
@@ -329,36 +257,32 @@ async function searchAnime() {
 async function openDetail(animeId) {
     currentAnimeId = animeId;
     showPage('page-detail');
-
     const container = document.getElementById('detailContent');
     container.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
 
     try {
         const infoRes = await fetch(`${animeId}/info.json`);
-        if (!infoRes.ok) throw new Error('Info not found');
+        if (!infoRes.ok) throw new Error('info.json tidak ditemukan');
         const info = await infoRes.json();
 
         const epRes = await fetch(`${animeId}/episodes.json`);
-        if (!epRes.ok) throw new Error('Episodes not found');
+        if (!epRes.ok) throw new Error('episodes.json tidak ditemukan');
         const epData = await epRes.json();
         currentEpisodes = epData.episodes || [];
 
         const genres = info.genre ? info.genre.map(g => `<span>${g}</span>`).join('') : '';
-        const synopsis = info.synopsis || 'Tidak ada sinopsis.';
         const img = info.image || 'https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image';
-        const totalEp = currentEpisodes.length;
 
         document.getElementById('breadcrumbSeries').textContent = info.title;
 
-        let episodeButtons = '';
+        let epBtns = '';
         if (currentEpisodes.length > 0) {
-            episodeButtons = currentEpisodes.map((ep, idx) => {
+            epBtns = currentEpisodes.map((ep, idx) => {
                 const hasLink = (ep.sources && ep.sources.length > 0) || ep.url;
-                const label = hasLink ? `EP ${ep.number}` : `EP ${ep.number} (no link)`;
-                return `<div class="episode-btn" onclick="watchEpisode(${idx})">${label}</div>`;
+                return `<div class="episode-btn" onclick="watchEpisode(${idx})">EP ${ep.number}${!hasLink ? ' (no link)' : ''}</div>`;
             }).join('');
         } else {
-            episodeButtons = `<div class="empty-state"><p>Belum ada episode.</p></div>`;
+            epBtns = `<div class="empty-state"><p>Belum ada episode.</p></div>`;
         }
 
         container.innerHTML = `
@@ -366,41 +290,36 @@ async function openDetail(animeId) {
                 <div class="poster"><img src="${img}" alt="${info.title}" onerror="this.src='https://via.placeholder.com/300x400/141425/7a7a9a?text=No+Image'"></div>
                 <div class="desc">
                     <h1>${info.title}</h1>
-                    <span class="status">Ongoing - ${totalEp} / ?</span>
+                    <span class="status">Ongoing - ${currentEpisodes.length} / ?</span>
                     ${genres ? `<div class="genres">${genres}</div>` : ''}
-                    <p>${synopsis}</p>
+                    <p>${info.synopsis || 'Tidak ada sinopsis.'}</p>
                     <div class="meta-info">
                         <span><i class="fas fa-calendar-alt"></i> Updated: ${new Date().toLocaleDateString('id-ID')}</span>
-                        <span><i class="fas fa-list-ul"></i> Total Episode: ${totalEp}</span>
-                        <span><i class="fas fa-tag"></i> ${info.genre ? info.genre.join(', ') : '-'}</span>
+                        <span><i class="fas fa-list-ul"></i> Total Episode: ${currentEpisodes.length}</span>
                     </div>
                 </div>
             </div>
             <h3 style="margin:20px 0 10px 0;"><i class="fas fa-list-ul"></i> Daftar Episode</h3>
-            <div class="episode-list">${episodeButtons}</div>
+            <div class="episode-list">${epBtns}</div>
         `;
 
-        const seriesLink = document.getElementById('breadcrumbSeriesLink');
-        if (seriesLink) {
-            seriesLink.textContent = info.title;
-            seriesLink.onclick = function(e) {
-                e.preventDefault();
-                goToDetail();
-            };
+        const link = document.getElementById('breadcrumbSeriesLink');
+        if (link) {
+            link.textContent = info.title;
+            link.onclick = function(e) { e.preventDefault(); goToDetail(); };
         }
-
-    } catch (error) {
-        console.error('Error loading detail:', error);
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat detail donghua.</p></div>`;
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>${err.message}</p></div>`;
     }
 }
 
 // ============================================================
-//  WATCH EPISODE (SUPPORT URL LAMA & SOURCES BARU)
+//  WATCH EPISODE
 // ============================================================
 function watchEpisode(index) {
     if (!currentEpisodes || currentEpisodes.length === 0) {
-        alert('Tidak ada episode tersedia!');
+        alert('Tidak ada episode!');
         return;
     }
     if (index < 0 || index >= currentEpisodes.length) {
@@ -408,33 +327,28 @@ function watchEpisode(index) {
         return;
     }
 
-    const episode = currentEpisodes[index];
+    const ep = currentEpisodes[index];
     currentEpisodeIndex = index;
 
-    // ★ DETEKSI FORMAT ★
-    if (episode.sources && episode.sources.length > 0) {
-        currentSources = episode.sources;
-    } else if (episode.url) {
-        currentSources = [{ server: 'Default', url: episode.url }];
+    if (ep.sources && ep.sources.length > 0) {
+        currentSources = ep.sources;
+    } else if (ep.url) {
+        currentSources = [{ server: 'Dailymotion', url: ep.url }];
     } else {
         alert('Episode ini belum memiliki link video.');
         return;
     }
-
     currentSourceIndex = 0;
 
     showPage('page-watch');
 
     const seriesName = document.getElementById('breadcrumbSeries')?.textContent || 'Series';
     document.getElementById('breadcrumbSeriesLink').textContent = seriesName;
-    document.getElementById('breadcrumbSeriesLink').onclick = function(e) {
-        e.preventDefault();
-        goToDetail();
-    };
-    document.getElementById('breadcrumbEpisode').textContent = `Episode ${episode.number}`;
+    document.getElementById('breadcrumbSeriesLink').onclick = function(e) { e.preventDefault(); goToDetail(); };
+    document.getElementById('breadcrumbEpisode').textContent = `Episode ${ep.number}`;
     document.getElementById('episodeSeriesName').textContent = seriesName;
-    document.getElementById('watchTitle').textContent = `${seriesName} Episode ${episode.number} - ${episode.title || 'Subtitle Indonesia'}`;
-    document.getElementById('episodeReleaseDate').innerHTML = `<i class="far fa-calendar-alt"></i> Released on ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+    document.getElementById('watchTitle').textContent = `${seriesName} Episode ${ep.number} - ${ep.title || 'Subtitle Indonesia'}`;
+    document.getElementById('episodeReleaseDate').innerHTML = `<i class="far fa-calendar-alt"></i> Released on ${new Date().toLocaleDateString('id-ID')}`;
     document.getElementById('episodePostedBy').innerHTML = `<i class="far fa-user"></i> Posted by admin`;
     document.getElementById('episodeSeries').innerHTML = `<i class="fas fa-tv"></i> Series: <span id="episodeSeriesName">${seriesName}</span>`;
 
@@ -445,41 +359,34 @@ function watchEpisode(index) {
 }
 
 // ============================================================
-//  UPDATE DROPDOWN SERVER
+//  DROPDOWN SERVER
 // ============================================================
 function updateServerDropdown() {
     const select = document.getElementById('videoServer');
     if (!select) return;
-
     select.innerHTML = '';
-
     if (!currentSources || currentSources.length === 0) {
-        const option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'Tidak ada server';
-        select.appendChild(option);
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'Tidak ada server';
+        select.appendChild(opt);
         select.disabled = true;
         return;
     }
-
-    currentSources.forEach((source, idx) => {
-        const option = document.createElement('option');
-        option.value = idx;
-        option.textContent = source.server || 'Server ' + (idx + 1);
-        select.appendChild(option);
+    currentSources.forEach((s, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = s.server || 'Server ' + (i + 1);
+        select.appendChild(opt);
     });
-
     select.disabled = false;
     select.value = currentSourceIndex;
-
-    const selector = document.querySelector('.server-selector');
-    if (selector) {
-        selector.style.display = (currentSources.length <= 1) ? 'none' : 'flex';
-    }
+    const sel = document.querySelector('.server-selector');
+    if (sel) sel.style.display = (currentSources.length <= 1) ? 'none' : 'flex';
 }
 
 // ============================================================
-//  ★ PLAY SOURCE (OTOMATIS DETEKSI PLATFORM) ★
+//  PLAY SOURCE (SEDERHANA)
 // ============================================================
 function playSource(index) {
     if (!currentSources || index >= currentSources.length) return;
@@ -488,60 +395,43 @@ function playSource(index) {
     currentSourceIndex = index;
 
     const video = document.getElementById('videoPlayer');
-    const videoWrapper = document.querySelector('.video-wrapper');
-    
-    if (!video || !videoWrapper) {
-        console.error('Video element or wrapper not found!');
-        return;
-    }
+    const wrapper = document.querySelector('.video-wrapper');
+    if (!video || !wrapper) return;
 
     video.pause();
     video.src = '';
     video.style.display = 'block';
 
     let url = source.url;
-    console.log('Original URL:', url);
-
-    // ★ OTOMATIS FIX LINK ★
     url = fixUrl(url);
-    console.log('Fixed URL:', url);
 
-    // ★ CEK APAKAH BUTUH IFRAME ★
-    const useIframe = isIframePlatform(url);
-    console.log('Use iframe?', useIframe);
+    const useIframe = isIframeUrl(url);
 
     if (useIframe) {
-        videoWrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
-        console.log('✅ Menggunakan iframe untuk:', url);
+        wrapper.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen style="border-radius:16px;border:none;"></iframe>`;
     } else {
-        // Video langsung (MP4, M3U8, dll.)
-        videoWrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
+        wrapper.innerHTML = `<video id="videoPlayer" controls autoplay></video>`;
         const newVideo = document.getElementById('videoPlayer');
         if (newVideo) {
             newVideo.src = url;
             newVideo.play().catch(e => console.log('Autoplay blocked:', e));
         }
-        console.log('🎬 Menggunakan video tag untuk:', url);
     }
 
-    // Update dropdown
     const select = document.getElementById('videoServer');
     if (select) select.value = index;
 }
 
-// ============================================================
-//  CHANGE SERVER (dari dropdown)
-// ============================================================
 function changeServer() {
     const select = document.getElementById('videoServer');
-    const index = parseInt(select.value);
-    if (!isNaN(index) && index >= 0 && index < currentSources.length) {
-        playSource(index);
+    const idx = parseInt(select.value);
+    if (!isNaN(idx) && idx >= 0 && idx < currentSources.length) {
+        playSource(idx);
     }
 }
 
 // ============================================================
-//  UPDATE EPISODE GRID & COUNTER
+//  EPISODE GRID & NAVIGASI
 // ============================================================
 function updateEpisodeGrid() {
     const grid = document.getElementById('episodeGrid');
@@ -552,4 +442,52 @@ function updateEpisodeGrid() {
         return `
             <div class="episode-square ${idx === currentEpisodeIndex ? 'active' : ''}" onclick="watchEpisode(${idx})">
                 <span class="ep-number">${ep.number}</span>
-                <span 
+                <span class="ep-title">${ep.title ? ep.title.substring(0, 6) : ''}</span>
+                ${!hasLink ? '<span style="font-size:6px;color:#ff4757;">✕</span>' : ''}
+            </div>
+        `;
+    }).join('');
+
+    const counter = document.getElementById('episodeCounter');
+    if (counter) {
+        counter.textContent = `${currentEpisodeIndex + 1} / ${currentEpisodes.length}`;
+    }
+}
+
+function navigateEpisode(dir) {
+    if (!currentEpisodes || currentEpisodes.length === 0) return;
+    let newIdx = currentEpisodeIndex + dir;
+    if (newIdx < 0) newIdx = 0;
+    if (newIdx >= currentEpisodes.length) newIdx = currentEpisodes.length - 1;
+    if (newIdx === currentEpisodeIndex) return;
+    watchEpisode(newIdx);
+}
+
+function updateNavButtons() {
+    const prev = document.getElementById('prevEpBtn');
+    const next = document.getElementById('nextEpBtn');
+    if (!prev || !next) return;
+    if (!currentEpisodes || currentEpisodes.length === 0) {
+        prev.disabled = true;
+        next.disabled = true;
+        return;
+    }
+    prev.disabled = (currentEpisodeIndex <= 0);
+    next.disabled = (currentEpisodeIndex >= currentEpisodes.length - 1);
+}
+
+// ============================================================
+//  INISIALISASI
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+    history.replaceState({ page: 'page-home' }, '', window.location.href);
+    loadAnimeList('all', 1);
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') searchAnime();
+    });
+    document.querySelector('.pagination').style.display = 'flex';
+});
+
+console.log('🚀 DONGZE siap!');
+console.log('📌 Support Dailymotion, OK.ru, YouTube.');
+console.log('📌 Cukup ganti link di episodes.json.');
