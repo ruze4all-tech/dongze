@@ -18,21 +18,24 @@
     </header>
 
     <div class="container">
-        
         <!-- HALAMAN HOME -->
-        <div id="page-home" class="page active">
-            <div class="section-title"><i class="fas fa-film"></i> Daftar Anime</div>
-            <!-- FILTER GENRE -->
-<div class="genre-filter">
-    <button class="genre-btn active" onclick="filterGenre('all')">Semua</button>
-    <button class="genre-btn" onclick="filterGenre('donghua')">Donghua</button>
-    <button class="genre-btn" onclick="filterGenre('action')">Action</button>
-    <button class="genre-btn" onclick="filterGenre('fantasy')">Fantasy</button>
-    <button class="genre-btn" onclick="filterGenre('shonen')">Shonen</button>
-    <button class="genre-btn" onclick="filterGenre('adventure')">Adventure</button>
-    <button class="genre-btn" onclick="filterGenre('comedy')">Comedy</button>
-    <button class="genre-btn" onclick="filterGenre('romance')">Romance</button>
-    <button class="genre-btn" onclick="filterGenre('sports')">Sports</button>
+<div id="page-home" class="page active">
+    <div class="section-title"><i class="fas fa-film"></i> Daftar Anime</div>
+    
+    <!-- ★ TAMBAHAN: FILTER GENRE ★ -->
+    <div class="genre-filter">
+        <button class="genre-btn active" data-genre="all" onclick="filterByGenre('all')">Semua</button>
+        <button class="genre-btn" data-genre="action" onclick="filterByGenre('action')">Action</button>
+        <button class="genre-btn" data-genre="adventure" onclick="filterByGenre('adventure')">Adventure</button>
+        <button class="genre-btn" data-genre="comedy" onclick="filterByGenre('comedy')">Comedy</button>
+        <button class="genre-btn" data-genre="donghua" onclick="filterByGenre('donghua')">Donghua</button>
+        <button class="genre-btn" data-genre="fantasy" onclick="filterByGenre('fantasy')">Fantasy</button>
+        <button class="genre-btn" data-genre="romance" onclick="filterByGenre('romance')">Romance</button>
+        <button class="genre-btn" data-genre="shonen" onclick="filterByGenre('shonen')">Shonen</button>
+        <button class="genre-btn" data-genre="slice-of-life" onclick="filterByGenre('slice-of-life')">Slice of Life</button>
+    </div>
+    
+    <div id="animeGrid" class="anime-grid"></div>
 </div>
             <div id="animeGrid" class="anime-grid"></div>
         </div>
