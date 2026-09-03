@@ -9,9 +9,7 @@
 </head>
 <body>
 
-    <!-- ============================================================ -->
-    <!-- HEADER                                                       -->
-    <!-- ============================================================ -->
+    <!-- ==================== HEADER ==================== -->
     <header>
         <div class="header-top">
             <div class="logo"><span>Anime</span>Stream</div>
@@ -20,8 +18,9 @@
                 <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
             </div>
         </div>
-        
-        <nav class="main-nav">
+
+        <!-- ★ NAVIGASI UTAMA (HANYA DI HOME) ★ -->
+        <nav class="main-nav" id="mainNav">
             <a href="#" class="active" onclick="goHome()"><i class="fas fa-home"></i> Home</a>
             <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Anime</a>
             <a href="#" onclick="filterByGenre('donghua')"><i class="fas fa-dragon"></i> Donghua</a>
@@ -30,14 +29,10 @@
         </nav>
     </header>
 
-    <!-- ============================================================ -->
-    <!-- KONTEN UTAMA                                                 -->
-    <!-- ============================================================ -->
+    <!-- ==================== KONTEN ==================== -->
     <div class="container">
 
-        <!-- ============================================================ -->
-        <!-- HALAMAN HOME                                                 -->
-        <!-- ============================================================ -->
+        <!-- ==================== HALAMAN HOME ==================== -->
         <div id="page-home" class="page active">
             <div class="section-title"><i class="fas fa-fire"></i> Update Anime</div>
 
@@ -60,24 +55,20 @@
             <div id="animeGrid" class="anime-grid"></div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- HALAMAN DETAIL                                               -->
-        <!-- ============================================================ -->
+        <!-- ==================== HALAMAN DETAIL ==================== -->
         <div id="page-detail" class="page">
             <div class="breadcrumb">
                 <a href="#" onclick="goHome()">Home</a>
                 <i class="fas fa-chevron-right"></i>
                 <span id="breadcrumbSeries">Series</span>
             </div>
+            <!-- ★ TOMBOL KEMBALI (history back) ★ -->
+            <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
             <div id="detailContent"></div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- HALAMAN TONTON - MULAI DARI SINI                             -->
-        <!-- ============================================================ -->
+        <!-- ==================== HALAMAN TONTON ==================== -->
         <div id="page-watch" class="page">
-
-            <!-- Breadcrumb (navigasi) -->
             <div class="breadcrumb">
                 <a href="#" onclick="goHome()">Home</a>
                 <i class="fas fa-chevron-right"></i>
@@ -86,7 +77,9 @@
                 <span id="breadcrumbEpisode">Episode</span>
             </div>
 
-            <!-- Pengumuman -->
+            <!-- ★ TOMBOL KEMBALI (history back) ★ -->
+            <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Kembali</button>
+
             <div class="announcement">
                 <i class="fas fa-info-circle"></i>
                 <div>
@@ -95,13 +88,10 @@
             </div>
 
             <div id="watchContent">
-
-                <!-- Video Player -->
                 <div class="video-wrapper">
                     <video id="videoPlayer" controls autoplay></video>
                 </div>
 
-                <!-- Select Video Server (Dropdown) -->
                 <div class="server-selector">
                     <label><i class="fas fa-server"></i> Select Video Server</label>
                     <select id="videoServer" onchange="changeServer()">
@@ -113,7 +103,6 @@
                     </select>
                 </div>
 
-                <!-- Info Episode -->
                 <div class="episode-info">
                     <h2 id="watchTitle">Memuat...</h2>
                     <div class="episode-meta">
@@ -123,29 +112,32 @@
                     </div>
                 </div>
 
-                <!-- Tombol Navigasi Episode -->
                 <div class="watch-nav">
                     <button id="prevEpBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
                     <button id="nextEpBtn" onclick="navigateEpisode(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
                 </div>
 
-                <!-- Daftar Episode (Sidebar) -->
                 <div class="episode-sidebar">
                     <h3><i class="fas fa-list-ul"></i> Daftar Episode</h3>
                     <div id="episodeListSidebar" class="episode-list-sidebar"></div>
                 </div>
 
-            </div> <!-- end #watchContent -->
-        </div> <!-- end #page-watch -->
+                <!-- FOOTER ABU-ABU -->
+                <div class="watch-footer">
+                    <p><i class="fas fa-info-circle"></i> Teks abu-abu ini bisa kamu ubah sesuai keinginan. Misalnya watermark, copyright, atau link.</p>
+                    <p style="font-size:12px; margin-top:5px; color:#5a5a7a;">
+                        Ganti teks ini di file <strong>index.html</strong> bagian <strong>#page-watch .watch-footer</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-        <!-- ============================================================ -->
-        <!-- LOADING                                                      -->
-        <!-- ============================================================ -->
+        <!-- ==================== LOADING ==================== -->
         <div id="globalLoader" class="loader" style="display:none;">
             <i class="fas fa-spinner"></i>
         </div>
 
-    </div> <!-- end .container -->
+    </div>
 
     <script src="script.js"></script>
 </body>
