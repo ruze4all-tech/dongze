@@ -1,24 +1,34 @@
-async function loadAnimeList(genre = 'all', page = 1) {
-    const grid = document.getElementById('animeGrid');
-    grid.innerHTML = `<div class="loader"><i class="fas fa-spinner"></i></div>`;
-
-    try {
-        const response = await fetch('anime-list.json');
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+{
+    "anime": [
+        {
+            "id": "renegade-immortal",
+            "title": "Renegade Immortal",
+            "image": "https://via.placeholder.com/300x400/ff4757/fff?text=Renegade+Immortal",
+            "genre": "Action, Adventure, Donghua, Fantasy, Cultivation"
+        },
+        {
+            "id": "tales-of-herding-gods",
+            "title": "Tales of Herding Gods",
+            "image": "https://via.placeholder.com/300x400/4a9eff/fff?text=Tales+of+Herding+Gods",
+            "genre": "Action, Adventure, Donghua, Fantasy"
+        },
+        {
+            "id": "soul-land",
+            "title": "Soul Land",
+            "image": "https://via.placeholder.com/300x400/ff6b35/fff?text=Soul+Land",
+            "genre": "Action, Adventure, Donghua, Fantasy, Romance"
+        },
+        {
+            "id": "battle-through-the-heavens",
+            "title": "Battle Through the Heavens",
+            "image": "https://via.placeholder.com/300x400/ff9f43/fff?text=Battle+Through+the+Heavens",
+            "genre": "Action, Adventure, Donghua, Fantasy, Cultivation"
+        },
+        {
+            "id": "martial-god-asura",
+            "title": "Martial God Asura",
+            "image": "https://via.placeholder.com/300x400/ff6b81/fff?text=Martial+God+Asura",
+            "genre": "Action, Adventure, Donghua, Fantasy, Cultivation"
         }
-        const data = await response.json();
-        console.log('Data anime:', data); // Cek di console
-
-        let animeList = data.anime || [];
-        if (animeList.length === 0) {
-            grid.innerHTML = `<div class="empty-state"><i class="fas fa-frown"></i><p>Belum ada donghua.</p></div>`;
-            return;
-        }
-
-        // ... sisanya tetap ...
-    } catch (error) {
-        console.error('Error loading anime list:', error);
-        grid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat daftar donghua: ${error.message}</p></div>`;
-    }
+    ]
 }
