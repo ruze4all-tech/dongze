@@ -28,6 +28,23 @@
     <button class="genre-btn" data-genre="action" onclick="filterByGenre('action')">Action</button>
     ...
 </div>
+    <div class="genre-filter">
+    <label for="genreSelect" style="color:#7a849b; margin-right:10px; font-weight:600;">
+        <i class="fas fa-tags"></i> Genre:
+    </label>
+    <select id="genreSelect" onchange="filterByGenre(this.value)">
+        <option value="all">Semua Genre</option>
+        <option value="action">Action</option>
+        <option value="adventure">Adventure</option>
+        <option value="comedy">Comedy</option>
+        <option value="donghua">Donghua</option>
+        <option value="fantasy">Fantasy</option>
+        <option value="romance">Romance</option>
+        <option value="shonen">Shonen</option>
+        <option value="slice-of-life">Slice of Life</option>
+        <!-- tambahkan genre lain sesuai kebutuhan -->
+    </select>
+    </div>
     
     <div id="animeGrid" class="anime-grid"></div>
 </div>
