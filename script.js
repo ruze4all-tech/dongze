@@ -9,48 +9,69 @@ let currentAnimeTitle = '';
 let pageHistory = [];
 
 // ============================================================
-//  NAVIGASI
+//  NAVIGASI (DENGAN BACK/UNDO)
 // ============================================================
+let previousPage = null;
+let previousAnimeId = null;
+
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
-    
-    // Sembunyikan/munculkan navigasi utama
-    const nav = document.getElementById('mainNav');
-    if (nav) {
-        nav.style.display = (pageId === 'page-home') ? 'flex' : 'none';
-    }
-    
-    // Simpan history
-    if (pageId !== 'page-home') {
-        pageHistory.push(pageId);
-    }
+    previousPage = pageId;
 }
 
 function goHome() {
     showPage('page-home');
+    toggleMainNav(true);
     loadAnimeList(currentGenre);
-    pageHistory = [];
+    previousAnimeId = null;
 }
 
-function goBack() {
-    if (pageHistory.length > 1) {
-        // Kembali ke halaman sebelumnya
-        pageHistory.pop();
-        const prevPage = pageHistory[pageHistory.length - 1];
-        showPage(prevPage);
-        // Reload konten jika perlu
-        if (prevPage === 'page-detail' && currentAnimeId) {
-            openDetail(currentAnimeId);
-        } else if (prevPage === 'page-watch' && currentEpisodeIndex !== undefined) {
-            watchEpisode(currentEpisodeIndex);
-        }
+function goToDetail() {
+    if (currentAnimeId) {
+        showPage('page-detail');
+        toggleMainNav(false);
+        openDetail(currentAnimeId); // reload detail
     } else {
-        // Jika tidak ada history, kembali ke home
         goHome();
     }
 }
 
+// Override openDetail untuk menyimpan currentAnimeId
+const originalOpenDetail = openDetail;
+openDetail = async function(animeId) {
+    currentAnimeId = animeId;
+    await originalOpenDetail(animeId);
+    // Update breadcrumb link di halaman tonton
+    const seriesLink = document.getElementById('breadcrumbSeriesLink');
+    if (seriesLink) {
+        seriesLink.onclick = function(e) {
+            e.preventDefault();
+            goToDetail();
+        };
+    }
+};
+
+// Override watchEpisode untuk update breadcrumb
+const originalWatchEpisode = watchEpisode;
+watchEpisode = function(index) {
+    originalWatchEpisode(index);
+    // Pastikan breadcrumb Series mengarah ke detail
+    const seriesLink = document.getElementById('breadcrumbSeriesLink');
+    if (seriesLink) {
+        seriesLink.onclick = function(e) {
+            e.preventDefault();
+            goToDetail();
+        };
+    }
+};
+
+// Inisialisasi
+document.addEventListener('DOMContentLoaded', () => {
+    loadAnimeList('all');
+    toggleMainNav(true);
+    // ...
+});
 // ============================================================
 //  LOAD DAFTAR ANIME
 // ============================================================
