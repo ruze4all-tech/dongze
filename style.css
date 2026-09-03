@@ -1,6 +1,4 @@
-/* ============================================================ */
-/* RESET & GLOBAL                                               */
-/* ============================================================ */
+/* ========== GLOBAL ========== */
 * {
     margin: 0;
     padding: 0;
@@ -14,9 +12,7 @@ body {
     min-height: 100vh;
 }
 
-/* ============================================================ */
-/* HEADER                                                       */
-/* ============================================================ */
+/* ========== HEADER ========== */
 header {
     background: #141425;
     border-bottom: 2px solid #2a2a3a;
@@ -69,6 +65,7 @@ header {
 }
 .search-box button:hover { color: #ff4757; }
 
+/* ========== MAIN NAV (HANYA DI HOME) ========== */
 .main-nav {
     display: flex;
     flex-wrap: wrap;
@@ -94,21 +91,7 @@ header {
 .main-nav a.active { color: #ff4757; border-bottom: 2px solid #ff4757; }
 .main-nav a.active i { color: #ff4757; }
 
-/* ============================================================ */
-/* KONTEN UTAMA                                                 */
-/* ============================================================ */
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 10px 30px 30px;
-}
-
-.page { display: none; }
-.page.active { display: block; }
-
-/* ============================================================ */
-/* BREADCRUMB                                                   */
-/* ============================================================ */
+/* ========== BREADCRUMB ========== */
 .breadcrumb {
     display: flex;
     align-items: center;
@@ -126,9 +109,28 @@ header {
 .breadcrumb i { font-size: 12px; color: #3a3a5a; }
 .breadcrumb span { color: #e8e8e8; }
 
-/* ============================================================ */
-/* ANNOUNCEMENT                                                 */
-/* ============================================================ */
+/* ========== TOMBOL KEMBALI ========== */
+.back-btn {
+    background: transparent;
+    border: 1px solid #2a2a3a;
+    color: #e8e8e8;
+    padding: 8px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+.back-btn:hover {
+    background: #2a2a3a;
+    border-color: #ff4757;
+}
+.back-btn i { font-size: 13px; }
+
+/* ========== ANNOUNCEMENT ========== */
 .announcement {
     background: #1a1a2e;
     border-left: 4px solid #ff4757;
@@ -150,9 +152,16 @@ header {
 }
 .announcement strong { color: #e8e8e8; }
 
-/* ============================================================ */
-/* HALAMAN HOME                                                 */
-/* ============================================================ */
+/* ========== KONTEN ========== */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 30px 30px;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
 .section-title {
     font-size: 20px;
     font-weight: 700;
@@ -164,6 +173,7 @@ header {
 }
 .section-title i { color: #ff4757; }
 
+/* ========== GENRE FILTER ========== */
 .genre-filter {
     display: flex;
     flex-wrap: wrap;
@@ -196,6 +206,7 @@ header {
 .genre-btn.active { background: #ff4757; color: #fff; border-color: #ff4757; }
 .genre-btn.active:hover { background: #e03e4e; }
 
+/* ========== GRID ANIME ========== */
 .anime-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -237,9 +248,7 @@ header {
     color: #7a7a9a;
 }
 
-/* ============================================================ */
-/* HALAMAN DETAIL                                               */
-/* ============================================================ */
+/* ========== DETAIL ========== */
 .detail-banner {
     background: #141425;
     border-radius: 16px;
@@ -328,23 +337,7 @@ header {
 }
 .episode-btn:hover { background: #ff4757; border-color: #ff4757; }
 
-.back-btn {
-    background: transparent;
-    border: 1px solid #2a2a3a;
-    color: #e8e8e8;
-    padding: 8px 20px;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    transition: 0.2s;
-}
-.back-btn:hover { background: #2a2a3a; }
-
-/* ============================================================ */
-/* HALAMAN TONTON - MULAI DARI SINI                             */
-/* ============================================================ */
-
-/* ---- Video Player ---- */
+/* ========== VIDEO PLAYER ========== */
 .video-wrapper {
     background: #000;
     border-radius: 16px;
@@ -356,7 +349,7 @@ header {
 .video-wrapper video { width: 100%; height: 100%; display: block; }
 .video-wrapper iframe { width: 100%; height: 100%; border: none; }
 
-/* ---- Select Video Server ---- */
+/* ========== SERVER SELECTOR ========== */
 .server-selector {
     display: flex;
     align-items: center;
@@ -387,7 +380,7 @@ header {
 .server-selector select:hover { border-color: #ff4757; }
 .server-selector select option { background: #141425; }
 
-/* ---- Info Episode ---- */
+/* ========== EPISODE INFO ========== */
 .episode-info {
     margin: 15px 0;
     padding: 15px 0;
@@ -414,7 +407,7 @@ header {
     align-items: center;
 }
 
-/* ---- Tombol Navigasi Episode ---- */
+/* ========== WATCH NAV ========== */
 .watch-nav {
     display: flex;
     gap: 15px;
@@ -443,7 +436,7 @@ header {
     cursor: not-allowed;
 }
 
-/* ---- Daftar Episode (Sidebar) ---- */
+/* ========== EPISODE SIDEBAR ========== */
 .episode-sidebar {
     margin-top: 25px;
     padding-top: 20px;
@@ -504,9 +497,27 @@ header {
 .episode-item.active .ep-title { color: #fff; }
 .episode-item.active .ep-date { color: #e8e8e8; }
 
-/* ============================================================ */
-/* LOADING & EMPTY STATE                                        */
-/* ============================================================ */
+/* ========== WATCH FOOTER ========== */
+.watch-footer {
+    margin-top: 30px;
+    padding: 15px 20px;
+    background: #141425;
+    border-radius: 12px;
+    border: 1px solid #2a2a3a;
+    color: #7a7a9a;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+}
+.watch-footer i {
+    color: #ff4757;
+    margin-right: 8px;
+}
+.watch-footer strong {
+    color: #a0a0c0;
+}
+
+/* ========== LOADING ========== */
 .loader {
     display: flex;
     justify-content: center;
@@ -529,9 +540,7 @@ header {
 }
 .empty-state i { font-size: 40px; margin-bottom: 10px; color: #2a2a3a; }
 
-/* ============================================================ */
-/* RESPONSIVE                                                   */
-/* ============================================================ */
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     header { padding: 12px 15px; }
     .header-top { flex-direction: column; align-items: stretch; }
@@ -557,4 +566,4 @@ header {
     .anime-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
     .anime-card img { height: 200px; }
     .section-title { font-size: 18px; }
-}
+        }
