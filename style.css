@@ -76,6 +76,81 @@ header {
 }
 .section-title i { color: #ff4757; margin-right: 10px; }
 
+/* ========== GENRE DROPDOWN ========== */
+.genre-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.genre-toggle {
+    background: #1a1a2e;
+    border: 1px solid #2a2a3a;
+    color: #f1f3f5;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.genre-toggle:hover {
+    background: #2a2a3a;
+    border-color: #ff4757;
+}
+.genre-toggle i {
+    color: #ff4757;
+}
+
+.genre-list {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 12px;
+    min-width: 180px;
+    z-index: 1000;
+    flex-wrap: wrap;
+    gap: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.genre-list.open {
+    display: flex;
+}
+
+.genre-btn {
+    background: #0f0f1a;
+    border: 1px solid #2a2a3a;
+    color: #7a849b;
+    padding: 6px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: 0.3s;
+    flex: 0 0 auto;
+}
+.genre-btn:hover {
+    background: #2a2a3a;
+    color: #f1f3f5;
+    border-color: #ff4757;
+}
+.genre-btn.active {
+    background: #ff4757;
+    color: #fff;
+    border-color: #ff4757;
+}
+.genre-btn.active:hover {
+    background: #e03e4e;
+}
+
+/* ========== GRID ANIME ========== */
 .anime-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -116,6 +191,7 @@ header {
     color: #7a849b;
 }
 
+/* ========== DETAIL ========== */
 .detail-banner {
     background: #1a1a2e;
     border-radius: 16px;
@@ -192,6 +268,7 @@ header {
 }
 .back-btn:hover { background: #2a2a3a; }
 
+/* ========== VIDEO PLAYER ========== */
 .video-wrapper {
     background: #000;
     border-radius: 16px;
@@ -232,6 +309,7 @@ header {
     cursor: not-allowed;
 }
 
+/* ========== LOADING ========== */
 .loader {
     display: flex;
     justify-content: center;
@@ -253,6 +331,7 @@ header {
     color: #7a849b;
 }
 
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     header { flex-direction: column; align-items: stretch; }
     .search-box input { width: 100%; }
@@ -261,47 +340,17 @@ header {
     .detail-banner .desc { padding: 15px; }
     .watch-info { flex-direction: column; align-items: stretch; }
     .watch-nav button { width: 100%; margin: 5px 0; }
-}
-/* ========== GENRE FILTER ========== */
-.genre-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 15px 0 25px 0;
-    padding: 10px 0;
-    border-bottom: 1px solid #2a2a3a;
-}
-
-.genre-btn {
-    background: #1a1a2e;
-    border: 1px solid #2a2a3a;
-    color: #7a849b;
-    padding: 8px 20px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    transition: 0.3s;
-}
-
-.genre-btn:hover {
-    background: #2a2a3a;
-    color: #f1f3f5;
-    border-color: #ff4757;
-}
-
-.genre-btn.active {
-    background: #ff4757;
-    color: #fff;
-    border-color: #ff4757;
-}
-
-.genre-btn.active:hover {
-    background: #e03e4e;
-}
-@media (max-width: 768px) {
-    .genre-btn {
-        padding: 6px 14px;
-        font-size: 12px;
+    .genre-list {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+    }
+    .genre-dropdown {
+        display: block;
+        width: 100%;
+    }
+    .genre-toggle {
+        width: 100%;
+        justify-content: center;
     }
 }
