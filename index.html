@@ -52,6 +52,13 @@
             </div>
 
             <div id="animeGrid" class="anime-grid"></div>
+
+            <!-- ==================== PAGINATION ==================== -->
+            <div class="pagination">
+                <button id="prevPageBtn" onclick="changePage(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
+                <span id="pageInfo">Halaman 1 dari 1</span>
+                <button id="nextPageBtn" onclick="changePage(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
+            </div>
         </div>
 
         <!-- ==================== HALAMAN DETAIL ==================== -->
@@ -89,11 +96,7 @@
                 <div class="server-selector">
                     <label><i class="fas fa-server"></i> Select Video Server</label>
                     <select id="videoServer" onchange="changeServer()">
-                        <option value="default">Default</option>
-                        <option value="okru">OK.ru</option>
-                        <option value="dailymotion">Dailymotion</option>
-                        <option value="youtube">YouTube</option>
-                        <option value="mega">Mega.nz</option>
+                        <!-- akan diisi oleh JavaScript -->
                     </select>
                 </div>
 
