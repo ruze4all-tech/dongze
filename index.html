@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <!-- ★ NAVIGASI: Home, Donghua, Genre, Jadwal Rilis ★ -->
+        <!-- NAVIGASI -->
         <nav class="main-nav" id="mainNav">
             <a href="#" class="active" onclick="goHome()"><i class="fas fa-home"></i> Home</a>
             <a href="#" onclick="filterByGenre('donghua')"><i class="fas fa-dragon"></i> Donghua</a>
@@ -40,8 +40,11 @@
 
         <!-- ==================== HALAMAN HOME ==================== -->
         <div id="page-home" class="page active">
+
+            <!-- JUDUL UPDATE DONGHUA -->
             <div class="section-title"><i class="fas fa-fire"></i> Update Donghua</div>
 
+            <!-- GENRE FILTER (RATA TENGAH) -->
             <div class="genre-filter">
                 <button class="genre-btn active" data-genre="all" onclick="filterByGenre('all')">Semua</button>
                 <button class="genre-btn" data-genre="action" onclick="filterByGenre('action')">Action</button>
@@ -58,14 +61,16 @@
                 <button class="genre-btn" data-genre="cultivation" onclick="filterByGenre('cultivation')">Cultivation</button>
             </div>
 
+            <!-- GRID ANIME -->
             <div id="animeGrid" class="anime-grid"></div>
 
-            <!-- ==================== PAGINATION (RAPI) ==================== -->
+            <!-- PAGINATION -->
             <div class="pagination">
                 <button id="prevPageBtn" onclick="changePage(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
                 <span id="pageInfo">Halaman 1 dari 1</span>
                 <button id="nextPageBtn" onclick="changePage(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
             </div>
+
         </div>
 
         <!-- ==================== HALAMAN DETAIL ==================== -->
@@ -116,29 +121,24 @@
                     </div>
                 </div>
 
-                <!-- TOMBOL PANAH + COUNTER -->
                 <div class="watch-nav">
                     <button id="prevEpBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i></button>
                     <span id="episodeCounter">1 / 10</span>
                     <button id="nextEpBtn" onclick="navigateEpisode(1)"><i class="fas fa-chevron-right"></i></button>
                 </div>
 
-                <!-- GRID EPISODE PERSEGI -->
                 <div class="episode-sidebar">
                     <h3><i class="fas fa-list-ul"></i> Daftar Episode</h3>
                     <div id="episodeGrid" class="episode-grid"></div>
                 </div>
 
                 <div class="watch-footer">
-                    <p><i class="fas fa-info-circle"></i> Teks abu-abu ini bisa kamu ubah sesuai keinginan. Misalnya watermark, copyright, atau link.</p>
-                    <p style="font-size:12px; margin-top:5px; color:#5a5a7a;">
-                        Ganti teks ini di file <strong>index.html</strong> bagian <strong>#page-watch .watch-footer</strong>
-                    </p>
+                    <p><i class="fas fa-info-circle"></i> Teks abu-abu ini bisa kamu ubah sesuai keinginan.</p>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== LOADING ==================== -->
+        <!-- LOADING -->
         <div id="globalLoader" class="loader" style="display:none;">
             <i class="fas fa-spinner"></i>
         </div>
