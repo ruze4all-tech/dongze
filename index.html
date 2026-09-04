@@ -3,28 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime - Nonton Anime & Donghua</title>
+    <title>Anime - Nonton Anime</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-
-    <!-- ★ IKLAN POPUNDER ★ -->
-    <script src="https://pl31172357.profitableratecpmnetwork.com/55/f3/73/55f3731a26f8236a4bd0aee4712f66e6.js"></script>
-
 </head>
 <body>
 
-    <!-- ==================== HEADER ==================== -->
     <header>
         <div class="header-top">
-            <div class="logo">
-                <span class="blue">A</span><span>n</span><span class="green">i</span><span>me</span>
-            </div>
+            <div class="logo"><span class="blue">A</span><span>n</span><span class="green">i</span><span>me</span></div>
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Cari anime..." onkeyup="searchAnime()">
                 <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
             </div>
         </div>
-
         <nav class="main-nav" id="mainNav">
             <a href="#" class="active" onclick="goHome()"><i class="fas fa-home"></i> Home</a>
             <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Anime</a>
@@ -34,10 +26,8 @@
         </nav>
     </header>
 
-    <!-- ==================== KONTEN ==================== -->
     <div class="container">
 
-        <!-- ==================== HALAMAN HOME ==================== -->
         <div id="page-home" class="page active">
             <div class="section-title"><i class="fas fa-fire"></i> Update Anime</div>
 
@@ -57,151 +47,59 @@
                 <button class="genre-btn" data-genre="cultivation" onclick="filterByGenre('cultivation')">Cultivation</button>
             </div>
 
-            <div id="animeGrid" class="anime-grid"></div>
+            <!-- ★ DAFTAR ANIME (HARDCODE LANGSUNG) ★ -->
+            <div class="anime-grid" id="animeGrid">
+                <!-- Kartu Anime 1: Tsuihou Sareta -->
+                <div class="anime-card" onclick="location.href='tsuihou-sareta/info.html'">
+                    <img src="https://via.placeholder.com/300x400/4a9eff/fff?text=Tsuihou+Sareta" alt="Tsuihou Sareta">
+                    <div class="info">
+                        <h3>Tsuihou Sareta Tensei Juukishi</h3>
+                        <p>Action, Fantasy, Isekai</p>
+                    </div>
+                </div>
+
+                <!-- Kartu Anime 2: Renegade Immortal -->
+                <div class="anime-card" onclick="location.href='renegade-immortal/info.html'">
+                    <img src="https://via.placeholder.com/300x400/ff4757/fff?text=Renegade+Immortal" alt="Renegade Immortal">
+                    <div class="info">
+                        <h3>Renegade Immortal</h3>
+                        <p>Action, Adventure, Donghua, Fantasy</p>
+                    </div>
+                </div>
+
+                <!-- Kartu Anime 3: Otome Game S2 -->
+                <div class="anime-card" onclick="location.href='otome-game-s2/info.html'">
+                    <img src="https://via.placeholder.com/300x400/ff6b35/fff?text=Otome+Game+S2" alt="Otome Game S2">
+                    <div class="info">
+                        <h3>Otome Game S2</h3>
+                        <p>Comedy, Romance, Isekai</p>
+                    </div>
+                </div>
+
+                <!-- Kartu Anime 4: Classroom of the Elite -->
+                <div class="anime-card" onclick="location.href='youkoso-jitsuryoku/info.html'">
+                    <img src="https://via.placeholder.com/300x400/4a9eff/fff?text=Youkoso" alt="Youkoso Jitsuryoku">
+                    <div class="info">
+                        <h3>Youkoso Jitsuryoku</h3>
+                        <p>Psychological, School, Drama</p>
+                    </div>
+                </div>
+
+                <!-- Tambah kartu anime lain di sini -->
+            </div>
 
             <div class="pagination">
                 <button id="prevPageBtn" onclick="changePage(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
                 <span id="pageInfo">Halaman 1 dari 1</span>
                 <button id="nextPageBtn" onclick="changePage(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
             </div>
-
-            <!-- ★ IKLAN BANNER - FOOTER HOME ★ -->
-            <div class="ad-footer">
-                <div class="ad-container">
-                    <script>
-                        atOptions = {
-                            'key' : 'a8d36c10a5a6fd39ae4b31451290d5e4',
-                            'format' : 'iframe',
-                            'height' : 50,
-                            'width' : 320,
-                            'params' : {}
-                        };
-                    </script>
-                    <script src="https://www.highrevenueformat.com/a8d36c10a5a6fd39ae4b31451290d5e4/invoke.js"></script>
-                </div>
-                <div class="ad-container" style="margin-top:10px;">
-                    <script>
-                        atOptions = {
-                            'key' : '14052f59aafd44c825f42826ef533d62',
-                            'format' : 'iframe',
-                            'height' : 90,
-                            'width' : 728,
-                            'params' : {}
-                        };
-                    </script>
-                    <script src="https://www.highrevenueformat.com/14052f59aafd44c825f42826ef533d62/invoke.js"></script>
-                </div>
-            </div>
         </div>
 
-        <!-- ==================== HALAMAN DETAIL ==================== -->
-        <div id="page-detail" class="page">
-            <div class="breadcrumb">
-                <a href="#" onclick="goHome()">Home</a>
-                <i class="fas fa-chevron-right"></i>
-                <span id="breadcrumbSeries">Series</span>
-            </div>
-            <div id="detailContent"></div>
-
-            <!-- ★ IKLAN BANNER - FOOTER DETAIL ★ -->
-            <div class="ad-footer">
-                <div class="ad-container">
-                    <script>
-                        atOptions = {
-                            'key' : 'd5532a357bb444b2ff669486d54286ba',
-                            'format' : 'iframe',
-                            'height' : 60,
-                            'width' : 468,
-                            'params' : {}
-                        };
-                    </script>
-                    <script src="https://www.highrevenueformat.com/d5532a357bb444b2ff669486d54286ba/invoke.js"></script>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== HALAMAN TONTON ==================== -->
-        <div id="page-watch" class="page">
-            <div class="breadcrumb">
-                <a href="#" onclick="goHome()">Home</a>
-                <i class="fas fa-chevron-right"></i>
-                <a href="#" id="breadcrumbSeriesLink" onclick="goToDetail()">Series</a>
-                <i class="fas fa-chevron-right"></i>
-                <span id="breadcrumbEpisode">Episode</span>
-            </div>
-
-            <div class="announcement">
-                <i class="fas fa-info-circle"></i>
-                <div>
-                    <strong>Wajib di baca!</strong> Jika server <strong>Dailymotion</strong> iklannya lama lebih dari 30 detik refresh aja (Reload) halaman nya. Jika masih tidak bisa, ganti server di bagian <strong>Select Video Server</strong> di bawah.
-                </div>
-            </div>
-
-            <div id="watchContent">
-                <div class="video-wrapper">
-                    <video id="videoPlayer" controls autoplay></video>
-                </div>
-
-                <div class="server-selector">
-                    <label><i class="fas fa-server"></i> Select Video Server</label>
-                    <select id="videoServer" onchange="changeServer()">
-                        <!-- akan diisi oleh JavaScript -->
-                    </select>
-                </div>
-
-                <div class="episode-info">
-                    <h2 id="watchTitle">Memuat...</h2>
-                    <div class="episode-meta">
-                        <span id="episodeReleaseDate"><i class="far fa-calendar-alt"></i> Loading...</span>
-                        <span id="episodePostedBy"><i class="far fa-user"></i> Posted by admin</span>
-                        <span id="episodeSeries"><i class="fas fa-tv"></i> Series: <span id="episodeSeriesName">-</span></span>
-                    </div>
-                </div>
-
-                <div class="watch-nav">
-                    <button id="prevEpBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i></button>
-                    <span id="episodeCounter">1 / 10</span>
-                    <button id="nextEpBtn" onclick="navigateEpisode(1)"><i class="fas fa-chevron-right"></i></button>
-                </div>
-
-                <div class="episode-sidebar">
-                    <h3><i class="fas fa-list-ul"></i> Daftar Episode</h3>
-                    <div id="episodeGrid" class="episode-grid"></div>
-                </div>
-
-                <!-- ★ IKLAN BANNER - FOOTER WATCH ★ -->
-                <div class="ad-footer">
-                    <div class="ad-container">
-                        <script>
-                            atOptions = {
-                                'key' : '13d64538044a84a2f0831d2769234f44',
-                                'format' : 'iframe',
-                                'height' : 300,
-                                'width' : 160,
-                                'params' : {}
-                            };
-                        </script>
-                        <script src="https://www.highrevenueformat.com/13d64538044a84a2f0831d2769234f44/invoke.js"></script>
-                    </div>
-                </div>
-
-                <div class="watch-footer">
-                    <p><i class="fas fa-film"></i> Selamat menikmati tayangan anime favoritmu di <strong>Anime</strong>. Nonton gratis, kapan saja, di mana saja! 🎬</p>
-                    <p style="font-size:12px; margin-top:5px; color:#6c757d;">
-                        Anime © 2026 | All Rights Reserved
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- LOADING -->
         <div id="globalLoader" class="loader" style="display:none;">
             <i class="fas fa-spinner"></i>
         </div>
-
     </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
