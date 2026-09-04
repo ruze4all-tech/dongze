@@ -3,140 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nonton Anime</title>
+    <title>Tonton - Tsuihou Sareta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #111;
-            color: #fff;
+        /* ========== GLOBAL ========== */
+        * {
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #0d0d1a;
+            color: #e8e8e8;
             min-height: 100vh;
         }
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background: #222;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%; /* Rasio 16:9 */
-            height: 0;
-            overflow: hidden;
-            border-radius: 8px;
-        }
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-        .info {
-            margin-top: 15px;
-            text-align: center;
-        }
-        .info h2 {
-            margin: 0 0 5px 0;
-        }
-        .info p {
-            color: #aaa;
-            margin: 0;
-        }
-        .nav-links {
-            margin-top: 20px;
+        a { text-decoration: none; color: inherit; }
+
+        /* ========== HEADER ========== */
+        header {
+            background: #141425;
+            border-bottom: 1px solid #2a2a3a;
+            padding: 10px 30px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #e8e8e8;
+        }
+        .logo .blue { color: #4a9eff; }
+        .logo .green { color: #28a745; }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
         }
         .nav-links a {
-            color: #007bff;
-            text-decoration: none;
-            padding: 8px 15px;
-            background-color: #333;
-            border-radius: 5px;
+            color: #7a7a9a;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
         }
-        .nav-links a:hover {
-            background-color: #444;
-            text-decoration: underline;
+        .nav-links a:hover { color: #4a9eff; }
+
+        /* ========== KONTEN ========== */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
+
+        /* ========== BACK BUTTON ========== */
+        .back-detail {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: #7a7a9a;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.25s;
+            margin-bottom: 15px;
+            padding: 8px 0;
         }
-        .back-link:hover {
-            background-color: #0056b3;
+        .back-detail:hover { color: #4a9eff; }
+
+        /* ========== VIDEO PLAYER ========== */
+        .video-wrapper {
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            border: 1px solid #2a2a3a;
+            position: relative;
+        }
+        .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ========== INFO EPISODE ========== */
+        .episode-info {
+            margin-top: 18px;
+            text-align: center;
+        }
+        .episode-info h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #e8e8e8;
+        }
+        .episode-info p {
+            color: #7a7a9a;
+            font-size: 13px;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
+        /* ========== NAVIGASI EPISODE ========== */
+        .watch-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 18px;
+        }
+        .watch-nav button {
+            background: #1a1a2e;
+            border: 1px solid #2a2a3a;
+            color: #e8e8e8;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .watch-nav button:hover:not(:disabled) {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(74, 158, 255, 0.25);
+        }
+        .watch-nav button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .watch-nav #episodeCounter {
+            font-size: 14px;
+            color: #7a7a9a;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            margin-top: 40px;
+            padding-top: 18px;
+            border-top: 1px solid #2a2a3a;
+            text-align: center;
+            font-size: 13px;
+            color: #5a5a7a;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            header { padding: 10px 15px; flex-direction: column; align-items: stretch; gap: 6px; }
+            .nav-links { justify-content: center; flex-wrap: wrap; gap: 12px; }
+            .container { padding: 12px; }
+            .watch-nav button { width: 40px; height: 40px; font-size: 16px; }
+            .episode-info h2 { font-size: 18px; }
+        }
+        @media (max-width: 480px) {
+            .watch-nav { gap: 12px; }
+            .watch-nav button { width: 36px; height: 36px; font-size: 14px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo"><span class="blue">A</span><span>n</span><span class="green">i</span><span>me</span></div>
+        <div class="nav-links">
+            <a href="../index.html">Home</a>
+            <a href="#">Daftar Anime</a>
+            <a href="#">Donghua</a>
+            <a href="#">Genre</a>
+        </div>
+    </header>
+
+    <!-- KONTEN -->
     <div class="container">
+
+        <!-- BACK BUTTON -->
+        <button class="back-detail" onclick="location.href='info.html'">
+            <i class="fas fa-arrow-left"></i> Kembali ke Detail
+        </button>
+
+        <!-- VIDEO PLAYER -->
         <div class="video-wrapper">
-            <!-- 
-                LINK VIDEO OK.RU ANDA:
-                Ganti src di bawah ini dengan link embed dari OK.ru.
-                Format link embed: https://ok.ru/videoembed/ID_VIDEO
-                ID video dari link Anda adalah: 9912202562114
-            -->
             <iframe 
-                src="https://ok.ru/videoembed/9912202562114" 
+                id="videoPlayer"
+                src="" 
                 frameborder="0" 
                 allow="autoplay; encrypted-media; fullscreen" 
-                allowfullscreen>
-            </iframe>
+                allowfullscreen
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+            ></iframe>
         </div>
-        <div class="info">
-            <h2 id="episode-title">Episode 1</h2>
-            <p id="episode-desc">Deskripsi singkat episode ini.</p>
+
+        <!-- INFO EPISODE -->
+        <div class="episode-info">
+            <h2 id="watchTitle">Memuat...</h2>
+            <p id="watchMeta">Loading...</p>
         </div>
-        <div class="nav-links">
-            <a href="#" id="prev-ep">◀ Episode Sebelumnya</a>
-            <a href="#" id="next-ep">Episode Selanjutnya ▶</a>
+
+        <!-- NAVIGASI EPISODE -->
+        <div class="watch-nav">
+            <button id="prevBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i></button>
+            <span id="episodeCounter">1 / 1</span>
+            <button id="nextBtn" onclick="navigateEpisode(1)"><i class="fas fa-chevron-right"></i></button>
         </div>
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="info.html" class="back-link">Kembali ke Info Anime</a>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            &copy; 2026 Anime | All Rights Reserved
         </div>
+
     </div>
 
     <script>
-        // Fungsi sederhana untuk mengambil parameter URL
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+        // ============================================================
+        //  BACA PARAMETER DARI URL
+        // ============================================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const episodeParam = urlParams.get('ep');
+        const videoUrlParam = urlParams.get('url');
+
+        // ============================================================
+        //  DATA EPISODE (HARDCODE - TAMBAHKAN SEMUA EPISODE DI SINI)
+        // ============================================================
+        const episodeList = [
+            { number: 7, title: 'Tsuihou Sareta', url: 'https://ok.ru/videoembed/9912202562114' }
+            // ★ TAMBAH EPISODE LAIN DI SINI ★
+            // { number: 1, title: 'Judul Episode 1', url: 'https://link.com' },
+            // { number: 2, title: 'Judul Episode 2', url: 'https://link.com' },
+        ];
+
+        let currentIndex = 0;
+
+        // ============================================================
+        //  CARI INDEX EPISODE BERDASARKAN PARAMETER
+        // ============================================================
+        function findEpisodeIndex(epNumber) {
+            for (let i = 0; i < episodeList.length; i++) {
+                if (episodeList[i].number == epNumber) return i;
+            }
+            return 0;
         }
 
-        // Ambil nomor episode dari URL (contoh: watch.html?ep=1)
-        const episode = getQueryParam('ep') || '1';
-        document.getElementById('episode-title').textContent = `Episode ${episode}`;
-        document.getElementById('episode-desc').textContent = `Deskripsi untuk Episode ${episode}.`;
+        // ============================================================
+        //  LOAD EPISODE
+        // ============================================================
+        function loadEpisode(index) {
+            if (index < 0 || index >= episodeList.length) return;
 
-        // Catatan: Link OK.ru sudah terpasang di iframe di atas.
-        // Untuk mengganti video berdasarkan episode, Anda bisa menggunakan JavaScript
-        // untuk mengubah atribut 'src' dari iframe.
+            const ep = episodeList[index];
+            currentIndex = index;
 
-        // Contoh logika untuk navigasi episode (opsional):
-        // Anda bisa menambahkan daftar link video untuk setiap episode di sini.
-        /*
-        const episodeLinks = {
-            '1': 'https://ok.ru/videoembed/9912202562114',
-            '2': 'https://ok.ru/videoembed/ID_EPISODE_2',
-        };
-        const iframe = document.querySelector('.video-wrapper iframe');
-        if (episodeLinks[episode]) {
-            iframe.src = episodeLinks[episode];
+            // Update player
+            const iframe = document.getElementById('videoPlayer');
+            iframe.src = ep.url;
+
+            // Update info
+            document.getElementById('watchTitle').textContent = `Episode ${ep.number} - ${ep.title}`;
+            document.getElementById('watchMeta').textContent = `Sumber: ${ep.url}`;
+
+            // Update counter
+            document.getElementById('episodeCounter').textContent = `${index + 1} / ${episodeList.length}`;
+
+            // Update tombol navigasi
+            document.getElementById('prevBtn').disabled = (index <= 0);
+            document.getElementById('nextBtn').disabled = (index >= episodeList.length - 1);
+
+            // Update URL tanpa reload
+            const newUrl = `?ep=${ep.number}&url=${encodeURIComponent(ep.url)}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+
+            console.log('🎬 Memutar Episode:', ep.number, '-', ep.title);
+            console.log('📌 Link:', ep.url);
         }
-        */
+
+        // ============================================================
+        //  NAVIGASI EPISODE (PREV/NEXT)
+        // ============================================================
+        function navigateEpisode(direction) {
+            const newIndex = currentIndex + direction;
+            if (newIndex < 0 || newIndex >= episodeList.length) return;
+            loadEpisode(newIndex);
+        }
+
+        // ============================================================
+        //  INISIALISASI
+        // ============================================================
+        if (episodeParam) {
+            const idx = findEpisodeIndex(parseInt(episodeParam));
+            loadEpisode(idx);
+        } else if (episodeList.length > 0) {
+            loadEpisode(0);
+        } else {
+            document.getElementById('watchTitle').textContent = '⚠️ Belum ada episode';
+            document.getElementById('watchMeta').textContent = 'Tambahkan episode di data episodeList.';
+        }
+
+        // Support back browser
+        window.addEventListener('popstate', function() {
+            const params = new URLSearchParams(window.location.search);
+            const ep = params.get('ep');
+            if (ep) {
+                const idx = findEpisodeIndex(parseInt(ep));
+                loadEpisode(idx);
+            }
+        });
+
+        console.log('📋 Total Episode:', episodeList.length);
     </script>
+
 </body>
 </html>
