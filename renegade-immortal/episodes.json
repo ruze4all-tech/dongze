@@ -1,11 +1,12 @@
 {
     "episodes": [
         {
-            "number": 1,
-            "title": "Pertemuan dengan Dao",
+            "number": 7,
+            "title": "Episode 7",
             "sources": [
                 {
-                    <iframe src="https://www.yourupload.com/embed/BtG4eCV18B52" allowfullscreen="true" style="border: 0" />
+                    "server": "YourUpload",
+                    "url": "https://www.yourupload.com/embed/BtG4eCV18B52"
                 }
             ]
         }
