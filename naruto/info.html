@@ -1,158 +1,91 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tsuihou Sareta - Detail</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../style.css">
+    <title>Info Anime - Nama Anime</title>
     <style>
-        body { background: #f0f4f8; color: #212529; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        header { background: #ffffff; border-bottom: 1px solid #dee2e6; padding: 8px 30px; position: sticky; top: 0; z-index: 999; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 6px; }
-        .logo { font-size: 26px; font-weight: 800; letter-spacing: 1px; color: #212529; }
-        .logo .blue { color: #4a9eff; }
-        .logo .green { color: #28a745; }
-        .search-box { display: flex; align-items: center; background: #f0f4f8; padding: 5px 12px; border-radius: 30px; border: 1px solid #dee2e6; }
-        .search-box input { background: transparent; border: none; outline: none; color: #212529; padding: 4px 8px; width: 160px; font-size: 13px; }
-        .search-box input::placeholder { color: #6c757d; }
-        .search-box button { background: transparent; border: none; color: #6c757d; cursor: pointer; font-size: 14px; }
-        .search-box button:hover { color: #4a9eff; }
-        .main-nav { display: flex; flex-wrap: wrap; gap: 25px; padding: 4px 0; border-top: 1px solid #dee2e6; }
-        .main-nav a { color: #6c757d; text-decoration: none; font-size: 13px; font-weight: 500; padding: 4px 0; transition: 0.3s; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .main-nav a i { font-size: 12px; color: #adb5bd; }
-        .main-nav a:hover { color: #4a9eff; }
-        .main-nav a:hover i { color: #4a9eff; }
-        .main-nav a.active { color: #4a9eff; border-bottom: 2px solid #4a9eff; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 10px 30px 30px; }
-        .breadcrumb { display: flex; align-items: center; gap: 10px; padding: 15px 0 10px 0; font-size: 14px; color: #6c757d; }
-        .breadcrumb a { color: #6c757d; text-decoration: none; cursor: pointer; }
-        .breadcrumb a:hover { color: #4a9eff; }
-        .breadcrumb i { font-size: 12px; color: #adb5bd; }
-        .breadcrumb span { color: #212529; }
-        .detail-banner { background: #ffffff; border-radius: 16px; overflow: hidden; margin-bottom: 30px; border: 1px solid #dee2e6; display: flex; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .detail-banner .poster { flex: 0 0 220px; height: 320px; }
-        .detail-banner .poster img { width: 100%; height: 100%; object-fit: cover; }
-        .detail-banner .desc { flex: 1; padding: 25px 30px; }
-        .detail-banner .desc h1 { font-size: 28px; margin-bottom: 8px; color: #212529; }
-        .detail-banner .desc .status { display: inline-block; background: #28a745; color: #fff; padding: 2px 14px; border-radius: 30px; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
-        .detail-banner .desc .genres { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
-        .detail-banner .desc .genres span { background: #e8f4fd; border: 1px solid #dee2e6; padding: 4px 14px; border-radius: 20px; font-size: 12px; color: #495057; }
-        .detail-banner .desc p { color: #495057; line-height: 1.7; font-size: 14px; }
-        .detail-banner .desc .meta-info { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 15px; font-size: 13px; color: #6c757d; }
-        .detail-banner .desc .meta-info i { color: #4a9eff; margin-right: 5px; }
-        .episode-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 15px; }
-        .episode-btn { background: #f8f9fa; border: 1px solid #dee2e6; color: #212529; padding: 12px 10px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 13px; font-weight: 500; transition: 0.2s; }
-        .episode-btn:hover { background: #4a9eff; color: #fff; border-color: #4a9eff; }
-        .back-btn { background: #4a9eff; color: #fff; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer; font-size: 14px; margin-bottom: 20px; transition: 0.2s; }
-        .back-btn:hover { background: #3b7dd8; }
-        .ad-footer { margin-top: 25px; padding: 10px 0; border-top: 1px solid #dee2e6; }
-        .ad-container { min-height: 90px; display: flex; justify-content: center; align-items: center; background: transparent; border-radius: 12px; overflow: hidden; }
-        @media (max-width: 768px) {
-            header { padding: 6px 15px; }
-            .header-top { flex-direction: column; align-items: stretch; gap: 6px; }
-            .search-box input { width: 100%; }
-            .search-box { width: 100%; padding: 4px 10px; }
-            .main-nav { justify-content: center; gap: 12px; }
-            .main-nav a { font-size: 12px; }
-            .container { padding: 10px 15px; }
-            .detail-banner .poster { flex: 0 0 100%; height: 220px; }
-            .detail-banner .desc { padding: 15px; }
-            .detail-banner .desc h1 { font-size: 22px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .poster {
+            text-align: center;
+        }
+        .poster img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .info {
+            margin-top: 20px;
+        }
+        .info h1 {
+            margin-top: 0;
+        }
+        .episode-list {
+            margin-top: 20px;
+        }
+        .episode-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .episode-list li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .episode-list li a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .episode-list li a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-link:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-
-    <!-- ==================== HEADER ==================== -->
-    <header>
-        <div class="header-top">
-            <div class="logo"><span class="blue">A</span><span>n</span><span class="green">i</span><span>me</span></div>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Cari anime..." onkeyup="searchAnime()">
-                <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-        <nav class="main-nav" id="mainNav">
-            <a href="#" onclick="location.href='../index.html'"><i class="fas fa-home"></i> Home</a>
-            <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Anime</a>
-            <a href="#" onclick="filterByGenre('donghua')"><i class="fas fa-dragon"></i> Donghua</a>
-            <a href="#" onclick="document.querySelector('.genre-filter').scrollIntoView({behavior:'smooth'})"><i class="fas fa-tags"></i> Genre</a>
-            <a href="#" onclick="alert('Jadwal rilis akan segera hadir!')"><i class="fas fa-calendar-alt"></i> Jadwal Rilis</a>
-        </nav>
-    </header>
-
-    <!-- ==================== KONTEN ==================== -->
     <div class="container">
-
-        <!-- BREADCRUMB -->
-        <div class="breadcrumb">
-            <a href="#" onclick="location.href='../index.html'">Home</a>
-            <i class="fas fa-chevron-right"></i>
-            <span>Tsuihou Sareta</span>
+        <div class="poster">
+            <!-- Ganti src dengan URL poster anime -->
+            <img src="https://via.placeholder.com/300x450/cccccc/666666?text=Poster+Anime" alt="Poster Anime">
         </div>
-
-        <!-- ==================== DETAIL ==================== -->
-        <div class="detail-banner">
-            <div class="poster">
-                <img src="https://via.placeholder.com/300x400/4a9eff/fff?text=Tsuihou+Sareta" alt="Tsuihou Sareta">
-            </div>
-            <div class="desc">
-                <h1>Tsuihou Sareta Tensei Juukishi wa Game Chishiki de Musou suru</h1>
-                <span class="status">Ongoing</span>
-                <div class="genres">
-                    <span>Action</span>
-                    <span>Fantasy</span>
-                    <span>Isekai</span>
-                </div>
-                <p>Kisah tentang seorang pria yang diusir dari kerajaan dan menggunakan pengetahuannya tentang game untuk bertahan hidup dan menjadi kuat.</p>
-                <div class="meta-info">
-                    <span><i class="fas fa-calendar-alt"></i> Updated: 4/9/2026</span>
-                    <span><i class="fas fa-list-ul"></i> Total Episode: 1</span>
-                </div>
-            </div>
+        <div class="info">
+            <h1>Nama Anime</h1>
+            <p><strong>Sinopsis:</strong> Ini adalah sinopsis singkat dari anime. Anda bisa menggantinya dengan sinopsis yang sebenarnya.</p>
+            <p><strong>Genre:</strong> Aksi, Petualangan, Komedi</p>
+            <p><strong>Total Episode:</strong> 1</p>
         </div>
-
-        <!-- ==================== DAFTAR EPISODE ==================== -->
-        <h3 style="margin:20px 0 10px 0;"><i class="fas fa-list-ul"></i> Daftar Episode</h3>
         <div class="episode-list">
-            <!-- ★ EPISODE 7 - OK.ru ★ -->
-            <div class="episode-btn" onclick="location.href='watch.html?ep=7&url=https://ok.ru/videoembed/9912202562114'">
-                EP 7 - Tsuihou Sareta
-            </div>
-
-            <!-- ★ TEMPLATE TAMBAH EPISODE ★ -->
-            <!--
-            <div class="episode-btn" onclick="location.href='watch.html?ep=NOMOR&url=LINK_EMBED'">
-                EP NOMOR - Judul Episode
-            </div>
-            -->
+            <h2>Daftar Episode</h2>
+            <ul>
+                <li><a href="watch.html?ep=1">Episode 1</a></li>
+                <!-- Tambahkan episode lain di sini -->
+            </ul>
         </div>
-
-        <!-- BACK BUTTON -->
-        <div style="margin-top:20px;">
-            <button class="back-btn" onclick="location.href='../index.html'"><i class="fas fa-arrow-left"></i> Kembali ke Home</button>
-        </div>
-
-        <!-- IKLAN FOOTER -->
-        <div class="ad-footer">
-            <div class="ad-container">
-                <script>
-                    atOptions = {
-                        'key' : 'a8d36c10a5a6fd39ae4b31451290d5e4',
-                        'format' : 'iframe',
-                        'height' : 50,
-                        'width' : 320,
-                        'params' : {}
-                    };
-                </script>
-                <script src="https://www.highrevenueformat.com/a8d36c10a5a6fd39ae4b31451290d5e4/invoke.js"></script>
-            </div>
-        </div>
-
+        <a href="index.html" class="back-link">Kembali ke Beranda</a>
     </div>
-
-    <script src="../script.js"></script>
 </body>
 </html>
