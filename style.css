@@ -32,19 +32,14 @@ header {
     margin-bottom: 6px;
 }
 
-/* ★ LOGO BARU: "Anime" dengan huruf A biru ★ */
 .logo {
     font-size: 26px;
     font-weight: 800;
     letter-spacing: 1px;
     color: #212529;
 }
-.logo .blue {
-    color: #4a9eff;
-}
-.logo .green {
-    color: #28a745;
-}
+.logo .blue { color: #4a9eff; }
+.logo .green { color: #28a745; }
 
 .search-box {
     display: flex;
