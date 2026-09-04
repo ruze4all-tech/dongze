@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime - Nonton Anime</title>
+    <title>Anime - Nonton Anime & Donghua</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- ==================== HEADER ==================== -->
     <header>
         <div class="header-top">
-            <div class="logo"><span class="blue">A</span><span>n</span><span class="green">i</span><span>me</span></div>
+            <div class="logo">
+                <span class="blue">A</span><span>n</span><span class="green">i</span><span>me</span>
+            </div>
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Cari anime..." onkeyup="searchAnime()">
                 <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
             </div>
         </div>
+
         <nav class="main-nav" id="mainNav">
             <a href="#" class="active" onclick="goHome()"><i class="fas fa-home"></i> Home</a>
             <a href="#" onclick="filterByGenre('all')"><i class="fas fa-list"></i> Daftar Anime</a>
@@ -26,8 +30,10 @@
         </nav>
     </header>
 
+    <!-- ==================== KONTEN ==================== -->
     <div class="container">
 
+        <!-- ==================== HALAMAN HOME ==================== -->
         <div id="page-home" class="page active">
             <div class="section-title"><i class="fas fa-fire"></i> Update Anime</div>
 
@@ -47,9 +53,10 @@
                 <button class="genre-btn" data-genre="cultivation" onclick="filterByGenre('cultivation')">Cultivation</button>
             </div>
 
-            <!-- ★ DAFTAR ANIME (HARDCODE LANGSUNG) ★ -->
+            <!-- ★ DAFTAR ANIME ★ -->
             <div class="anime-grid" id="animeGrid">
-                <!-- Kartu Anime 1: Tsuihou Sareta -->
+
+                <!-- ====== ANIME 1: Tsuihou Sareta ====== -->
                 <div class="anime-card" onclick="location.href='tsuihou-sareta/info.html'">
                     <img src="https://via.placeholder.com/300x400/4a9eff/fff?text=Tsuihou+Sareta" alt="Tsuihou Sareta">
                     <div class="info">
@@ -58,7 +65,7 @@
                     </div>
                 </div>
 
-                <!-- Kartu Anime 2: Renegade Immortal -->
+                <!-- ====== ANIME 2: Renegade Immortal ====== -->
                 <div class="anime-card" onclick="location.href='renegade-immortal/info.html'">
                     <img src="https://via.placeholder.com/300x400/ff4757/fff?text=Renegade+Immortal" alt="Renegade Immortal">
                     <div class="info">
@@ -67,7 +74,7 @@
                     </div>
                 </div>
 
-                <!-- Kartu Anime 3: Otome Game S2 -->
+                <!-- ====== ANIME 3: Otome Game S2 ====== -->
                 <div class="anime-card" onclick="location.href='otome-game-s2/info.html'">
                     <img src="https://via.placeholder.com/300x400/ff6b35/fff?text=Otome+Game+S2" alt="Otome Game S2">
                     <div class="info">
@@ -76,28 +83,102 @@
                     </div>
                 </div>
 
-                <!-- Kartu Anime 4: Classroom of the Elite -->
+                <!-- ====== ANIME 4: Classroom of the Elite ====== -->
                 <div class="anime-card" onclick="location.href='youkoso-jitsuryoku/info.html'">
-                    <img src="https://via.placeholder.com/300x400/4a9eff/fff?text=Youkoso" alt="Youkoso Jitsuryoku">
+                    <img src="https://via.placeholder.com/300x400/4a9eff/fff?text=Youkoso+Jitsuryoku" alt="Youkoso Jitsuryoku">
                     <div class="info">
                         <h3>Youkoso Jitsuryoku</h3>
                         <p>Psychological, School, Drama</p>
                     </div>
                 </div>
 
-                <!-- Tambah kartu anime lain di sini -->
+                <!-- ====== ANIME 5: One Piece (Contoh) ====== -->
+                <!--
+                <div class="anime-card" onclick="location.href='one-piece/info.html'">
+                    <img src="https://via.placeholder.com/300x400/ff6b35/fff?text=One+Piece" alt="One Piece">
+                    <div class="info">
+                        <h3>One Piece</h3>
+                        <p>Action, Adventure, Comedy, Shonen</p>
+                    </div>
+                </div>
+                -->
+
+                <!-- ====== ANIME 6: Naruto (Contoh) ====== -->
+                <!--
+                <div class="anime-card" onclick="location.href='naruto/info.html'">
+                    <img src="https://via.placeholder.com/300x400/ff9f43/fff?text=Naruto" alt="Naruto">
+                    <div class="info">
+                        <h3>Naruto</h3>
+                        <p>Action, Adventure, Shonen</p>
+                    </div>
+                </div>
+                -->
+
+                <!-- ====== ANIME 7: Jujutsu Kaisen (Contoh) ====== -->
+                <!--
+                <div class="anime-card" onclick="location.href='jujutsu-kaisen/info.html'">
+                    <img src="https://via.placeholder.com/300x400/ff4757/fff?text=Jujutsu+Kaisen" alt="Jujutsu Kaisen">
+                    <div class="info">
+                        <h3>Jujutsu Kaisen</h3>
+                        <p>Action, Supernatural, Shonen</p>
+                    </div>
+                </div>
+                -->
+
+                <!-- ★ TEMPLATE UNTUK TAMBAH ANIME BARU ★ -->
+                <!--
+                <div class="anime-card" onclick="location.href='NAMA-FOLDER/info.html'">
+                    <img src="URL_GAMBAR" alt="JUDUL_ANIME">
+                    <div class="info">
+                        <h3>JUDUL_ANIME</h3>
+                        <p>Genre1, Genre2, Genre3</p>
+                    </div>
+                </div>
+                -->
+
             </div>
 
+            <!-- ==================== PAGINATION ==================== -->
             <div class="pagination">
                 <button id="prevPageBtn" onclick="changePage(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
                 <span id="pageInfo">Halaman 1 dari 1</span>
                 <button id="nextPageBtn" onclick="changePage(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
             </div>
+
+            <!-- ==================== IKLAN FOOTER ==================== -->
+            <div class="ad-footer">
+                <div class="ad-container">
+                    <script>
+                        atOptions = {
+                            'key' : 'a8d36c10a5a6fd39ae4b31451290d5e4',
+                            'format' : 'iframe',
+                            'height' : 50,
+                            'width' : 320,
+                            'params' : {}
+                        };
+                    </script>
+                    <script src="https://www.highrevenueformat.com/a8d36c10a5a6fd39ae4b31451290d5e4/invoke.js"></script>
+                </div>
+                <div class="ad-container" style="margin-top:10px;">
+                    <script>
+                        atOptions = {
+                            'key' : '14052f59aafd44c825f42826ef533d62',
+                            'format' : 'iframe',
+                            'height' : 90,
+                            'width' : 728,
+                            'params' : {}
+                        };
+                    </script>
+                    <script src="https://www.highrevenueformat.com/14052f59aafd44c825f42826ef533d62/invoke.js"></script>
+                </div>
+            </div>
         </div>
 
+        <!-- ==================== LOADING ==================== -->
         <div id="globalLoader" class="loader" style="display:none;">
             <i class="fas fa-spinner"></i>
         </div>
+
     </div>
 
     <script src="script.js"></script>
