@@ -3,139 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tonton - Naruto</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../style.css">
+    <title>Nonton Anime</title>
     <style>
-        body { background: #0d0d1a; color: #e8e8e8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .video-wrapper { background: #000; border-radius: 16px; overflow: hidden; aspect-ratio: 16/9; width: 100%; border: 1px solid #2a2a3a; }
-        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
-        .watch-info { margin-top: 15px; text-align: center; }
-        .watch-info h2 { color: #e8e8e8; font-size: 20px; margin-bottom: 5px; }
-        .watch-info p { color: #7a7a9a; font-size: 13px; word-break: break-all; }
-        .watch-nav { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 15px; }
-        .watch-nav button { background: #4a9eff; color: #fff; border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-size: 14px; transition: 0.2s; }
-        .watch-nav button:hover { background: #3b7dd8; }
-        .watch-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
-        .back-btn { background: #4a9eff; color: #fff; border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-size: 14px; margin-bottom: 15px; transition: 0.2s; }
-        .back-btn:hover { background: #3b7dd8; }
-        .ad-footer { margin-top: 25px; padding: 10px 0; border-top: 1px solid #2a2a3a; }
-        .ad-container { min-height: 90px; display: flex; justify-content: center; align-items: center; background: transparent; border-radius: 12px; overflow: hidden; }
-        @media (max-width: 768px) {
-            .container { padding: 10px 15px; }
-            .watch-nav { flex-wrap: wrap; gap: 10px; }
-            .watch-nav button { width: 100%; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #222;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* Rasio 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .info {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .info h2 {
+            margin: 0 0 5px 0;
+        }
+        .info p {
+            color: #aaa;
+            margin: 0;
+        }
+        .nav-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .nav-links a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 8px 15px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        .nav-links a:hover {
+            background-color: #444;
+            text-decoration: underline;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-link:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="container">
-
-        <button class="back-btn" onclick="location.href='info.html'"><i class="fas fa-arrow-left"></i> Kembali ke Detail</button>
-
         <div class="video-wrapper">
+            <!-- 
+                LINK VIDEO OK.RU ANDA:
+                Ganti src di bawah ini dengan link embed dari OK.ru.
+                Format link embed: https://ok.ru/videoembed/ID_VIDEO
+                ID video dari link Anda adalah: 9912202562114
+            -->
             <iframe 
-                id="videoPlayer"
-                src="" 
-                width="100%" 
-                height="100%" 
+                src="https://ok.ru/videoembed/9912202562114" 
                 frameborder="0" 
-                allowfullscreen
-                allow="autoplay; encrypted-media; fullscreen"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
-            ></iframe>
+                allow="autoplay; encrypted-media; fullscreen" 
+                allowfullscreen>
+            </iframe>
         </div>
-
-        <div class="watch-info">
-            <h2 id="watchTitle">Memuat...</h2>
-            <p id="watchMeta">Loading...</p>
+        <div class="info">
+            <h2 id="episode-title">Episode 1</h2>
+            <p id="episode-desc">Deskripsi singkat episode ini.</p>
         </div>
-
-        <div class="watch-nav">
-            <button id="prevBtn" onclick="navigateEpisode(-1)"><i class="fas fa-chevron-left"></i> Sebelumnya</button>
-            <span id="episodeCounter" style="color:#7a7a9a; font-size:14px;">1 / 1</span>
-            <button id="nextBtn" onclick="navigateEpisode(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
+        <div class="nav-links">
+            <a href="#" id="prev-ep">◀ Episode Sebelumnya</a>
+            <a href="#" id="next-ep">Episode Selanjutnya ▶</a>
         </div>
-
-        <div class="ad-footer">
-            <div class="ad-container">
-                <script>
-                    atOptions = {
-                        'key' : 'a8d36c10a5a6fd39ae4b31451290d5e4',
-                        'format' : 'iframe',
-                        'height' : 50,
-                        'width' : 320,
-                        'params' : {}
-                    };
-                </script>
-                <script src="https://www.highrevenueformat.com/a8d36c10a5a6fd39ae4b31451290d5e4/invoke.js"></script>
-            </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="info.html" class="back-link">Kembali ke Info Anime</a>
         </div>
-
     </div>
 
     <script>
-        // ★ DAFTAR EPISODE NARUTO ★
-        const episodeList = [
-            { number: 1, title: 'Naruto Uzumaki', url: 'https://www.dailymotion.com/embed/video/xxx' }
-            // ★ TAMBAH EPISODE LAIN DI SINI ★
-            // { number: 2, title: 'Konohamaru', url: 'https://link.com' },
-            // { number: 3, title: 'Sasuke & Sakura', url: 'https://link.com' },
-        ];
-
-        let currentIndex = 0;
-
-        function findEpisodeIndex(epNumber) {
-            for (let i = 0; i < episodeList.length; i++) {
-                if (episodeList[i].number == epNumber) return i;
-            }
-            return 0;
+        // Fungsi sederhana untuk mengambil parameter URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
         }
 
-        function loadEpisode(index) {
-            if (index < 0 || index >= episodeList.length) return;
-            const ep = episodeList[index];
-            currentIndex = index;
+        // Ambil nomor episode dari URL (contoh: watch.html?ep=1)
+        const episode = getQueryParam('ep') || '1';
+        document.getElementById('episode-title').textContent = `Episode ${episode}`;
+        document.getElementById('episode-desc').textContent = `Deskripsi untuk Episode ${episode}.`;
 
-            document.getElementById('videoPlayer').src = ep.url;
-            document.getElementById('watchTitle').textContent = `Episode ${ep.number} - ${ep.title}`;
-            document.getElementById('watchMeta').textContent = `Sumber: ${ep.url}`;
-            document.getElementById('episodeCounter').textContent = `${index + 1} / ${episodeList.length}`;
-            document.getElementById('prevBtn').disabled = (index <= 0);
-            document.getElementById('nextBtn').disabled = (index >= episodeList.length - 1);
+        // Catatan: Link OK.ru sudah terpasang di iframe di atas.
+        // Untuk mengganti video berdasarkan episode, Anda bisa menggunakan JavaScript
+        // untuk mengubah atribut 'src' dari iframe.
 
-            const newUrl = `?ep=${ep.number}&url=${encodeURIComponent(ep.url)}`;
-            window.history.pushState({ path: newUrl }, '', newUrl);
+        // Contoh logika untuk navigasi episode (opsional):
+        // Anda bisa menambahkan daftar link video untuk setiap episode di sini.
+        /*
+        const episodeLinks = {
+            '1': 'https://ok.ru/videoembed/9912202562114',
+            '2': 'https://ok.ru/videoembed/ID_EPISODE_2',
+        };
+        const iframe = document.querySelector('.video-wrapper iframe');
+        if (episodeLinks[episode]) {
+            iframe.src = episodeLinks[episode];
         }
-
-        function navigateEpisode(direction) {
-            const newIndex = currentIndex + direction;
-            if (newIndex < 0 || newIndex >= episodeList.length) return;
-            loadEpisode(newIndex);
-        }
-
-        // INISIALISASI
-        const urlParams = new URLSearchParams(window.location.search);
-        const episode = urlParams.get('ep');
-        if (episode) {
-            const idx = findEpisodeIndex(parseInt(episode));
-            loadEpisode(idx);
-        } else if (episodeList.length > 0) {
-            loadEpisode(0);
-        } else {
-            document.getElementById('watchTitle').textContent = '⚠️ Belum ada episode';
-            document.getElementById('watchMeta').textContent = 'Tambahkan episode di data episodeList.';
-        }
-
-        window.addEventListener('popstate', function() {
-            const params = new URLSearchParams(window.location.search);
-            const ep = params.get('ep');
-            if (ep) {
-                const idx = findEpisodeIndex(parseInt(ep));
-                loadEpisode(idx);
-            }
-        });
+        */
     </script>
 </body>
 </html>
