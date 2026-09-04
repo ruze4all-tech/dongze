@@ -11,18 +11,6 @@
             "title": "Naruto",
             "image": "https://via.placeholder.com/300x400/ff9f43/fff?text=Naruto",
             "genre": "Action, Adventure, Shonen"
-        },
-        {
-            "id": "one-piece",
-            "title": "One Piece",
-            "image": "https://via.placeholder.com/300x400/ff6b35/fff?text=One+Piece",
-            "genre": "Action, Adventure, Comedy, Shonen"
-        },
-        {
-            "id": "jujutsu-kaisen",
-            "title": "Jujutsu Kaisen",
-            "image": "https://via.placeholder.com/300x400/ff4757/fff?text=Jujutsu+Kaisen",
-            "genre": "Action, Supernatural, Shonen"
         }
     ]
 }
